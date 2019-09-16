@@ -1,0 +1,121 @@
+
+/*首页巨幕*/
+.jumbotron {
+    /* background-color: #eee; */
+    background-color: #612222 !important;
+}
+
+.alert-warning {
+    /* background-image: linear-gradient(to bottom,#fcf8e3 0,#f8efc0 100%); */
+    background-image: linear-gradient(to bottom,#e5f0f1 0,#dcdbe3 100%) !important;
+}
+
+.close {
+    /* font-size: 21px; */
+    /* text-shadow: 0 1px 0 #fff; */
+    font-size: 17px !important;
+}
+
+/*首页页头*/
+
+.page-header {
+    margin: 40px !important;
+    margin-bottom: 10px !important;
+}
+
+/*首页帖子左边的图片*/
+
+.media-object {
+    width: 35px !important;
+}
+
+/* bootstrap.min.css | http://localhost:8888/css/bootstrap.min.css */
+/*栅格*/
+/*首页栅格左 帖子列表背景色和margin*/
+.row{
+    margin: 30px !important;
+    margin-top: 1px !important ;
+}
+
+
+.media_left{
+    background-color: mistyrose !important;
+    padding: 20px !important;
+    padding-left: 25px !important;
+    margin: 10px !important;
+    margin-left: 0 !important;
+}
+
+.row_left{
+    margin-left: -20px !important;
+}
+
+.row_right{
+    padding-left: 60px !important;
+    padding-right: 5px !important;
+    margin-left: 20px !important;
+}
+
+/*首页分页按钮*/
+.pagebtn{
+    float: right;
+}
+.pagebtn_disabled{
+    background: bottom !important;
+}
+/*分页信息*/
+.myPageInfo{
+    float: left;
+}
+
+
+
+
+/* bootstrap.min.css | http://localhost:8888/css/bootstrap.min.css */
+/*编辑页面标题输入框*/
+.input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn {
+    /* height: 46px; */
+    /* font-size: 18px; */
+    height: 60px !important;
+    font-size: 28px !important;
+}
+
+.input-group-addon {
+    /* background-color: #eee; */
+    /* border: 1px solid #ccc; */
+    background-color: #2CE6E6 !important;
+    border: 0px solid #ccc !important;
+}
+
+.input-group .form-control {
+    /* width: 100%; */
+    width: 60% !important;
+}
+
+
+/*所有界面body的颜色*/
+body {
+    /* background-color: #fff; */
+    background-color: #d2eced !important;
+}
+
+/*编辑页面流式布局*/
+div.container-fluid:nth-child(11) {
+    background-color: #dee2e3a3 !important;
+    margin: 30px !important;
+}
+
+/* 元素 | http://localhost:8888/newInvitation */
+
+.row {
+    height: 500px !important;
+}
+
+/*编辑界面按钮*/
+
+
+button.btn:nth-child(7) {
+    float: right !important;
+}
+
+
