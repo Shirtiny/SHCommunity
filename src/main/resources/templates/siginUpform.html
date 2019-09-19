@@ -1,0 +1,14 @@
+<!--测试-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>s</title>
+</head>
+<body>
+<form method="post"
+      th:action="@{/signup}" th:object="${signupForm}" th:fragment="signupForm">
+    <input type="text" name="name"><br>
+    <input type="submit"><br>
+</form>
+</body>
+</html>

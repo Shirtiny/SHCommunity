@@ -1,6 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.Model.Invitation;
+import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -69,5 +72,21 @@ public class pageController {
     public String toNewInvitation(){//前往创建帖子的页面
 
         return "newInvitation";
+    }
+
+    @GetMapping("/signUpPage")
+    public String toSignUpPage(){//跳转到注册界面
+        return "signUpPage";
+    }
+
+
+//测试
+    @RequestMapping(value = "signup")
+    public String signup(Model model) {
+
+        model.addAttribute(new User());
+
+        return "index :: signupForm";
+
     }
 }

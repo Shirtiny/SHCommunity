@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>主页</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <!--若有属性冲突，加 !important -->
+    <link rel="stylesheet" href="/css/myCss.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+
+
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <!--<script src="/js/bootstrap.min.js" type="application/javascript"></script>-->
+</head>
+<body>
+<div class="mySignUpForm">
+    <form action="#">
+        <div class="form-group">
+            <label for="exampleInputEmail1">邮箱</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">密码</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+        </div>
+<!--        <div class="checkbox">-->
+<!--            <label>-->
+<!--                <input type="checkbox"> Check me out-->
+<!--            </label>-->
+<!--        </div>-->
+        <button type="submit" class="btn btn-primary float_left">登录</button>
+       <h2> <span class=" glyphicon glyphicon-chevron-down "> </span></h2>
+        <a href="/github/loginWithGithub" >
+            <button type="button" class="btn btn-info float_left" aria-label="Left Align">
+                Gtihub <span class="glyphicon glyphicon-thumbs-up"></span>
+            </button>
+
+        </a>
+        <a href="/">
+            <button type="button" class="btn btn-success float_right" aria-label="Left Align">
+                <span class="glyphicon glyphicon-home" aria-hidden="true">返回首页</span>
+            </button>
+        </a>
+    </form>
+</div>
+</body>
+</html>

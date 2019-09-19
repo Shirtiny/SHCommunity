@@ -1,4 +1,42 @@
 
+/*字体颜色*/
+.font_color_aliceBlue{
+    color: aliceblue;
+}
+
+/*透明度*/
+.rgba{
+    background: rgba(255, 252, 251, 0.82) !important;
+}
+
+/*外间距*/
+.margin_top{
+    margin-top: 20px !important;
+}
+.margin_bottom{
+    margin-bottom: 20px !important;
+}
+
+/*左浮动*/
+.float_left{
+    float: left;
+}
+/*右浮动*/
+.float_right{
+    float: right;
+}
+
+/*页脚*/
+.myfooter{
+    /*background-color: #e6e3e6;*/
+    height: 25px;
+    width: auto;
+    padding: 5px;
+    text-align: center;
+    position: relative;
+    background: rgba(255, 252, 251, 0.82);
+}
+
 /*首页巨幕*/
 .jumbotron {
     /* background-color: #eee; */
@@ -23,10 +61,17 @@
     margin-bottom: 10px !important;
 }
 
+/*首页位置导航*/
+
+.breadcrumb {
+    height: 60px !important;
+}
+
+
 /*首页帖子左边的图片*/
 
 .media-object {
-    width: 35px !important;
+    width: 50px !important;
 }
 
 /* bootstrap.min.css | http://localhost:8888/css/bootstrap.min.css */
@@ -44,10 +89,12 @@
     padding-left: 25px !important;
     margin: 10px !important;
     margin-left: 0 !important;
+    height: 80px;
 }
 
 .row_left{
     margin-left: -20px !important;
+    padding-bottom: 20px !important;
 }
 
 .row_right{
@@ -60,12 +107,14 @@
 .pagebtn{
     float: right;
 }
+
 .pagebtn_disabled{
-    background: bottom !important;
+    background: #50a2ee !important;
 }
 /*分页信息*/
 .myPageInfo{
     float: left;
+    width: 200px;
 }
 
 
@@ -96,7 +145,17 @@
 /*所有界面body的颜色*/
 body {
     /* background-color: #fff; */
-    background-color: #d2eced !important;
+    /*background-color: #d2eced !important;*/
+    background-image:url("https://file.moetu.org/images/2019/09/19/mikud2f6bf789dc779f2.png") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    background-position: center 0;
+    background-attachment:fixed;
+}
+
+.mybody{
+    padding-left: 50px !important;
+    padding-right: 50px !important;
 }
 
 /*编辑页面流式布局*/
@@ -119,3 +178,13 @@ button.btn:nth-child(7) {
 }
 
 
+/*注册界面表单div*/
+.mySignUpForm{
+    height: 300px;
+    width: 600px;
+    margin: auto;
+    padding: 50px;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: rgba(255, 252, 251, 0.82);
+}
