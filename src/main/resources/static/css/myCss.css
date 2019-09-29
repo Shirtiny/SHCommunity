@@ -1,7 +1,11 @@
 
+
+
+
+
 /*字体颜色*/
 .font_color_aliceBlue{
-    color: aliceblue;
+    color: aliceblue !important;
 }
 
 /*透明度*/
@@ -16,14 +20,90 @@
 .margin_bottom{
     margin-bottom: 20px !important;
 }
+.margin_bottom_5px{
+    margin-bottom: 5px !important;
+}
+
+/*内补*/
+.padding_around{
+    padding: 10px !important;
+}
+.padding_bottom{
+    padding-bottom: 15px !important;
+}
 
 /*左浮动*/
 .float_left{
-    float: left;
+    float: left !important;
 }
 /*右浮动*/
 .float_right{
-    float: right;
+    float: right !important;
+}
+
+/*头像尺寸*/
+.avatar_image-sm{
+    width: 50px !important;
+}
+.avatar_image-df{
+    width: 75px !important;
+}
+.avatar_image-lg{
+    width: 120px !important;
+}
+
+/*帖子详情界面的头像div半透明背景色*/
+.my_Bgcolor{
+    background-color: #c2fcfd9e !important;
+}
+/*帖子详情页的h1标题*/
+.invitationDetail_title {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+/*帖子详情页的头像外边距*/
+.invitationDetail_avatar_margin{
+    margin-right: 40px !important;
+    margin-bottom: 10px !important;
+}
+/*帖子详情页的用户签名*/
+.user_quote {
+    margin-right: 20px !important;
+    margin-bottom: 10px !important;
+    width: 60%;
+    min-width: 260px;
+    background-color: #ebebbecc;
+}
+
+/* 帖子详情 */
+.invitation_paper {
+    /*height: 600px;*/
+    /*background-color: white;*/
+    padding: 10px;
+    min-width: 350px;
+}
+/*帖子内容*/
+.invitationDetail_content {
+    /*height: 400px;*/
+    min-width: 350px;
+    background-color: floralwhite;
+    margin-top: 95px !important;
+    margin: 37px;
+}
+
+/*历史评论以及回复*/
+.invitationDetail_comment{
+    /*上右下左*/
+    margin: 0 40px 10px 40px;
+    background-color: #ffdeade3;
+    padding: 10px 10px 0 20px;
+
+}
+
+
+/*帖子 发送评论的输入栏*/
+.invitationDetail_commentor{
+    margin: 80px 40px 0 40px
 }
 
 /*页脚*/
@@ -54,6 +134,33 @@
     font-size: 17px !important;
 }
 
+/*导航条两侧padding*/
+.navbar {
+    padding-left: 70px !important;
+    padding-right: 70px !important;
+}
+
+
+/*导航条上的用户头像*/
+.nav_avatar{
+    width: 50px;
+    height: 50px;
+    margin-top: -15px;
+
+}
+.navbar-brand{
+    /*padding: 1px !important;*/
+}
+
+/*导航条消息提醒*/
+.nav_message{
+    position: absolute !important;
+    top: 5px !important;
+    left: 26px !important;
+    font-size: 10px !important;
+    background-color: #007cff87 !important;
+}
+
 /*首页页头*/
 
 .page-header {
@@ -69,20 +176,30 @@
 
 
 /*首页帖子左边的图片*/
-
-.media-object {
-    width: 50px !important;
-}
+/*.media-object {*/
+/*    width: 50px !important;*/
+/*}*/
 
 /* bootstrap.min.css | http://localhost:8888/css/bootstrap.min.css */
 /*栅格*/
-/*首页栅格左 帖子列表背景色和margin*/
+/*首页栅格 帖子列表背景色和margin*/
 .row{
     margin: 30px !important;
     margin-top: 1px !important ;
 }
+/*栅栏左*/
+.row_left{
+    margin-left: -20px !important;
+    padding-bottom: 20px !important;
+}
+/*栅栏右*/
+.row_right{
+    padding-left: 60px !important;
+    padding-right: 5px !important;
+    margin-left: 20px !important;
+}
 
-
+/*首页帖子媒体对象*/
 .media_left{
     background-color: mistyrose !important;
     padding: 20px !important;
@@ -92,16 +209,7 @@
     height: 80px;
 }
 
-.row_left{
-    margin-left: -20px !important;
-    padding-bottom: 20px !important;
-}
 
-.row_right{
-    padding-left: 60px !important;
-    padding-right: 5px !important;
-    margin-left: 20px !important;
-}
 
 /*首页分页按钮*/
 .pagebtn{
@@ -151,6 +259,7 @@ body {
     background-size: cover;
     background-position: center 0;
     background-attachment:fixed;
+    min-width: 675px;
 }
 
 .mybody{
@@ -171,11 +280,6 @@ div.container-fluid:nth-child(11) {
 }
 
 /*编辑界面按钮*/
-
-
-button.btn:nth-child(7) {
-    float: right !important;
-}
 
 
 /*注册界面表单div*/

@@ -33,6 +33,13 @@ public class userServiceImpl implements IuserService {
             System.out.println("该用户之前已保存到数据库中");
         }
 
+    }
 
+    @Override
+    public List<User> selectOneUserByGithubId(Long githubId) {
+        Map<String,Object> map=new HashMap<>();
+        map.put("github_id",githubId);
+        //返回查找结果
+        return userMapper.selectByMap(map);
     }
 }

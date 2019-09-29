@@ -2,7 +2,6 @@ package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.GithubUserInfoDTO;
 import cn.shirtiny.community.SHcommunity.Mapper.Pre_UserMapper;
-import cn.shirtiny.community.SHcommunity.Mapper.UserMapper;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IGithubService;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
@@ -17,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-public class LoginController {
+public class LoginWithGithubController {
 
 
     @Autowired
@@ -48,8 +47,18 @@ public class LoginController {
         String accessToken = tokenAndType.split("&")[0].split("=")[1];
         String userInfoJson = githubService.getUserInfoJson(accessToken);
         GithubUserInfoDTO userInfo = JSON.parseObject(userInfoJson, GithubUserInfoDTO.class);
+        //根据github的userid查一下是不是已经注册了论坛
+        List<User> users = userService.selectOneUserByGithubId(Long.parseLong(userInfo.getId()));
+        if (users.size()>0){
+            //若已经存在
+            //存入session
+            httpServletRequest.getSession().setAttribute("user", users.get(0));
+            //返回主页
+            return "redirect:/";
+        }
+        //若不存在
+        User user=new User();
         //存到本地数据库的user对象
-        User user = new User();
         user.setNickName(userInfo.getLogin());
         user.setEmail(userInfo.getEmail());
         user.setGithubId(userInfo.getId());
@@ -58,9 +67,12 @@ public class LoginController {
         user.setGmtCreate(System.currentTimeMillis());
         user.setGmtModified(user.getGmtCreate());
         //添加进数据库
+        //似乎添加后自动返回了user的自增id
         userService.addUser(user);
-        System.out.println(userInfo);
-        httpServletRequest.getSession().setAttribute("userinfo", userInfo);
+        System.out.println("github上获得的用户信息："+userInfo);
+        System.out.println("存储的用户信息："+user);
+        //存入session
+        httpServletRequest.getSession().setAttribute("user", user);
 
         return "redirect:/";
 

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<nav class="navbar navbar-default " th:fragment="nav">
+<nav class="navbar navbar-default" th:fragment="nav">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -12,7 +12,7 @@
                 <span class="icon-bar"></span>
             </button>
             <!--            左上角logo首页-->
-            <a class="navbar-brand" href="#">Shirtiny</a>
+            <a class="navbar-brand" href="/">Shirtiny</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -24,7 +24,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">社区 <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/signUpPage">注册</a></li>
+                        <li><a href="/loginPage">注册</a></li>
                         <li><a href="#">Another action</a></li>
                         <li><a href="#">Something else here</a></li>
                         <li role="separator" class="divider"></li>
@@ -45,10 +45,18 @@
             <!--            右下拉框-->
             <ul class="nav navbar-nav navbar-right">
                 <!--                if判断 标签内有效-->
-                <li><a href="/signUpPage" th:if="${session.userinfo==null}">登录</a></li>
-                <li class="dropdown" th:if="${session.userinfo!=null}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false"><span th:text="${session.userinfo.getLogin()}"></span>个人中心 <span
+                <li><a href="/loginPage" th:if="${session.user==null}">登录</a></li>
+                <!--                用户头像-->
+                <li th:if="${session.user!=null}"><a class="navbar-brand" href="#">
+                    <img alt="avatar" class="nav_avatar img-thumbnail img-circle"
+                         th:src="@{${session.user.avatarImage}}">
+                </a></li>
+                <!--                消息-->
+                <li th:if="${session.user!=null}"><a><abbr title="您收到的消息"><span class="glyphicon glyphicon-envelope"></span><span class="badge nav_message">4</span></abbr></a>
+                </li>
+                <li class="dropdown" th:if="${session.user!=null}">
+                    <a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false"><span th:text="${session.user.nickName}"></span> <span
                             class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#">Action</a></li>
