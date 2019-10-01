@@ -1,7 +1,10 @@
 package cn.shirtiny.community.SHcommunity.DTO;
 
+import cn.shirtiny.community.SHcommunity.Model.Comment;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class InvitationDTO {
@@ -19,5 +22,6 @@ public class InvitationDTO {
     private String nickName;//作者昵称
     private String description;//作者的签名、描述、自我介绍
     private String gmtCreate;//作者的注册时间
-
+    //评论集合
+    private List<Comment> comments;
 }

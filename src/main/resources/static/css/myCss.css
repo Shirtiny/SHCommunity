@@ -94,12 +94,18 @@
 /*历史评论以及回复*/
 .invitationDetail_comment{
     /*上右下左*/
-    margin: 0 40px 10px 40px;
+    margin: 0 40px 5px 40px;
     background-color: #ffdeade3;
     padding: 10px 10px 0 20px;
 
 }
+.invitationDetail_comment_right{
+    /*上右下左*/
+    margin: 0 40px 5px 40px;
+    background-color: #56b5ace3;
+    padding: 10px 10px 0 20px;
 
+}
 
 /*帖子 发送评论的输入栏*/
 .invitationDetail_commentor{

@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
+import cn.shirtiny.community.SHcommunity.DTO.InvitationDTO;
 import cn.shirtiny.community.SHcommunity.Model.Invitation;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,6 +40,12 @@ public class InvitationController {
 
     }
 
+    //测试，返回1号 帖子、帖子的评论以及评论人
+    @RequestMapping("/testI")
+    @ResponseBody
+    public InvitationDTO testI(){
+        return invitationService.selectOneDtoAndCs(1);
+    }
 
 
 

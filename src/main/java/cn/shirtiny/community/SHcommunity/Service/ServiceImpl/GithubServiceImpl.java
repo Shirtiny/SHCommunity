@@ -1,6 +1,8 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
 import cn.shirtiny.community.SHcommunity.DTO.GithubOauthDTO;
+import cn.shirtiny.community.SHcommunity.DTO.GithubUserInfoDTO;
+import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IGithubService;
 import com.alibaba.fastjson.JSON;
 import okhttp3.*;
@@ -57,5 +59,19 @@ public class GithubServiceImpl implements IGithubService {
         String userInfoJson = response.body().string();
         System.out.println("用令牌调用github的user_api，得到github用户信息："+userInfoJson);
         return userInfoJson;
+    }
+
+    @Override
+    public User localisationGithubUser(GithubUserInfoDTO githubUser) {
+        User user=new User();
+        //存到本地数据库的user对象
+        user.setNickName(githubUser.getLogin());
+        user.setEmail(githubUser.getEmail());
+        user.setGithubId(githubUser.getId());
+        user.setAvatarImage(githubUser.getAvatar_url());
+        //获取当前系统的毫秒数
+        user.setGmtCreate(System.currentTimeMillis());
+        user.setGmtModified(user.getGmtCreate());
+        return user;
     }
 }

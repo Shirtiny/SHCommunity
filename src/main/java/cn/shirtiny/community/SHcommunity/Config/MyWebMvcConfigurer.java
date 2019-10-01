@@ -18,6 +18,7 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         //静态资源
         excludePatterns.add("/css/**");
         excludePatterns.add("/js/**");
+        excludePatterns.add("/js/myJs/**");
         excludePatterns.add("/image/**");
         excludePatterns.add("/fonts/**");
         //登录页、github登录、主页、帖子详情页、错误页

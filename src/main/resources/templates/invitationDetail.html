@@ -9,8 +9,10 @@
 
 
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
-    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+    <!--    <script src="/js/jquery-3.4.1.min.js"></script>-->
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/myJs/sh.js"></script>
 </head>
 <body>
 <!--导航条-->
@@ -45,16 +47,41 @@
                     </div>
                     <hr/>
                     <!-- 历史回复-->
-                    <div class="media invitationDetail_comment  img-rounded" >
-                        <div class="margin_bottom_5px"><span class="glyphicon glyphicon-globe "></span>&nbsp;&nbsp;<span th:text="${#dates.format(invitationDetail.gmtCreated,'yy-M-dd')}"></span></div>
-                        <div class="media-left">
-                            <a href="#">
-                                <img class="media-object thumbnail avatar_image-df  my_Bgcolor" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvNjR4NjQKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNmQ3NzA0NWU5YyB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE2ZDc3MDQ1ZTljIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSIxMy40NTgzMzM5NjkxMTYyMTEiIHk9IjM2LjU1OTk5OTk0Mjc3OTU0Ij42NHg2NDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==" alt="头像">
-                            </a>
+                    <!--遍历                    -->
+                    <div class=""
+                         th:each="comment:${invitationDetail.comments}">
+                        <!-- 左媒体    id是2的整数倍                   -->
+                        <div class="media invitationDetail_comment  img-rounded" th:if="${comment.commentId}%2==0">
+                            <div class="">
+                                <span th:text="${#dates.format(invitationDetail.gmtCreated,'yy.MM.dd')}"></span></div>
+                            <div class="media-left ">
+                                <a href="#">
+                                    <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
+                                         th:src="@{${comment.userDTO.avatarImage}}"
+                                         alt="头像">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading"><em><strong><span
+                                        th:text="${comment.userDTO.nickName}"></span></strong></em></h4>
+                                <p class="text-left"><span th:text="${comment.commentContent}"></span></p>
+                            </div>
                         </div>
-                        <div class="media-body">
-                            <h4 class="media-heading"><em>用户名：</em></h4>
-                            <span></span>评论内容
+                        <!-- 右媒体       不是2的整数倍                -->
+                        <div class="media invitationDetail_comment_right  img-rounded" th:if="${comment.commentId}%2!=0">
+                            <div class="text-right"><span th:text="${#dates.format(invitationDetail.gmtCreated,'yy.MM.dd')}"></span></div>
+                            <div class="media-body">
+                                <h4 class="media-heading text-right"><em><strong><span
+                                        th:text="${comment.userDTO.nickName}"></span></strong></em></h4>
+                                <p class="text-right"><span th:text="${comment.commentContent}"></span></p>
+                            </div>
+                            <div class="media-right ">
+                                <a href="#">
+                                    <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
+                                         th:src="@{${comment.userDTO.avatarImage}}"
+                                         alt="头像">
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <!-- 发送评论栏 -->
@@ -66,14 +93,20 @@
                                      alt="头像">
                             </a>
                             <a href="#">
-                            <img th:if="${session.user!=null}" class="media-object img-thumbnail avatar_image-sm"
-                                 th:src="@{${session.user.avatarImage}}"
-                                 alt="头像">
+                                <img th:if="${session.user!=null}" class="media-object img-thumbnail avatar_image-sm"
+                                     th:src="@{${session.user.avatarImage}}"
+                                     alt="头像">
                             </a>
                         </div>
-                        <textarea class="form-control " rows="3"></textarea>
-                        <br/>
-                        <button type="submit" class="btn btn-success btn-sm float_right">发送评论</button>
+                        <form method="post" action="/sendComment">
+                            <input id="sendComment_InvitaionId" type="hidden" readonly="readonly" unselectable="on" name="invitationId"
+                                   th:value="${invitationDetail.invitationId}">
+                            <textarea id="sendComment_Content" class="form-control " name="commentContent" rows="3"
+                                      placeholder="在此写下你的评论..."></textarea>
+                            <br/>
+                            <button id="sendCommentBtn" onclick="sendComment()" type="button" class="btn btn-success btn-sm float_right">发送评论</button>
+                        </form>
+
                     </div>
                 </div>
 

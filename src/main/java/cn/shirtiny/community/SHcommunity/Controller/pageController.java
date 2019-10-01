@@ -1,7 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.InvitationDTO;
-import cn.shirtiny.community.SHcommunity.Exception.InvitationNotFoundException;
+import cn.shirtiny.community.SHcommunity.Exception.ShException;
 import cn.shirtiny.community.SHcommunity.Model.Invitation;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
@@ -21,8 +23,14 @@ public class pageController {
     private IinvitationService invitationService;
 
 
+
+
+
     @GetMapping("/loginPage")//跳转到登录界面
-    public String toSignUpPage() {
+    public String toSignUpPage(@RequestParam(value = "shRedirect",defaultValue = "/") String shRedirect, HttpServletResponse response) {
+        //设置回调cookie
+        Cookie redirectCookie=new Cookie("shRedirectCookie",shRedirect);
+        response.addCookie(redirectCookie);
         return "loginPage";
     }
 
@@ -83,9 +91,9 @@ public class pageController {
 
     @GetMapping("/invitationDetail/{invitationId}")//前往帖子详情页面，传递一个帖子id
     public String toInvitationDetail(@PathVariable("invitationId") long invitationId, Model model) {
-        InvitationDTO invitationDetail = invitationService.selectOneInvitationDetailsById(invitationId);
+        InvitationDTO invitationDetail = invitationService.selectOneDtoAndCs(invitationId);
         if (invitationDetail==null){
-            throw new InvitationNotFoundException("找不到该帖，请确认是否存在",404);
+            throw new ShException("找不到该帖，请确认是否存在",404);
         }
         model.addAttribute("invitationDetail", invitationDetail);
         return "invitationDetail";
