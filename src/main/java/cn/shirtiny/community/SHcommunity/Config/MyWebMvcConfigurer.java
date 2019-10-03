@@ -27,6 +27,8 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         excludePatterns.add("/loginPage");
         excludePatterns.add("/invitationDetail/*");//这里只填一个*才不被拦截，不知道为什么
         excludePatterns.add("/error");
+        //测试
+        excludePatterns.add("/test/**");
 
         //登录检测拦截器、拦截未登录者
         registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**").excludePathPatterns(excludePatterns);

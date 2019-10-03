@@ -109,4 +109,9 @@ public class pageController {
         return "index :: signupForm";
 
     }
+
+    @RequestMapping(value = "/test")
+    public String toTestPage(){
+        return "test";
+    }
 }

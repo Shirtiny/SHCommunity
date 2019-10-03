@@ -16,12 +16,8 @@ public class LoginServiceImpl implements IloginService {
         //遍历cookies，拿到回调值后返回
         for (Cookie cookie:cookies){
             if ("shRedirectCookie".equals(cookie.getName())){
-                String redirect = cookie.getValue();
-                //重置回调地址为首页
-                Cookie oraginCookie=new Cookie("shRedirectCookie","/");
-                response.addCookie(oraginCookie);
                 //跳转到回调地址
-                return redirect;
+                return cookie.getValue();
             }
         }
         //没找到回调地址就返回主页

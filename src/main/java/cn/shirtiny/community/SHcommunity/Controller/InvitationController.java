@@ -41,7 +41,7 @@ public class InvitationController {
     }
 
     //测试，返回1号 帖子、帖子的评论以及评论人
-    @RequestMapping("/testI")
+    @RequestMapping("/test/i")
     @ResponseBody
     public InvitationDTO testI(){
         return invitationService.selectOneDtoAndCs(1);

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+    <script src="/js/myJs/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<h2>我的错误页面</h2>
+
+<div id="app">
+    {{code}}
+    {{message}}
+</div>
+
+<button onclick="testApi()">按钮</button>
+
+
+<script>
+    function testApi() {
+
+        // Make a request for a user with a given ID
+        axios.get('/test/c')
+            .then(function (response) {
+                // handle success
+                console.log(response);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+            .finally(function () {
+                // always executed
+                console.log("调用");
+            });
+    }
+</script>
+
+</body>
+</html>
