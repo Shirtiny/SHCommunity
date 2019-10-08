@@ -30,6 +30,8 @@ public class pageController {
     public String toSignUpPage(@RequestParam(value = "shRedirect",defaultValue = "/") String shRedirect, HttpServletResponse response) {
         //设置回调cookie
         Cookie redirectCookie=new Cookie("shRedirectCookie",shRedirect);
+        //位于本站根目录下
+        redirectCookie.setPath("/");
         response.addCookie(redirectCookie);
         return "loginPage";
     }
@@ -85,7 +87,7 @@ public class pageController {
     @GetMapping("/newInvitation")//前往创建帖子的页面
     public String toNewInvitation() {
 
-        return "newInvitation";
+        return "newInvitationMd";
     }
 
 

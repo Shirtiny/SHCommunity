@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="/css/myCss.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 
 
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
 <!--    <script src="/js/myJs/jquery.js"></script>-->
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/myJs/vue.js"></script>
+    <script src="/js/myJs/element.js"></script>
 
 
 </head>
@@ -28,15 +31,44 @@
 
 
 <!--没登录时展示的巨幕-->
-<div class=" jumbotron alert alert-warning alert-dismissible " th:if="${session.user==null}">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-            aria-hidden="true">&times;关闭</span></button>
-    <div class="container">
-        <h1>Welcome!</h1>
-        <p>这是一个开放的论坛网站，您可以在此畅所欲言~</p>
-        <p><a class="btn btn-success btn-lg" href="/newInvitation" role="button">去发帖</a></p>
-    </div>
+<!--<div class=" jumbotron alert alert-warning alert-dismissible " th:if="${session.user==null}">-->
+<!--    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span-->
+<!--            aria-hidden="true">&times;关闭</span></button>-->
+<!--    <div class="container">-->
+<!--        <h1>Welcome!</h1>-->
+<!--        <p>这是一个开放的论坛网站，您可以在此畅所欲言~</p>-->
+<!--        <p><a class="btn btn-success btn-lg" href="/newInvitation" role="button">去发帖</a></p>-->
+<!--    </div>-->
+<!--</div>-->
+<div class="block" id="vue_index_carousel">
+    <el-carousel height="150px">
+        <el-carousel-item v-for="item in 4" :key="item">
+            <h3 class="small">{{ item }} 首页条幅、大广告位</h3>
+        </el-carousel-item>
+    </el-carousel>
 </div>
+<style>
+    .el-carousel__item h3 {
+        color: #475669;
+        font-size: 14px;
+        opacity: 0.75;
+        line-height: 150px;
+        margin: 0;
+    }
+
+    .el-carousel__item:nth-child(2n) {
+        background-color: #99a9bf;
+    }
+
+    .el-carousel__item:nth-child(2n+1) {
+        background-color: #d3dce6;
+    }
+</style>
+<script>
+    const vue_index_carousel=new Vue({
+        el:'#vue_index_carousel'
+    })
+</script>
 <!--首页头-->
 <div class="page-header">
     <h1><span class="glyphicon glyphicon-home"></span>

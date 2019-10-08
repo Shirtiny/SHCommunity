@@ -39,7 +39,7 @@ public class CommentController {
 
 
     //测试，返回0号帖子的评论
-    @RequestMapping("/test/c")
+    @RequestMapping(value="/test/c")
     @ResponseBody
     public List<Comment> testComments() {
         return commentService.findAllComment(0);

@@ -27,6 +27,7 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
             System.out.println("是ajax请求");
             throw new NoLoginException();
         }
+
         //其他情况直接跳转到登录界面
         response.sendRedirect("/loginPage");
         return false;

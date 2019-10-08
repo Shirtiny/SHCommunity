@@ -90,7 +90,10 @@
     margin-top: 95px !important;
     margin: 37px;
 }
-
+/*帖子内容的md显示器*/
+.sh_MdViewer{
+    background-color: rgba(255, 255, 255, 0.41) !important;
+}
 /*历史评论以及回复*/
 .invitationDetail_comment{
     /*上右下左*/
@@ -260,14 +263,25 @@
 body {
     /* background-color: #fff; */
     /*background-color: #d2eced !important;*/
-    background-image:url("https://file.moetu.org/images/2019/09/19/mikud2f6bf789dc779f2.png") ;
+    /*全部body的背景图片*/
+    /*background-image:url("https://file.moetu.org/images/2019/09/19/mikud2f6bf789dc779f2.png") ;*/
+    background-image:url("/image/miku.png") ;
     background-repeat:no-repeat;
     background-size: cover;
     background-position: center 0;
     background-attachment:fixed;
     min-width: 675px;
 }
-
+/*我的包装，用于给element的backtop按钮提供返回的对象和环境*/
+.mywraper{
+    /*vh就是当前屏幕可见高度的1%*/
+    height: 100vh !important;
+    /*border: 4px solid red;*/
+    min-height: 500px !important;
+    overflow: hidden !important;
+    overflow-x: auto !important;
+    overflow-y: scroll !important;
+}
 .mybody{
     padding-left: 50px !important;
     padding-right: 50px !important;
@@ -284,6 +298,13 @@ div.container-fluid:nth-child(11) {
 .row {
     height: 500px !important;
 }
+
+/*编辑界面，md文本编辑器*/
+.sh_MdEditor{
+    height: 500px !important;
+    min-height: 300px !important;
+}
+
 
 /*编辑界面按钮*/
 

@@ -21,12 +21,14 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         excludePatterns.add("/js/myJs/**");
         excludePatterns.add("/image/**");
         excludePatterns.add("/fonts/**");
-        //登录页、github登录、主页、帖子详情页、错误页
+        excludePatterns.add("/editormd/**");
+        //登录页、github登录、主页、帖子详情页、错误页、cookie操作
         excludePatterns.add("/");
         excludePatterns.add("/github/**");
         excludePatterns.add("/loginPage");
         excludePatterns.add("/invitationDetail/*");//这里只填一个*才不被拦截，不知道为什么
         excludePatterns.add("/error");
+        excludePatterns.add("/cookieController/**");
         //测试
         excludePatterns.add("/test/**");
 

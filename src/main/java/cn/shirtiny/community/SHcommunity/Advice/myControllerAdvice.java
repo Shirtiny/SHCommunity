@@ -1,6 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Advice;
 
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
+import cn.shirtiny.community.SHcommunity.Exception.CreateInvitationErrException;
 import cn.shirtiny.community.SHcommunity.Exception.NoLoginException;
 import cn.shirtiny.community.SHcommunity.Exception.ShException;
 import org.springframework.ui.Model;
@@ -12,17 +13,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice//结合@ExceptionHandler用于全局异常的处理
 public class myControllerAdvice {
 
-    @ExceptionHandler(Exception.class)//捕获所有异常
-    @ResponseStatus
-    public String handler(Model model, Throwable e){
-        System.out.println("异常");
-        model.addAttribute("message",e.getMessage());
-        if (e instanceof ShException){
-            int code = ((ShException) e).getErrorCode();
-            model.addAttribute("code",code);
-        }
-        return  "myError";
-    }
 
     @ExceptionHandler(NoLoginException.class)
     @ResponseBody
@@ -31,5 +21,22 @@ public class myControllerAdvice {
         return new ShResultDTO(4001,"未登录，请先登录再进行此操作");
     }
 
+    @ExceptionHandler(CreateInvitationErrException.class)
+    @ResponseBody
+    public ShResultDTO CreateInvitationErr(Throwable e){
+        System.out.println("帖子提交失败，数据库的异常，在应该是InvitationService里抛出");
+        return new ShResultDTO(4502,e.getMessage());
+    }
 
+//    @ExceptionHandler(Exception.class)//捕获所有异常
+//    @ResponseStatus
+//    public String handler(Model model, Throwable e){
+//        System.out.println("异常");
+//        model.addAttribute("message",e.getMessage());
+//        if (e instanceof ShException){
+//            int code = ((ShException) e).getErrorCode();
+//            model.addAttribute("code",code);
+//        }
+//        return  "myError";
+//    }
 }

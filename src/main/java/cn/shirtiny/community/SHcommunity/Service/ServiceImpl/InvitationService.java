@@ -1,6 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
 import cn.shirtiny.community.SHcommunity.DTO.InvitationDTO;
+import cn.shirtiny.community.SHcommunity.Exception.CreateInvitationErrException;
 import cn.shirtiny.community.SHcommunity.Exception.ShException;
 import cn.shirtiny.community.SHcommunity.Mapper.InvitationMapper;
 import cn.shirtiny.community.SHcommunity.Mapper.UserMapper;
@@ -34,7 +35,7 @@ public class InvitationService implements IinvitationService {
         boolean titleIsEmpty = StringUtils.isEmpty(invitation.getTitle());
         boolean contentIsEmpty = StringUtils.isEmpty(invitation.getContent());
         //判断标题或内容是不是空、标题或内容长度是否超限
-        if (titleIsEmpty || contentIsEmpty || invitation.getTitle().length() > 20 || invitation.getContent().length() > 400) {
+        if (titleIsEmpty || contentIsEmpty || invitation.getTitle().length() > 20 || invitation.getContent().length() > 2000) {
             return false;
         } else {
             invitation.setGmtCreated(System.currentTimeMillis());
@@ -43,10 +44,8 @@ public class InvitationService implements IinvitationService {
                 invitationMapper.insert(invitation);//插入数据库
                 return true;
             } catch (Exception e) {
-                System.out.println(invitation);
-                throw new ShException("一条帖子增加失败", 500);
+                throw new CreateInvitationErrException(e.toString(),4502);
             }
-
 
         }
     }
