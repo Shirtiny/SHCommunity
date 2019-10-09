@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Exception;
 
+//未登录
 public class NoLoginException extends ShException {
 
 

@@ -21,7 +21,8 @@
     <!--<script src="/js/bootstrap.min.js" type="application/javascript"></script>-->
 </head>
 <body>
-<div class="mySignUpForm" id="vue_login" element-loading-text="努力与服务器交互中" v-loading.fullscreen.lock="fullscreenLoading" >
+
+<div class="mySignUpForm img-rounded " id="vue_login" element-loading-text="努力与服务器交互中" v-loading="dLoading" element-loading-background="rgba(255, 255, 255, 0.7)"   >
     <form action="#">
         <div class="form-group">
             <label for="exampleInputEmail1">邮箱</label>
@@ -37,12 +38,12 @@
         <!--            </label>-->
         <!--        </div>-->
         <!--sh账户登录        -->
-        <button type="submit" class="btn btn-primary float_left" @click="openFullScreenLoading">登录</button>
+        <button type="submit" class="btn btn-primary float_left" @click="opendLoading">登录</button>
         <h2><span class=" glyphicon glyphicon-chevron-down "> </span></h2>
 
         <!--使用github登录/github/loginWithGithub        -->
         <a href="/github/loginWithGithub">
-            <button id="loginWithGithubBtn" type="button" @click="openFullScreenLoading"
+            <button id="loginWithGithubBtn" type="button" @click="opendLoading"
                     class="btn btn-info float_left"
                     aria-label="Left Align">
                 Gtihub <span class="glyphicon glyphicon-thumbs-up"></span>
@@ -63,15 +64,15 @@
         el: "#vue_login",
         data: {
             //控制页面的loading效果的值，与v-loading.fullscreen.lock="fullscreenLoading"配合
-            fullscreenLoading: false
+            dLoading: false
         },
         methods: {
-            openFullScreenLoading() {
+            opendLoading() {
                 //改变fullscreenLoading的值
-                this.fullscreenLoading = true;
+                this.dLoading = true;
                 //设置转10000ms时间
                 setTimeout(() => {
-                    this.fullscreenLoading = false;
+                    this.dLoading = false;
             }, 20000);
                 //如果20秒还没登录成功，通知异常，通知比loading晚1秒
                 setTimeout(function () {

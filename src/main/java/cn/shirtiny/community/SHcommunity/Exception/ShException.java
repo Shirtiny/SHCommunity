@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Exception;
 
+//sh的基本异常
 public class ShException extends RuntimeException {
 
     private int errorCode;

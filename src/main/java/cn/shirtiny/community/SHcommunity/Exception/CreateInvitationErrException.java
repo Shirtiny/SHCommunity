@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Exception;
 
+//数据库帖子插入失败
 public class CreateInvitationErrException extends ShException {
     public CreateInvitationErrException(String message, int errorCode) {
         super(message, errorCode);

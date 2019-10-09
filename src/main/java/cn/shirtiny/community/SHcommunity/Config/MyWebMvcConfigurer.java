@@ -1,11 +1,14 @@
 package cn.shirtiny.community.SHcommunity.Config;
 
 import cn.shirtiny.community.SHcommunity.MyHandlerInterceptors.LoginHandlerInterceptor;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.MultipartConfigElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,5 +39,15 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**").excludePathPatterns(excludePatterns);
     }
 
+    //文件上次大小限制，不设的话，默认1M
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        //单个文件最大
+        factory.setMaxFileSize("100MB");
+        //设置总请求数据大小
+        factory.setMaxRequestSize("500MB");
+        return factory.createMultipartConfig();
+    }
 
 }

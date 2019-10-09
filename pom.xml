@@ -80,6 +80,12 @@
             <version>1.18.10</version>
             <optional>true</optional>
         </dependency>
+        <!--  图片上传sdk      -->
+        <dependency>
+            <groupId>cn.ucloud.ufile</groupId>
+            <artifactId>ufile-client-java</artifactId>
+            <version>2.2.1</version>
+        </dependency>
 
 
         <!--引入这个依赖后，不需要对html标签进行验证-->

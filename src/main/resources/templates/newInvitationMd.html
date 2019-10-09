@@ -60,7 +60,6 @@
                 <div id="editor" class="sh_MdEditor">
                     <textarea  style="display:none;" name="content" id="content"
                               placeholder="在此输入文章内容..."></textarea>
-
                 </div>
                 <!--空文本错误警告-->
 
@@ -90,10 +89,8 @@
                     <a href="#" class="list-group-item list-group-item-warning">Porta ac consectetur ac</a>
                     <a href="#" class="list-group-item list-group-item-danger">Vestibulum at eros</a>
                 </div>
-
             </div>
         </div>
-
     </div>
 </div>
 </body>
@@ -104,7 +101,8 @@
         const vue_Editor = new Vue({
             el: "#vue_Editor",
             data:{
-                md_title:""
+                md_title:"",
+                fileUploadErr:false
             },
             methods: {
                 submitMd: function () {
@@ -125,10 +123,10 @@
                                 message: response.data.message+"，即将跳转...",
                                 type: 'success'
                             });
-                            //2秒后调到最后一页
+                            //1.5秒后跳转到最后一页
                             setTimeout(function () {
                                 window.location.href="/?curPage=999999"
-                            },2000);
+                            },1500);
                         }else if(response.data.code==400){
                             vue_Editor.$notify.error({
                                 title: 'No~',
@@ -154,9 +152,10 @@
             codeFold: true,
             htmlDecode: true,
             emoji: true,
+            //图片上传
             imageUpload: true,
             imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-            imageUploadURL: "",             // Upload url
+            imageUploadURL: "/imageUpload",             // Upload url
             crossDomainUpload: false,          // Enable/disable Cross-domain upload
             uploadCallbackURL: "",
             placeholder: '在此输入文章内容，使用markdown语法...',
@@ -165,9 +164,9 @@
                 description: "Markdown编辑器<br/>Markdown editor."
             }
         });
+
+
     });
-
-
 </script>
 
 </html>
