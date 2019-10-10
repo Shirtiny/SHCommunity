@@ -6,15 +6,13 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.ibatis.annotations.Many;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 public interface InvitationMapper extends BaseMapper<Invitation> {
 
+    //分页关联查询user和invitation
     @Select("select * from USER u join INVITATION i on u.user_id=i.AUTHOR_ID")
     IPage<InvitationDTO> selectDtoByPage(Page<InvitationDTO> page);
 
@@ -31,6 +29,8 @@ public interface InvitationMapper extends BaseMapper<Invitation> {
     })
     InvitationDTO selectOneDtoAndCs(long id);
 
-
+    //使invitation的replyNum回复数自增1
+    @Select("update INVITATION set REPLY_NUM=REPLY_NUM+1 where INVITATION_ID=#{invitationId}")
+    void incrInvitationReplyNum(@Param("invitationId") long id);
 
 }
