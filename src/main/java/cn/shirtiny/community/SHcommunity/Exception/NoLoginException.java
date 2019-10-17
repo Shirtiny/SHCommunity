@@ -1,8 +1,13 @@
 package cn.shirtiny.community.SHcommunity.Exception;
 
+import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
+
 //未登录
 public class NoLoginException extends ShException {
 
+    public NoLoginException(ShErrorCode shErrorCode) {
+        super(shErrorCode);
+    }
 
     public NoLoginException() {
         super("未登录，请登录",4001);

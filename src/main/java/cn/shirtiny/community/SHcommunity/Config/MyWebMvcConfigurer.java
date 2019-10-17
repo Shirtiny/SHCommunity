@@ -34,6 +34,9 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         excludePatterns.add("/cookieController/**");
         //测试
         excludePatterns.add("/test/**");
+        excludePatterns.add("/Test6");
+        //分页查询帖子列表
+        excludePatterns.add("/listInvitationsByPage");
 
         //登录检测拦截器、拦截未登录者
         registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**").excludePathPatterns(excludePatterns);
@@ -44,9 +47,9 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
         //单个文件最大
-        factory.setMaxFileSize("100MB");
+        factory.setMaxFileSize("10000MB");
         //设置总请求数据大小
-        factory.setMaxRequestSize("500MB");
+        factory.setMaxRequestSize("50000MB");
         return factory.createMultipartConfig();
     }
 

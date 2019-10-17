@@ -33,7 +33,7 @@ public class CommentController {
         comment.setCreatedTime(System.currentTimeMillis());
         boolean flag = commentService.addOneComment(comment);
 
-        return flag ? new ShResultDTO<String>(200,"评论成功") : new ShResultDTO<String>(400,"发送失败，评论不能为空或全是空格或字数超限");
+        return flag ? new ShResultDTO<>(200,"评论成功") : new ShResultDTO<>(400,"发送失败，评论不能为空或全是空格或字数超限");
 
     }
 

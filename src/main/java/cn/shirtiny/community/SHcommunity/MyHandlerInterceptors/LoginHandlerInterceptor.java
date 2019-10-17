@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.MyHandlerInterceptors;
 
+import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
 import cn.shirtiny.community.SHcommunity.Exception.NoLoginException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -25,7 +26,7 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
         String isAjax = request.getParameter("isAjax");
         if ("true".equals(isAjax)){
             System.out.println("是ajax请求");
-            throw new NoLoginException();
+            throw new NoLoginException(ShErrorCode.NoLogin_Error);
         }
 
         //其他情况直接跳转到登录界面

@@ -1,6 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.InvitationDTO;
+import cn.shirtiny.community.SHcommunity.Exception.NotFoundException;
 import cn.shirtiny.community.SHcommunity.Exception.ShException;
 import cn.shirtiny.community.SHcommunity.Model.Invitation;
 import cn.shirtiny.community.SHcommunity.Model.User;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+
+import static cn.shirtiny.community.SHcommunity.Enum.ShErrorCode.NotFound_Error;
 
 @Controller
 public class pageController {
@@ -36,20 +39,27 @@ public class pageController {
         return "loginPage";
     }
 
-    //    @GetMapping("/")
-    public String toIndex(Model model) {//前往首页，并展示全部帖子
-        //分页的在下面
-        List<Invitation> invitations = invitationService.selectAll();
-        model.addAttribute("invitations", invitations);
+    @GetMapping("/")
+    public String toIndex() {//前往首页
         return "index";
     }
 
-
-    @GetMapping("/")//首页，分页展示首页的帖子，包含对应用户信息
-    public String toIndexByPage(@RequestParam(value = "curPage", defaultValue = "1") long curPage, Model model) {//前往首页并分页
+    //前往首页并分页 _旧
+    @GetMapping("/index_old")//首页，分页展示首页的帖子，包含对应用户信息
+    public String toIndexByPage(@RequestParam(value = "curPage", defaultValue = "1") long curPage,
+                                @RequestParam(value = "orderBy", defaultValue = "1",required = false) Integer orderBy
+            ,Model model) {
         Page<InvitationDTO> page = new Page<>();
         page.setCurrent(curPage);
-        IPage<InvitationDTO> pageInfo = invitationService.selectDtoBypage(page);
+        IPage<InvitationDTO> pageInfo=null;
+        if (orderBy==null||orderBy==0){
+            //无或0按默认顺序，id升序
+            pageInfo = invitationService.selectDtoBypage(page);
+        }else {
+            //其他值按更新时间倒序排列（Controller默认）
+            pageInfo = invitationService.selectDtoBypageDesc(page);
+        }
+
         model.addAttribute("pageInfo", pageInfo);
         //总页数
         long pages = pageInfo.getPages();
@@ -74,7 +84,7 @@ public class pageController {
         }
         model.addAttribute("pageNumArray", pageNumArray);
 
-        return "index";
+        return "index_old";
     }
 
 
@@ -93,9 +103,10 @@ public class pageController {
 
     @GetMapping("/invitationDetail/{invitationId}")//前往帖子详情页面，传递一个帖子id
     public String toInvitationDetail(@PathVariable("invitationId") long invitationId, Model model) {
+
         InvitationDTO invitationDetail = invitationService.selectOneDtoAndCs(invitationId);
         if (invitationDetail==null){
-            throw new ShException("找不到该帖，请确认是否存在",404);
+            throw new NotFoundException(NotFound_Error);
         }
         model.addAttribute("invitationDetail", invitationDetail);
         return "invitationDetail";

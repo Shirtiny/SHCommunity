@@ -1,14 +1,37 @@
 package cn.shirtiny.community.SHcommunity.Exception;
 
+import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
+
 //sh的基本异常
 public class ShException extends RuntimeException {
 
     private int errorCode;
 
+    //枚举类
+    private ShErrorCode shErrorCode;
+
     public ShException(String message, int errorCode) {
         super(message);
         this.errorCode = errorCode;
     }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public ShErrorCode getShErrorCode() {
+        return shErrorCode;
+    }
+
+    public void setShErrorCode(ShErrorCode shErrorCode) {
+        this.shErrorCode = shErrorCode;
+    }
+
+    public ShException(ShErrorCode shErrorCode ) {
+        super();
+        this.shErrorCode = shErrorCode;
+    }
+
 
     @Override
     public String getMessage() {

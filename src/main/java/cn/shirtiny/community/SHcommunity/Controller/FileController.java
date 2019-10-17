@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Controller
-public class ImageController {
+public class FileController {
 
     @Autowired
     private ImageService imageService;
@@ -28,15 +28,18 @@ public class ImageController {
     private boolean ImageUploadService_isAllownRename;
 
     //md图片上传以及回显
-    @RequestMapping(value = "/imageUpload")
+    @RequestMapping(value = "/fileUpload")
     @ResponseBody
-    public Md_ImageUpResultDTO uploadImage(HttpServletRequest request){
+    public Md_ImageUpResultDTO uploadFile(HttpServletRequest request){
         //转换request
         MultipartHttpServletRequest multipartRequest= (MultipartHttpServletRequest) request;
         String downloadUrl="";
         try {
             //需要md图片表单提交的文件name
             MultipartFile file = multipartRequest.getFile(Md_Editor_imageFile_name);
+            if (file==null){
+                file=multipartRequest.getFile("uploadFile");
+            }
             if (file != null) {
                 InputStream inputStream = file.getInputStream();
                 String contentType = file.getContentType();

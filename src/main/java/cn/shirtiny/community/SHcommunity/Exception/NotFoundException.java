@@ -5,15 +5,29 @@ import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-//md图片上传失败
-public class Md_ImageUploadFailedException extends ShException {
-
-    public Md_ImageUploadFailedException(ShErrorCode shErrorCode) {
-        super(shErrorCode);
+//找不到资源
+public class NotFoundException extends ShException {
+    public NotFoundException(String message, int errorCode) {
+        super(message, errorCode);
     }
 
-    public Md_ImageUploadFailedException(String message, int errorCode) {
-        super(message, errorCode);
+    @Override
+    public void setErrorCode(int errorCode) {
+        super.setErrorCode(errorCode);
+    }
+
+    @Override
+    public ShErrorCode getShErrorCode() {
+        return super.getShErrorCode();
+    }
+
+    @Override
+    public void setShErrorCode(ShErrorCode shErrorCode) {
+        super.setShErrorCode(shErrorCode);
+    }
+
+    public NotFoundException(ShErrorCode shErrorCode) {
+        super(shErrorCode);
     }
 
     @Override
@@ -96,19 +110,19 @@ public class Md_ImageUploadFailedException extends ShException {
         return super.getErrorCode();
     }
 
-    public Md_ImageUploadFailedException(String message) {
+    public NotFoundException(String message) {
         super(message);
     }
 
-    public Md_ImageUploadFailedException(String message, Throwable cause) {
+    public NotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public Md_ImageUploadFailedException(Throwable cause) {
+    public NotFoundException(Throwable cause) {
         super(cause);
     }
 
-    protected Md_ImageUploadFailedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    protected NotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

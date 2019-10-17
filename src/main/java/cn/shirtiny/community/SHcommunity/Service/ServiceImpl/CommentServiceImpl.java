@@ -26,15 +26,23 @@ public class CommentServiceImpl implements ICommentService {
         if (comment==null  || comment.getCommentContent().trim().isEmpty()){
             return false;
         }
-        //使对应帖子的回复数加1
-        invitationMapper.incrInvitationReplyNum(comment.getTargetId());
+        boolean isSuccess=false;
         try {
             //向数据库插入评论
             commentMapper.insert(comment);
-            return true;
+            isSuccess=true;
         }catch (Exception e){
             return false;
+        }finally {
+            if (isSuccess){
+                //使对应帖子的回复数加1
+                invitationMapper.incrInvitationReplyNum(comment.getTargetId());
+                //更新帖子的回复时间
+                invitationMapper.updateInviModiDate(comment.getTargetId(),System.currentTimeMillis());
+            }
+            return isSuccess;
         }
+
     }
 
     @Override

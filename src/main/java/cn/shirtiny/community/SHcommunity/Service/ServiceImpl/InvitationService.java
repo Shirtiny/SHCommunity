@@ -1,6 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
 import cn.shirtiny.community.SHcommunity.DTO.InvitationDTO;
+import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
 import cn.shirtiny.community.SHcommunity.Exception.CreateInvitationErrException;
 import cn.shirtiny.community.SHcommunity.Exception.ShException;
 import cn.shirtiny.community.SHcommunity.Mapper.InvitationMapper;
@@ -9,6 +10,7 @@ import cn.shirtiny.community.SHcommunity.Model.Invitation;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class InvitationService implements IinvitationService {
 
     @Autowired
@@ -44,6 +47,7 @@ public class InvitationService implements IinvitationService {
                 invitationMapper.insert(invitation);//插入数据库
                 return true;
             } catch (Exception e) {
+                log.error("帖子提交失败，数据库的异常，在应该是InvitationService里抛出,{},{}",invitation, ShErrorCode.Create_Invitation_Failed_Error);
                 throw new CreateInvitationErrException(e.toString(),4502);
             }
 
@@ -58,6 +62,8 @@ public class InvitationService implements IinvitationService {
 
     @Override
     public InvitationDTO selectOneDtoAndCs(long id) {
+        //帖子浏览量+1
+        invitationMapper.incrViews(id);
         return invitationMapper.selectOneDtoAndCs(id);
     }
 
@@ -75,9 +81,15 @@ public class InvitationService implements IinvitationService {
         return invitationMapper.selectPage(page, null);
     }
 
-    //分页查询全部帖子，包含用户信息
+    //分页查询全部帖子，包含用户信息，根据id顺序 升序排列
     @Override
     public IPage<InvitationDTO> selectDtoBypage(Page<InvitationDTO> page) {
         return invitationMapper.selectDtoByPage(page);
+    }
+
+    //分页查询全部帖子，包含用户信息，根据最后更新时间 倒序排列
+    @Override
+    public IPage<InvitationDTO> selectDtoBypageDesc(Page<InvitationDTO> page) {
+        return invitationMapper.selectDtoByPageDesc(page);
     }
 }

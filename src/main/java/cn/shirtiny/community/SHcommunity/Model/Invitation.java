@@ -14,8 +14,9 @@ public class Invitation {//论坛帖子
     private String title;//标题
     private String content;//内容
 
-    private int replyNum;//回复数
+    private long replyNum;//回复数
     //浏览量views
+    private long views;
     private long gmtCreated;//创建时间
     private long gmtModified;//更新时间
     private Long authorId;//发帖者的id

@@ -1305,7 +1305,7 @@
         handlers: function (a, b) {
             var c, d, e, f, g = [], h = b.delegateCount, i = a.target;
             if (h && i.nodeType && ("click" !== a.type || isNaN(a.button) || a.button < 1)) for (; i != this; i = i.parentNode || this) if (1 === i.nodeType && (i.disabled !== !0 || "click" !== a.type)) {
-                for (d = [], c = 0; h > c; c++) f = b[c], e = f.selector + " ", void 0 === d[e] && (d[e] = f.needsContext ? n(e, this).index(i) > -1 : n.find(e, this, null, [i]).length), d[e] && d.push(f);
+                for (d = [], c = 0; h > c; c++) f = b[c], e = f.selector + " ", void 0 === d[e] && (d[e] = f.needsContext ? n(e, this).index_Old(i) > -1 : n.find(e, this, null, [i]).length), d[e] && d.push(f);
                 d.length && g.push({elem: i, handlers: d})
             }
             return h < b.length && g.push({elem: this, handlers: b.slice(h)}), g

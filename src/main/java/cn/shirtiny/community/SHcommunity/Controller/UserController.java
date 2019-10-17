@@ -14,5 +14,10 @@ public class UserController {
         return "redirect:/";
     }
 
+    @GetMapping("/Test6")
+    public String Test6(HttpServletRequest request){
+        return "Test6";
+    }
+
 
 }

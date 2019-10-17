@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+    <!--    <script src="/js/myJs/jquery.js"></script>-->
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/myJs/vue.js"></script>
+    <script src="/js/myJs/element.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="content">
+{{msg}}
+    {{invitations}}
+    {{arr}}
+
+</div>
+
+<script>
+    var vm = new Vue({
+        el: "#content",
+        data(){
+            return{
+                //无或0按默认顺序，id升序,其他值按更新时间倒序排列（Controller默认）
+                msg:"nihao",
+                orderBy:2,
+                curPage:3,
+                //帖子数组
+                arr:[{title:"zs"},{title:"ls"}],
+                invitations:[]
+            }
+        },
+        created(){
+            this.orderChange();
+            // console.log(this.invitations)
+        },
+        methods:{
+            getInvitations:function (curPage,orderBy) {
+                console.log("getInvitaions")
+            },
+            orderChange() {
+                console.log("切换排序规则");
+                axios.get('/listInvitationsByPage?curPage='+this.curPage+'&orderBy='+this.orderBy).then(res => {
+                    console.log(res);
+                    this.invitations=res.data.data.pageInfo.records;
+                    console.log(this.invitations);
+                });
+                // console.log(this.invitations)
+            }
+        }
+
+    })
+</script>
+</body>
+</html>

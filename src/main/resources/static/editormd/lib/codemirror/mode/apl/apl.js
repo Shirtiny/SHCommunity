@@ -63,7 +63,7 @@ CodeMirror.defineMode("apl", function() {
     "↓": [null, "drop"],
     "⊂": ["enclose", "partitionWithAxis"],
     "⊃": ["diclose", "pick"],
-    "⌷": [null, "index"],
+    "⌷": [null, "index_old.html"],
     "⍋": ["gradeUp", null],
     "⍒": ["gradeDown", null],
     "⊤": ["encode", null],

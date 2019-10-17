@@ -4426,7 +4426,7 @@
             methods: {
                 updateActiveIndex: function (e) {
                     var t = this.items[e] || this.items[this.activeIndex] || this.items[this.defaultActive];
-                    t ? (this.activeIndex = t.index, this.initOpenedMenu()) : this.activeIndex = null
+                    t ? (this.activeIndex = t.index_Old, this.initOpenedMenu()) : this.activeIndex = null
                 }, getMigratingConfig: function () {
                     return {props: {theme: "theme is removed."}}
                 }, getColorChannels: function (e) {
@@ -4444,13 +4444,13 @@
                     var i = this.getColorChannels(e), n = i.red, r = i.green, s = i.blue;
                     return t > 0 ? (n *= 1 - t, r *= 1 - t, s *= 1 - t) : (n += (255 - n) * t, r += (255 - r) * t, s += (255 - s) * t), "rgb(" + Math.round(n) + ", " + Math.round(r) + ", " + Math.round(s) + ")"
                 }, addItem: function (e) {
-                    this.$set(this.items, e.index, e)
+                    this.$set(this.items, e.index_Old, e)
                 }, removeItem: function (e) {
-                    delete this.items[e.index]
+                    delete this.items[e.index_Old]
                 }, addSubmenu: function (e) {
-                    this.$set(this.submenus, e.index, e)
+                    this.$set(this.submenus, e.index_Old, e)
                 }, removeSubmenu: function (e) {
-                    delete this.submenus[e.index]
+                    delete this.submenus[e.index_Old]
                 }, openMenu: function (e, t) {
                     var i = this.openedMenus;
                     -1 === i.indexOf(e) && (this.uniqueOpened && (this.openedMenus = i.filter(function (e) {
@@ -4460,11 +4460,11 @@
                     var t = this.openedMenus.indexOf(e);
                     -1 !== t && this.openedMenus.splice(t, 1)
                 }, handleSubmenuClick: function (e) {
-                    var t = e.index, i = e.indexPath;
+                    var t = e.index_Old, i = e.indexPath;
                     -1 !== this.openedMenus.indexOf(t) ? (this.closeMenu(t), this.$emit("close", t, i)) : (this.openMenu(t, i), this.$emit("open", t, i))
                 }, handleItemClick: function (e) {
-                    var t = this, i = e.index, n = e.indexPath, r = this.activeIndex, s = null !== e.index;
-                    s && (this.activeIndex = e.index), this.$emit("select", i, n, e), ("horizontal" === this.mode || this.collapse) && (this.openedMenus = []), this.router && s && this.routeToItem(e, function (e) {
+                    var t = this, i = e.index_Old, n = e.indexPath, r = this.activeIndex, s = null !== e.index_Old;
+                    s && (this.activeIndex = e.index_Old), this.$emit("select", i, n, e), ("horizontal" === this.mode || this.collapse) && (this.openedMenus = []), this.router && s && this.routeToItem(e, function (e) {
                         t.activeIndex = r, e && console.error(e)
                     })
                 }, initOpenedMenu: function () {
@@ -4474,7 +4474,7 @@
                         i && e.openMenu(t, i.indexPath)
                     })
                 }, routeToItem: function (e, t) {
-                    var i = e.route || e.index;
+                    var i = e.route || e.index_Old;
                     try {
                         this.$router.push(i, function () {
                         }, t)
@@ -4528,7 +4528,7 @@
         }, ni = {
             inject: ["rootMenu"], computed: {
                 indexPath: function () {
-                    for (var e = [this.index], t = this.$parent; "ElMenu" !== t.$options.componentName;) t.index && e.unshift(t.index), t = t.$parent;
+                    for (var e = [this.index_Old], t = this.$parent; "ElMenu" !== t.$options.componentName;) t.index_Old && e.unshift(t.index_Old), t = t.$parent;
                     return e
                 }, parentMenu: function () {
                     for (var e = this.$parent; e && -1 === ["ElMenu", "ElSubmenu"].indexOf(e.$options.componentName);) e = e.$parent;
@@ -4577,7 +4577,7 @@
                 }, menuTransitionName: function () {
                     return this.rootMenu.collapse ? "el-zoom-in-left" : "el-zoom-in-top"
                 }, opened: function () {
-                    return this.rootMenu.openedMenus.indexOf(this.index) > -1
+                    return this.rootMenu.openedMenus.indexOf(this.index_Old) > -1
                 }, active: function () {
                     var e = !1, t = this.submenus, i = this.items;
                     return Object.keys(i).forEach(function (t) {
@@ -4617,13 +4617,13 @@
                 handleCollapseToggle: function (e) {
                     e ? this.initPopper() : this.doDestroy()
                 }, addItem: function (e) {
-                    this.$set(this.items, e.index, e)
+                    this.$set(this.items, e.index_Old, e)
                 }, removeItem: function (e) {
-                    delete this.items[e.index]
+                    delete this.items[e.index_Old]
                 }, addSubmenu: function (e) {
-                    this.$set(this.submenus, e.index, e)
+                    this.$set(this.submenus, e.index_Old, e)
                 }, removeSubmenu: function (e) {
-                    delete this.submenus[e.index]
+                    delete this.submenus[e.index_Old]
                 }, handleClick: function () {
                     var e = this.rootMenu, t = this.disabled;
                     "hover" === e.menuTrigger && "horizontal" === e.mode || e.collapse && "vertical" === e.mode || t || this.dispatch("ElMenu", "submenu-click", this)
@@ -4893,7 +4893,7 @@
             },
             computed: {
                 active: function () {
-                    return this.index === this.rootMenu.activeIndex
+                    return this.index_Old === this.rootMenu.activeIndex
                 }, hoverBackground: function () {
                     return this.rootMenu.hoverBackground
                 }, backgroundColor: function () {
@@ -6132,7 +6132,7 @@
                         }
                         return 0
                     }(e, t);
-                    return r || (r = e.index - t.index), r * i
+                    return r || (r = e.index_Old - t.index_Old), r * i
                 }).map(function (e) {
                     return e.value
                 })
@@ -6451,7 +6451,7 @@
                     var e = this.states, t = e.selection, i = e.rowKey, n = e.data, r = mn(t, i);
                     n.forEach(function (e) {
                         var n = fn(e, i), s = r[n];
-                        s && (t[s.index] = e)
+                        s && (t[s.index_Old] = e)
                     })
                 }, updateAllSelected: function () {
                     var e = this.states, t = e.selection, i = e.rowKey, n = e.selectable, r = e.data || [];
@@ -7750,7 +7750,7 @@
                 renderHeader: function (e, t) {
                     return t.column.label || "#"
                 }, renderCell: function (e, t) {
-                    var i = t.$index, n = i + 1, r = t.column.index;
+                    var i = t.$index, n = i + 1, r = t.column.index_Old;
                     return "number" == typeof r ? n = i + r : "function" == typeof r && (n = r(i)), e("div", [n])
                 }, sortable: !1
             }, expand: {
@@ -7901,7 +7901,7 @@
                 }, registerNormalWatchers: function () {
                     var e = this,
                         t = {prop: "property", realAlign: "align", realHeaderAlign: "headerAlign", realWidth: "width"},
-                        i = ["label", "property", "filters", "filterMultiple", "sortable", "index", "formatter", "className", "labelClassName", "showOverflowTooltip"].reduce(function (e, t) {
+                        i = ["label", "property", "filters", "filterMultiple", "sortable", "index_old.html", "formatter", "className", "labelClassName", "showOverflowTooltip"].reduce(function (e, t) {
                             return e[t] = t, e
                         }, t);
                     Object.keys(i).forEach(function (i) {
@@ -12059,10 +12059,10 @@
                 isClosable: function () {
                     return this.closable || this.$parent.closable
                 }, active: function () {
-                    var e = this.$parent.currentName === (this.name || this.index);
+                    var e = this.$parent.currentName === (this.name || this.index_Old);
                     return e && (this.loaded = !0), e
                 }, paneName: function () {
-                    return this.name || this.index
+                    return this.name || this.index_Old
                 }
             },
             updated: function () {
@@ -12276,7 +12276,7 @@
                 }), this.store.lazy || i.forEach(function (t) {
                     n[t[So]] || e.removeChildByData(t)
                 }), r.forEach(function (t) {
-                    var i = t.index, n = t.data;
+                    var i = t.index_Old, n = t.data;
                     e.insertChild({data: n}, i)
                 }), this.updateLeafState()
             }, e.prototype.loadData = function (e) {
@@ -14654,7 +14654,7 @@
             }, ["success" !== e.currentStatus && "error" !== e.currentStatus ? e._t("icon", [e.icon ? i("i", {
                 staticClass: "el-step__icon-inner",
                 class: [e.icon]
-            }) : e._e(), e.icon || e.isSimple ? e._e() : i("div", {staticClass: "el-step__icon-inner"}, [e._v(e._s(e.index + 1))])]) : i("i", {
+            }) : e._e(), e.icon || e.isSimple ? e._e() : i("div", {staticClass: "el-step__icon-inner"}, [e._v(e._s(e.index_Old + 1))])]) : i("i", {
                 staticClass: "el-step__icon-inner is-status",
                 class: ["el-icon-" + ("success" === e.currentStatus ? "check" : "close")]
             })], 2)]), i("div", {staticClass: "el-step__main"}, [i("div", {
@@ -14684,7 +14684,7 @@
                 currentStatus: function () {
                     return this.status || this.internalStatus
                 }, prevStatus: function () {
-                    var e = this.$parent.steps[this.index - 1];
+                    var e = this.$parent.steps[this.index_Old - 1];
                     return e ? e.currentStatus : "wait"
                 }, isCenter: function () {
                     return this.$parent.alignCenter
@@ -14716,7 +14716,7 @@
                 }
             },
             mounted: function () {
-                var e = this, t = this.$watch("index", function (i) {
+                var e = this, t = this.$watch("index_old.html", function (i) {
                     e.$watch("$parent.active", e.updateStatus, {immediate: !0}), e.$watch("$parent.processStatus", function () {
                         var t = e.$parent.active;
                         e.updateStatus(t)
@@ -15415,7 +15415,7 @@
                 isEmpty: function () {
                     return !this.nodes.length
                 }, menuId: function () {
-                    return "cascader-menu-" + this.id + "-" + this.index
+                    return "cascader-menu-" + this.id + "-" + this.index_Old
                 }
             },
             methods: {
@@ -17272,7 +17272,7 @@
                     }
                 }
             })])]), i("div", {staticClass: "el-image-viewer__canvas"}, e._l(e.urlList, function (t, n) {
-                return n === e.index ? i("img", {
+                return n === e.index_Old ? i("img", {
                     key: t,
                     ref: "img",
                     refInFor: !0,
@@ -17321,11 +17321,11 @@
                     isSingle: function () {
                         return this.urlList.length <= 1
                     }, isFirst: function () {
-                        return 0 === this.index
+                        return 0 === this.index_Old
                     }, isLast: function () {
-                        return this.index === this.urlList.length - 1
+                        return this.index_Old === this.urlList.length - 1
                     }, currentImg: function () {
-                        return this.urlList[this.index]
+                        return this.urlList[this.index_Old]
                     }, imgStyle: function () {
                         var e = this.transform, t = e.scale, i = e.deg, n = e.offsetX, r = e.offsetY, s = {
                             transform: "scale(" + t + ") rotate(" + i + "deg)",

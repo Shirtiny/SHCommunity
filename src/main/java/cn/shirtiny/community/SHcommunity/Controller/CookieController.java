@@ -15,7 +15,7 @@ public class CookieController {
 
     @RequestMapping(value = "/addCookie")
     @ResponseBody
-    public ShResultDTO<String> addOneCookie(@RequestBody Map<String,String> map,  HttpServletResponse response){
+    public ShResultDTO addOneCookie(@RequestBody Map<String,String> map,  HttpServletResponse response){
         String cookieName = map.get("cookieName");
         String cookieValue = map.get("cookieValue");
         Cookie cookie=new Cookie(cookieName,cookieValue);

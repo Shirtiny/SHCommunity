@@ -1,5 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Exception;
 
+import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -7,6 +9,10 @@ import java.io.PrintWriter;
 public class FileUploadFailedException extends ShException {
     public FileUploadFailedException(String message, int errorCode) {
         super(message, errorCode);
+    }
+
+    public FileUploadFailedException(ShErrorCode shErrorCode) {
+        super(shErrorCode);
     }
 
     @Override

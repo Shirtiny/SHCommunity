@@ -23,6 +23,10 @@
 .margin_bottom_5px{
     margin-bottom: 5px !important;
 }
+.margin_around_5px{
+    margin: 5px !important;
+}
+
 
 /*内补*/
 .padding_around{
@@ -143,20 +147,26 @@
     font-size: 17px !important;
 }
 
-/*导航条两侧padding*/
+/*导航条*/
 .navbar {
     padding-left: 70px !important;
     padding-right: 70px !important;
+    /*background-color: #ffffffc7 !important;*/
+    background-color: hsla(0,0%,100%,.5) !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,.2) !important;
 }
+
+
 
 
 /*导航条上的用户头像*/
 .nav_avatar{
-    width: 50px;
-    height: 50px;
-    margin-top: -15px;
+    width: 50px !important;
+    height: 50px !important;
+    margin-top: -15px !important;
 
 }
+
 .navbar-brand{
     /*padding: 1px !important;*/
 }
@@ -169,6 +179,17 @@
     font-size: 10px !important;
     background-color: #007cff87 !important;
 }
+
+/*导航条element搜索框*/
+#vue_Nav_Search {
+    height: 36px !important;
+    margin-top: 2px !important;
+}
+.Nav_Search_input_icon {
+    text-decoration: none !important;
+}
+
+
 
 /*首页页头*/
 
