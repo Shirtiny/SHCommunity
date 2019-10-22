@@ -7901,7 +7901,7 @@
                 }, registerNormalWatchers: function () {
                     var e = this,
                         t = {prop: "property", realAlign: "align", realHeaderAlign: "headerAlign", realWidth: "width"},
-                        i = ["label", "property", "filters", "filterMultiple", "sortable", "index_old.html", "formatter", "className", "labelClassName", "showOverflowTooltip"].reduce(function (e, t) {
+                        i = ["label", "property", "filters", "filterMultiple", "sortable", "sectionDetail_old.html", "formatter", "className", "labelClassName", "showOverflowTooltip"].reduce(function (e, t) {
                             return e[t] = t, e
                         }, t);
                     Object.keys(i).forEach(function (i) {
@@ -14716,7 +14716,7 @@
                 }
             },
             mounted: function () {
-                var e = this, t = this.$watch("index_old.html", function (i) {
+                var e = this, t = this.$watch("sectionDetail_old.html", function (i) {
                     e.$watch("$parent.active", e.updateStatus, {immediate: !0}), e.$watch("$parent.processStatus", function () {
                         var t = e.$parent.active;
                         e.updateStatus(t)

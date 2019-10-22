@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div id="vue_index_el_sh_collapse" th:fragment="el_sh_collapse" class="img-rounded">
+
+    <el-collapse v-model="activeNames" @change="handleChange">
+        <!--        <el-collapse-item name="0" disabled="true">-->
+        <!--        </el-collapse-item>-->
+        <el-collapse-item name="1">
+            <el-page-header slot="title" @back="goBack" content="管理版块">
+            </el-page-header>
+            <i class="header-icon el-icon-info"></i>
+            <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+            <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+        </el-collapse-item>
+    </el-collapse>
+
+</div>
+
+<style>
+    #vue_index_el_sh_collapse {
+        background-color: #fff;
+        padding: 0 10px 0 10px;
+    }
+
+</style>
+<script>
+    const vue_index_el_sh_collapse = new Vue({
+        el: "#vue_index_el_sh_collapse",
+        data() {
+            return {
+                activeNames: ['1','2','3','4']
+            };
+        },
+        methods: {
+            goBack() {
+                console.log('go back');
+            },
+            handleChange(val) {
+                console.log(val);
+            }
+        }
+    })
+</script>
+</html>

@@ -12,13 +12,14 @@ import java.util.List;
 
 public interface InvitationMapper extends BaseMapper<Invitation> {
 
-    //分页关联查询user和invitation
-    @Select("select * from USER u join INVITATION i on u.user_id=i.AUTHOR_ID")
-    IPage<InvitationDTO> selectDtoByPage(Page<InvitationDTO> page);
+    //分页关联查询某个版块的user和invitation列表，按照帖子id升序
+    @Select("select * from USER u join INVITATION i on u.user_id=i.AUTHOR_ID where i.section_id=#{sectionId}")
+    IPage<InvitationDTO> selectDtoByPage(Page<InvitationDTO> page,@Param("sectionId") long sectionId);
 
-    //分页关联查询user和invitation，按照帖子更新时间戳倒序，有新回复的时候会更新帖子, ... order by  字段  asc/desc
-    @Select("select * from USER u join INVITATION i on u.user_id=i.AUTHOR_ID order by i.GMT_MODIFIED desc")
-    IPage<InvitationDTO> selectDtoByPageDesc(Page<InvitationDTO> page);
+    //主要
+    //分页关联查询某个版块的user和invitation列表，默认按照帖子更新时间戳倒序，有新回复的时候会更新帖子, ... order by  字段  asc/desc
+    @Select("select * from USER u join INVITATION i on u.user_id=i.AUTHOR_ID where i.section_id=#{sectionId} order by i.GMT_MODIFIED desc")
+    IPage<InvitationDTO> selectDtoByPageDesc(Page<InvitationDTO> page,@Param("sectionId") long sectionId);
 
     //更新帖子的更新（最后一次回复）时间
     @Select("update INVITATION set GMT_MODIFIED=#{GMT_MODIFIED} where INVITATION_ID=#{invitationId}")
@@ -29,7 +30,8 @@ public interface InvitationMapper extends BaseMapper<Invitation> {
     @Select("select * from USER u join INVITATION i on u.user_id=i.AUTHOR_ID  where invitation_id=#{id}")
     InvitationDTO selectOneDtoById(long id);
 
-    //查询帖子及其评论，默认id升序
+    //主要
+    //查询帖子详情及其评论
     @Select("select * from USER u join INVITATION i on u.user_id=i.AUTHOR_ID  where invitation_id=#{id}")
     @Results({
             @Result(property = "invitationId",column = "invitation_id",id = true)

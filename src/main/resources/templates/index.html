@@ -1,14 +1,13 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>首页（未来设计为版块详情，默认主板）</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
-    <!--若有属性冲突，加 !important -->
+    <meta content="text/html; charset=UTF-8">
+    <title>主页</title>
     <link rel="stylesheet" href="/css/myCss.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!--            <link rel="stylesheet" href="/css/element.css">-->
 
 
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
@@ -16,340 +15,57 @@
     <!--    <script src="/js/myJs/jquery.js"></script>-->
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/myJs/vue.js"></script>
-    <script src="/js/myJs/element.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!--    <script src="/js/myJs/element.js"></script>-->
+    <!--    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+    <script src="/js/myJs/axios.js"></script>
 
 </head>
-
-
-<body>
-
+<body class="shbody">
 <!--引用导航条-->
 <div th:replace="nav"></div>
-<!--条幅、大广告位-->
-<div class="block" id="vue_index_carousel">
-    <el-carousel height="150px">
-        <el-carousel-item v-for="item in 4" :key="item">
-            <h3 class="small">{{ item }} 首页条幅、大广告位</h3>
-        </el-carousel-item>
-    </el-carousel>
-</div>
-<style>
-    .el-carousel__item h3 {
-        color: #475669;
-        font-size: 14px;
-        opacity: 0.75;
-        line-height: 150px;
-        margin: 0;
-    }
 
-    .el-carousel__item:nth-child(2n) {
-        background-color: #99a9bf;
-    }
+<!--引用条幅、大广告位-->
+<div th:replace="banner_lg"></div>
 
-    .el-carousel__item:nth-child(2n+1) {
-        background-color: #d3dce6;
-    }
-</style>
-<script>
-    const vue_index_carousel = new Vue({
-        el: '#vue_index_carousel'
-    })
-</script>
-<!--首页头-->
-<div class="page-header">
-    <h1><span class="glyphicon glyphicon-home"></span>
-        <small class="font_color_aliceBlue">测试列表</small>
-    </h1>
-    <hr/>
-    <!-- Split button -->
-    <div class="btn-group">
-        <button type="button" class="btn btn-success">Action</button>
-        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-        </ul>
+<div class="container-fluid mybody">
+
+    <div class="row">
+        <!--面包屑导航-->
+        <div class="col-md-12">
+            <div th:replace="el_breadcrumb"></div>
+        </div>
+
+        <!--中型广告-->
+        <div class="col-md-6 ">
+            <div th:replace="banner_md"></div>
+        </div>
+        <!--排行榜 -->
+        <div class="col-md-6 ">
+            <div th:replace="el_card"></div>
+        </div>
     </div>
-    <div class="btn-group">
-        <button type="button" class="btn btn-danger">Action</button>
-        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-        </ul>
+    <div class="row">
+        <!--el导航条        -->
+        <div class="col-md-12 margin_bottom_15px">
+            <div th:replace="el_nav"></div>
+        </div>
+
+        <!--el版块列表        -->
+        <div class="col-md-12 ">
+            <div th:replace="el_collapse"></div>
+        </div>
     </div>
-
-    <a href="/newInvitation">
-        <button type="button" class="btn btn-success" aria-label="Left Align">
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-        </button>
-    </a>
-</div>
-<!--我的body-->
-<div class="mybody" id="vue_invitaions_body">
-    <div class="container-fluid contentbody">
-        <div class="row">
-
-            <!--栅格左-->
-            <div class="col-xs-12  col-sm-9  row_left ">
-                <el-menu mode="horizontal" default-active="1-4-1" class="el-menu-vertical-demo ">
-                    <el-submenu index="1">
-                        <template slot="title">
-                            <i class="el-icon-location"></i>
-                            <span slot="title">导航一</span>
-                        </template>
-                        <el-menu-item-group>
-                            <span slot="title">分组一</span>
-                            <el-menu-item index="1-1">选项1</el-menu-item>
-                            <el-menu-item index="1-2">选项2</el-menu-item>
-                        </el-menu-item-group>
-                        <el-menu-item-group title="分组2">
-                            <el-menu-item index="1-3">选项3</el-menu-item>
-                        </el-menu-item-group>
-                        <el-submenu index="1-4">
-                            <span slot="title">选项4</span>
-                            <el-menu-item index="1-4-1">选项1</el-menu-item>
-                        </el-submenu>
-                    </el-submenu>
-                    <el-menu-item index="2">
-                        <i class="el-icon-menu"></i>
-                        <span slot="title">导航二 </span>
-                    </el-menu-item>
-                    <el-menu-item index="3" disabled>
-                        <i class="el-icon-document"></i>
-                        <span slot="title">导航三</span>
-                    </el-menu-item>
-                    <el-menu-item index="4">
-                        <i class="el-icon-setting"></i>
-                        <span slot="title">导航四</span>
-                    </el-menu-item>
-                    <el-menu-item index="5">
-
-                        <el-tooltip :content="'按最后回复时间顺序: ' + orderStatus" placement="top">
-                            <el-switch
-                                    v-model="orderStatus"
-                                    active-color="#13ce66"
-                                    inactive-color="#5fb5d0cf"
-                                    active-value='on'
-                                    inactive-value='off'
-                                    @change="refreshInvitations"
-                            >
-                            </el-switch>
-                        </el-tooltip>
-                    </el-menu-item>
-                    <!--文件上传                    -->
-                    <!--                    <el-menu-item index="6">-->
-                    <!--                        <el-upload-->
-                    <!--                                name="uploadFile"-->
-                    <!--                                class="upload-demo"-->
-                    <!--                                action="/fileUpload"-->
-                    <!--                                :on-preview="handlePreview"-->
-                    <!--                                :on-remove="handleRemove"-->
-                    <!--                                :before-remove="beforeRemove"-->
-                    <!--                                multiple-->
-                    <!--                                :limit="3"-->
-                    <!--                                :on-exceed="handleExceed"-->
-                    <!--                                >-->
-                    <!--                            <el-button size="small" type="primary">点击上传</el-button>-->
-                    <!--                            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
-                    <!--                        </el-uploaduploadFile>-->
-                    <!--                    </el-menu-item>-->
-                </el-menu>
-                <div class="media alert alert-warning media_left  " v-for="invitation in invitations"
-                     :key="invitation.invitationId"
-                     role="alert">
-
-                    <div class="media-left">
-                        <a href="#">
-                            <img class="media-object img-thumbnail avatar_image-sm"
-                                 :src="invitation.avatarImage"
-                                 alt=image>
-                        </a>
-                    </div>
-
-                    <div class="media-body">
-                        <a :href="'/invitationDetail/'+invitation.invitationId">
-                            <h4 class="media-heading">
-                                <span>{{invitation.title}}</span>
-                            </h4>
-                        </a>
-                        <span>
-                            <span class="label label-success">{{invitation.replyNum}} 条评论</span>  •
-                            <span class="label label-info">{{invitation.views}}次查看</span>  •
-                            <!--                            <span class="label label-default">{{invitation.gmtCreated | dateFrm(invitation.gmtCreated)}}</span>-->
-                            <span class="label label-default">创建于 {{formatDate(invitation.gmtCreated)}}</span>
-                        </span>
-                    </div>
-
-                </div>
-
-
-                <hr/>
-                <!-- 分页信息-->
-                <div class="myPageInfo font_color_aliceBlue">
-                    共<span class="label label-warning ">{{pageInfo.total}}</span>篇帖子；
-                    当前第<span class="label label-warning ">{{pageInfo.current}}</span>页;
-                    <br><br>
-                    <!--                    <span class="btn btn-warning"> {{pageError}}</span>-->
-                </div>
-
-                <!-- 分页按钮-->
-                <nav aria-label="Page navigation" class="pagebtn">
-                    <ul class="pagination pagination-lg">
-                        <!-- 第一页                       -->
-                        <li>
-                            <el-button @click="refreshInvitationsPage(1)" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </el-button>
-                        </li>
-                        <!--让后台传递一个页码数组 弱化js-->
-                        <li v-for="pageNum in pageNumArray">
-                            <!-- 页码                           -->
-                            <el-button @click="refreshInvitationsPage(pageNum)"
-                                       :class="pageInfo.current==pageNum?'pagebtn_disabled':'active'">
-                                <span>{{pageNum}}</span>
-                            </el-button>
-                        </li>
-                        <!-- 跳转到最后一页                       -->
-                        <li>
-                            <el-button @click="refreshInvitationsPage(pageInfo.pages)" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </el-button>
-                        </li>
-                    </ul>
-
-                </nav>
-            </div>
-            <!--        栅格右-->
-            <div th:replace="row_right"></div>
+    <div class="row">
+        <!-- 管理版块-->
+        <div class="col-md-8">
+            <div th:replace="el_sh_collapse"></div>
+        </div>
+        <!-- 其他 tab-->
+        <div class="col-md-4">
+            <div th:replace="el_tabs"></div>
         </div>
     </div>
 </div>
-
 </body>
-<script>
-    Vue.filter("dateFrm", function (time, spliceStr) {
-        var newDate = new Date(time);
-        var y = newDate.getFullYear();
-        var m = newDate.getMonth() + 1;
-        var d = newDate.getDate();
-        var hh = newDate.getHours();
-        var mm = newDate.getMinutes();
-        var ss = newDate.getSeconds();
-        return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
-    });
-</script>
-<script>
-    const vue_invitaions_body = new Vue({
-        el: "#vue_invitaions_body",
-        data: {
-            //无或0按默认顺序，id升序,其他值按更新时间倒序排列（Controller默认）orderBy
-            orderStatus: 'on',
-            //服务器返回的总结果
-            shResult: {},
-            //分页信息
-            pageInfo: {},
-            //帖子数组
-            invitations: [],
-            //页码数组
-            pageNumArray: [],
-        },
-        //计算属性
-        computed: {
-            //排序类型
-            orderBy: function () {
-                return this.orderStatus == "on" ? 1 : 0;
-            },
-            //当前页
-            curPage: function () {
-                return this.pageInfo.current;
-            },
-
-        },
-        created() {
-            //初始化数据
-            this.getInvitations(1, this.orderBy);
-        },
-        methods: {
-            getInvitations: function (pageNum, orderBy) {
-                //0默认按创建时间顺序排序，1按更新时间排序
-                //这里要用es6写，不知道为什么
-                axios.get('/listInvitationsByPage?curPage=' + pageNum + '&orderBy=' + orderBy).then(res => {
-                    console.log(res);
-                    this.shResult = res.data;
-                    this.pageInfo = res.data.data.pageInfo;
-                    this.pageNumArray = res.data.data.pageNumArray;
-                    this.invitations = res.data.data.pageInfo.records;
-                    console.log(this.shResult)
-                });
-            },
-            //刷新数据
-            refreshInvitations: function () {
-                this.getInvitations(this.curPage, this.orderBy);
-                //后端传来的页码数组
-                console.log(this.pageNumArray);
-            },
-            //刷新数据，换页
-            refreshInvitationsPage: function (pageNum) {
-                this.getInvitations(pageNum, this.orderBy);
-                //后端传来的页码数组
-                console.log(this.pageNumArray);
-                //最后一页时弹出提示
-                if (pageNum == this.pageInfo.pages) {
-                    this.$notify({
-                        title: '提示',
-                        message: '已到最后一页',
-                        type: 'info',
-                        //延迟消失的时间
-                        duration: 1500
-                    });
-                }
-            },
-            //格式化日期
-            formatDate(gmtime) {
-                return new Date(gmtime).toLocaleString();
-            }
-        }
-
-    });
-</script>
-<!--文件上传-->
-<!--<script>-->
-<!--    const vue_Nav_Upload = new Vue({-->
-<!--        el: "#vue_Nav_Upload",-->
-<!--        data: {},-->
-<!--        methods: {-->
-<!--            handleRemove(file, fileList) {-->
-<!--                console.log(file, fileList);-->
-<!--            },-->
-<!--            handlePreview(file) {-->
-<!--                console.log(file);-->
-<!--            },-->
-<!--            handleExceed(files, fileList) {-->
-<!--                this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);-->
-<!--            },-->
-<!--            beforeRemove(file, fileList) {-->
-<!--                return this.$confirm(`确定移除 ${file.name}？`);-->
-<!--            }-->
-<!--        }-->
-
-<!--    })-->
-
-<!--</script>-->
-<!--<div th:replace="footer"></div>-->
 </html>

@@ -77,7 +77,7 @@ CodeMirror.defineMode("fortran", function() {
                           "iachar", "iand", "iargc", "ibclr", "ibits",
                           "ibset", "ichar", "idate", "idim", "idint",
                           "idnint", "ieor", "ierrno", "ifix", "imag",
-                          "imagpart", "index_old.html", "int", "ior", "irand",
+                          "imagpart", "sectionDetail_old.html", "int", "ior", "irand",
                           "isatty", "ishft", "ishftc", "isign",
                           "iso_c_binding", "is_iostat_end", "is_iostat_eor",
                           "itime", "kill", "kind", "lbound", "len", "len_trim",

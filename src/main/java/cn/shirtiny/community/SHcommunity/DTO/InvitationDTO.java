@@ -20,7 +20,9 @@ public class InvitationDTO {
     //浏览量views
     private long views;
     //可以直接设为字符串，赋值时会自动转换
+    @JsonSerialize(using = ToStringSerializer.class)
     private long gmtCreated;//创建时间
+    @JsonSerialize(using = ToStringSerializer.class)
     private long gmtModified;//更新时间
 //  private String createdDate;//格式化的创建时间，不在数据库中，在页面里格式化了
 //  private String modifiedDate;//格式化的更新时间，不在数据库中

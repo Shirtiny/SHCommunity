@@ -83,13 +83,13 @@ public class InvitationService implements IinvitationService {
 
     //分页查询全部帖子，包含用户信息，根据id顺序 升序排列
     @Override
-    public IPage<InvitationDTO> selectDtoBypage(Page<InvitationDTO> page) {
-        return invitationMapper.selectDtoByPage(page);
+    public IPage<InvitationDTO> selectDtoBypage(Page<InvitationDTO> page,Long sectionId) {
+        return invitationMapper.selectDtoByPage(page,sectionId);
     }
 
     //分页查询全部帖子，包含用户信息，根据最后更新时间 倒序排列
     @Override
-    public IPage<InvitationDTO> selectDtoBypageDesc(Page<InvitationDTO> page) {
-        return invitationMapper.selectDtoByPageDesc(page);
+    public IPage<InvitationDTO> selectDtoBypageDesc(Page<InvitationDTO> page,Long sectionId) {
+        return invitationMapper.selectDtoByPageDesc(page,sectionId);
     }
 }

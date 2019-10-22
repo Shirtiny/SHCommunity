@@ -2,8 +2,6 @@ package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.InvitationDTO;
 import cn.shirtiny.community.SHcommunity.Exception.NotFoundException;
-import cn.shirtiny.community.SHcommunity.Exception.ShException;
-import cn.shirtiny.community.SHcommunity.Model.Invitation;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 import static cn.shirtiny.community.SHcommunity.Enum.ShErrorCode.NotFound_Error;
 
@@ -39,25 +36,32 @@ public class pageController {
         return "loginPage";
     }
 
-    @GetMapping("/")
+    @GetMapping("/")//首页
     public String toIndex() {//前往首页
         return "index";
     }
 
-    //前往首页并分页 _旧
+    @GetMapping("/shPub/sectionDetail")//前往版块详情页，由前端sessionStorage传递版块id
+    public String toSectionDetail() {
+        return "sectionDetail";
+    }
+
+    //前往版块详情首页并分页 _旧
     @GetMapping("/index_old")//首页，分页展示首页的帖子，包含对应用户信息
     public String toIndexByPage(@RequestParam(value = "curPage", defaultValue = "1") long curPage,
                                 @RequestParam(value = "orderBy", defaultValue = "1",required = false) Integer orderBy
-            ,Model model) {
+            ,Model model,@RequestParam(value = "sectionId",defaultValue = "1",required = false) Long sectionId) {
         Page<InvitationDTO> page = new Page<>();
         page.setCurrent(curPage);
         IPage<InvitationDTO> pageInfo=null;
         if (orderBy==null||orderBy==0){
             //无或0按默认顺序，id升序
-            pageInfo = invitationService.selectDtoBypage(page);
+            pageInfo = invitationService.selectDtoBypage(page,sectionId);
+            System.out.println("这是旧版本，已不适用");
         }else {
             //其他值按更新时间倒序排列（Controller默认）
-            pageInfo = invitationService.selectDtoBypageDesc(page);
+            pageInfo = invitationService.selectDtoBypageDesc(page,sectionId);
+            System.out.println("这是旧版本，已不适用");
         }
 
         model.addAttribute("pageInfo", pageInfo);
@@ -84,7 +88,7 @@ public class pageController {
         }
         model.addAttribute("pageNumArray", pageNumArray);
 
-        return "index_old";
+        return "sectionDetail_old";
     }
 
 
@@ -101,7 +105,7 @@ public class pageController {
     }
 
 
-    @GetMapping("/invitationDetail/{invitationId}")//前往帖子详情页面，传递一个帖子id
+    @GetMapping("/shPub/invitationDetail/{invitationId}")//前往帖子详情页面，传递一个帖子id
     public String toInvitationDetail(@PathVariable("invitationId") long invitationId, Model model) {
 
         InvitationDTO invitationDetail = invitationService.selectOneDtoAndCs(invitationId);

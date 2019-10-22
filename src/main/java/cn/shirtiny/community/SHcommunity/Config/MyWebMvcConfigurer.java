@@ -37,6 +37,10 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         excludePatterns.add("/Test6");
         //分页查询帖子列表
         excludePatterns.add("/listInvitationsByPage");
+        //api
+        excludePatterns.add("/shApi/**");
+        //公开页面，无需登录即可访问
+        excludePatterns.add("/shPub/**");
 
         //登录检测拦截器、拦截未登录者
         registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**").excludePathPatterns(excludePatterns);

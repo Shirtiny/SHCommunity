@@ -47,20 +47,21 @@ public class InvitationController {
 
     }
 
-    @GetMapping(value = "/listInvitationsByPage")
+    @GetMapping(value = "/shApi/listInvitationsByPage")
     @ResponseBody
-    public ShResultDTO listInvitationsByPage(@RequestParam(value = "curPage", defaultValue = "1") long curPage,
-                                             @RequestParam(value = "orderBy", defaultValue = "1",required = false) Integer orderBy){
+    public ShResultDTO listInvitationsByPage(@RequestParam(value = "curPage", defaultValue = "1") Long curPage,
+                                             @RequestParam(value = "orderBy", defaultValue = "1",required = false) Integer orderBy,
+                                             @RequestParam(value = "sectionId",defaultValue = "1",required = false) Long sectionId){
 
         Page<InvitationDTO> page = new Page<>();
         page.setCurrent(curPage);
         IPage<InvitationDTO> pageInfo=null;
         if (orderBy==null||orderBy==0){
             //无或0按默认顺序，id升序
-            pageInfo = invitationService.selectDtoBypage(page);
+            pageInfo = invitationService.selectDtoBypage(page,sectionId);
         }else {
             //其他值按更新时间倒序排列（Controller默认）
-            pageInfo = invitationService.selectDtoBypageDesc(page);
+            pageInfo = invitationService.selectDtoBypageDesc(page,sectionId);
         }
 
         //返回数据map集合
@@ -72,7 +73,7 @@ public class InvitationController {
         //若当前页大于总页数
         if (curPage > pages) {
             //重新调用1次自身方法，将当前页设为最后一页
-            return listInvitationsByPage(pages,orderBy);
+            return listInvitationsByPage(pages,orderBy,sectionId);
         }
         //控制的打印前端标签
         long[] pageNumArray=null;

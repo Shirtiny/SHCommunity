@@ -20,5 +20,7 @@ public class Invitation {//论坛帖子
     private long gmtCreated;//创建时间
     private long gmtModified;//更新时间
     private Long authorId;//发帖者的id
+    private Long sectionId;//所属版块的id
+
 
 }

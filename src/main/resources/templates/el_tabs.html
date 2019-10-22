@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div id="vue_el_tab" th:fragment="el_tab" class="img-rounded">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="用户管理" name="first">用户管理用户管理用户管理用户管理用户管理<br>
+            用户管理用户管理用户管理用户管理用户管理<br>
+            用户管理用户管理用户管理</el-tab-pane>
+        <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+        <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+        <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+    </el-tabs>
+</div>
+<style>
+    #vue_el_tab {
+        background-color: #fff;
+        padding: 20px 20px 20px 20px;
+        width: 400px;
+    }
+</style>
+<script>
+    const vue_el_tab = new Vue({
+        el: "#vue_el_tab",
+        data() {
+            return {
+                activeName: 'second'
+            };
+        },
+        methods: {
+            handleClick(tab, event) {
+                console.log(tab, event);
+            }
+        }
+    })
+</script>
+</html>

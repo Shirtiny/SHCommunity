@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div id="vue_index_el_collapse" th:fragment="el_collapse" class="img-rounded">
+
+    <el-breadcrumb separator-class="el-icon-coin" id="Section_breadCrumb" class="padding_bottom ">
+        <el-breadcrumb-item><span class="el-icon-s-data"></span>&nbsp;&nbsp;</el-breadcrumb-item>
+        <el-breadcrumb-item>活动管理</el-breadcrumb-item>
+        <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+        <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+    </el-breadcrumb>
+
+    <el-collapse v-model="activeIds" @change="handleChange" v-for="(section,index) in sections" :key="index">
+        <!--        <el-collapse-item name="0" disabled="true">-->
+        <!--        </el-collapse-item>-->
+        <el-collapse-item :name="index">
+            <div slot="title">
+                <el-rate
+                        v-model="section.sectionRate"
+                        disabled
+                        show-score
+                        text-color="#ff9900"
+                >
+                </el-rate>
+            </div>
+
+            <div>
+                <el-row>
+                    <!-- 版块信息头部-->
+                    <el-col :span="2" class="clumn_avatar_block">
+                        <el-avatar class="imageBlock" :shape="circle " :size="large" fit="cover"
+                                   :src="section.sectionAvatarImage"></el-avatar>
+                    </el-col>
+
+                    <el-col :span="4" class="clumn_info_block">
+                        <p class="font_title"><a  @click="saveSectionId(section.sectionId)">{{section.sectionTitle}}</a><span class="badge section_badge">{{section.invitationTotalNum}}</span>
+                        </p>
+                        <p class="font_description">{{section.sectionDescription}}</p>
+                        <p class="font_description"><span class="label label-info">子版块：暂无</span></p>
+                    </el-col>
+                    <el-col :span="10">
+                        <div>sd</div>
+                    </el-col>
+                    <el-col :span="8">
+                        <div>ddd</div>
+                    </el-col>
+                </el-row>
+
+            </div>
+
+        </el-collapse-item>
+
+    </el-collapse>
+
+</div>
+
+<style>
+    #Section_breadCrumb {
+        background-color: #fff;
+        padding-left: 5px;
+    }
+
+    #vue_index_el_collapse {
+        background-color: #fff;
+        padding: 20px 20px 20px 20px;
+    }
+
+    .imageBlock {
+        height: 64px;
+        width: 64px;
+
+    }
+
+    .clumn_avatar_block {
+        text-align: center;
+        margin: 15px 0 0 0;
+    }
+
+    .clumn_info_block {
+        margin: 15px 0 0 0;
+    }
+
+    .font_title {
+        font-style: normal;
+        font-size: 16px;
+        line-height: 20px;
+        font-weight: 100;
+        letter-spacing: 0;
+
+    }
+
+    .font_description {
+        font-size: 12px;
+        line-height: 18px;
+        letter-spacing: 0;
+        font-weight: 400;
+        font-style: normal;
+        color: #888888;
+    }
+
+    a{
+        color: #258686;
+        cursor: pointer;
+    }
+
+    .section_badge {
+        background-color: #67ced9 !important;
+    }
+
+
+</style>
+<script>
+    const vue_index_el_collapse = new Vue({
+        el: "#vue_index_el_collapse",
+        data: {
+            rateValue: 3.7,
+            activeIds: [0, 1, 2],
+            sections: [],
+            large: 'large',
+            circle: 'circle',
+        },
+        computed: {},
+        methods: {
+            goBack() {
+                console.log('go back');
+            },
+            handleChange(val) {
+                console.log(val);
+            },
+            addActiveName(name) {
+                this.activeIds.push(name);
+                return name;
+            },
+            saveSectionId(sectionId) {
+                sessionStorage.setItem("sectionId", JSON.stringify(sectionId));
+                console.log('存入sessionStorage：' + sectionId);
+                //跳转页面
+                window.location.href="/shPub/sectionDetail"
+            },
+            readSectionId() {
+                var id = JSON.parse(sessionStorage.getItem('sectionId'));
+                console.log('读取sessionStorage：' + id)
+            }
+        },
+        created: function () {
+            axios.get('/shApi/listSections').then((res) => {
+
+                this.sections = res.data.data.sections;
+                console.log(this.sections);
+            })
+        }
+    })
+</script>
+</html>
