@@ -69,7 +69,7 @@
                         <li><a href="#">Another action</a></li>
                         <li><a href="#">Something else here</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="/logout">注销</a></li>
+                        <li><a onclick="logOut()">注销</a></li>
                     </ul>
                 </li>
             </ul>
@@ -89,7 +89,16 @@
                 console.log("执行搜索")
             }
         }
-    })
+    });
+
+    function logOut() {
+        console.log("执行注销");
+        axios.get('/logout').then(res => {
+            if (res.data.code==200){
+                window.location.reload()
+            }
+        })
+    }
 </script>
 
 </html>

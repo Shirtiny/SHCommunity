@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--首页头-->
+<div class="page-header" th:fragment="section_header" id="vue_section_header">
+    <h1><span class="glyphicon glyphicon-home"></span>&nbsp;{{section.sectionTitle}}
+        <small class="font_color_aliceBlue">{{section.sectionDescription}}</small>
+    </h1>
+</div>
+<script>
+    const vue_section_header = new Vue({
+        el: "#vue_section_header",
+        data: {
+            //版块id，默认1，从sessionStorage读取
+            sectionId: 1,
+            //版块对象，存储版块信息
+            section: {},
+        },
+        created: function () {
+            //读取sectionId
+            this.readSectionId();
+            this.getSectionIfo(this.sectionId)
+        },
+        methods: {
+            getSectionIfo: function (sectionId) {
+                axios.get('/shApi/oneSection/' + sectionId).then((res) => {
+                    this.section = res.data.data.section;
+                    console.log(this.section)
+                })
+            },
+            //读取sessionStorage中的sectionId（当前版块的id）
+            readSectionId() {
+                var id = JSON.parse(sessionStorage.getItem('sectionId'));
+                console.log('读取sessionStorage中的版块id：' + id);
+                if (id != null) {
+                    //赋值
+                    this.sectionId = id;
+                }
+            }
+        }
+    })
+</script>
+</html>

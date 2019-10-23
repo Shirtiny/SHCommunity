@@ -5,6 +5,7 @@ import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
 import cn.shirtiny.community.SHcommunity.Exception.CreateInvitationErrException;
 import cn.shirtiny.community.SHcommunity.Exception.ShException;
 import cn.shirtiny.community.SHcommunity.Mapper.InvitationMapper;
+import cn.shirtiny.community.SHcommunity.Mapper.SectionMapper;
 import cn.shirtiny.community.SHcommunity.Mapper.UserMapper;
 import cn.shirtiny.community.SHcommunity.Model.Invitation;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,6 +29,8 @@ public class InvitationService implements IinvitationService {
     private InvitationMapper invitationMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private SectionMapper sectionMapper;
 
 
     //增加帖子
@@ -45,6 +49,8 @@ public class InvitationService implements IinvitationService {
             invitation.setGmtModified(invitation.getGmtCreated());
             try {
                 invitationMapper.insert(invitation);//插入数据库
+                //使对应版块帖子总数+1
+                sectionMapper.incrInvitationTotalNUm(invitation.getSectionId());
                 return true;
             } catch (Exception e) {
                 log.error("帖子提交失败，数据库的异常，在应该是InvitationService里抛出,{},{}",invitation, ShErrorCode.Create_Invitation_Failed_Error);
@@ -91,5 +97,23 @@ public class InvitationService implements IinvitationService {
     @Override
     public IPage<InvitationDTO> selectDtoBypageDesc(Page<InvitationDTO> page,Long sectionId) {
         return invitationMapper.selectDtoByPageDesc(page,sectionId);
+    }
+
+    //查询出指定版块的一个最新创建的帖子（该帖应有最大的帖子id），包含创建者、标题等
+    @Override
+    public InvitationDTO selectOneLatestDto(long sectionId) {
+        return invitationMapper.selectOneLatestDto(sectionId);
+    }
+
+    //查询出版块列表的每一个最新创建的帖子（该帖应有最大的帖子id），包含创建者、标题等
+    @Override
+    public List<InvitationDTO> selectAllLatestDto(List<Long> sectionIds) {
+
+        List<InvitationDTO> iList=new ArrayList<>();
+        for (Long sid:sectionIds){
+            iList.add(invitationMapper.selectOneLatestDto(sid));
+        }
+
+        return iList;
     }
 }

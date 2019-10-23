@@ -22,7 +22,7 @@ public interface InvitationMapper extends BaseMapper<Invitation> {
     IPage<InvitationDTO> selectDtoByPageDesc(Page<InvitationDTO> page,@Param("sectionId") long sectionId);
 
     //更新帖子的更新（最后一次回复）时间
-    @Select("update INVITATION set GMT_MODIFIED=#{GMT_MODIFIED} where INVITATION_ID=#{invitationId}")
+    @Update("update INVITATION set GMT_MODIFIED=#{GMT_MODIFIED} where INVITATION_ID=#{invitationId}")
     void updateInviModiDate(@Param("invitationId") long id,@Param("GMT_MODIFIED") long gmtModified);//帖子浏览量+1
 
 
@@ -41,11 +41,16 @@ public interface InvitationMapper extends BaseMapper<Invitation> {
 
 
     //使帖子浏览量+1
-    @Select("update INVITATION set VIEWS=VIEWS+1 where INVITATION_ID=#{invitationId}")
+    @Update("update INVITATION set VIEWS=VIEWS+1 where INVITATION_ID=#{invitationId}")
     void incrViews(@Param("invitationId") long id);//帖子浏览量+1
 
     //使invitation的replyNum回复数自增1
-    @Select("update INVITATION set REPLY_NUM=REPLY_NUM+1 where INVITATION_ID=#{invitationId}")
+    @Update("update INVITATION set REPLY_NUM=REPLY_NUM+1 where INVITATION_ID=#{invitationId}")
     void incrInvitationReplyNum(@Param("invitationId") long id);
 
+
+    //查询出指定版块的一个最新创建的帖子（该帖应有最大的帖子id），包含创建者、标题等
+    @Select("select * from USER u join INVITATION i on u.user_id = i.AUTHOR_ID " +
+            "where i.INVITATION_ID = (select max(INVITATION_ID) from INVITATION where SECTION_ID = #{sectionId})")
+    InvitationDTO selectOneLatestDto(@Param("sectionId") long sectionId);
 }

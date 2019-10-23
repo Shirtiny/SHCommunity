@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-<!--     <link rel="stylesheet" href="/css/element.css">-->
+    <!--     <link rel="stylesheet" href="/css/element.css">-->
     <link rel="stylesheet" href="/editormd/css/editormd.min.css"/>
 
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
@@ -27,7 +27,7 @@
 
 
 <!--引用导航条-->
-<div th:replace="nav :: nav"></div>
+<div th:replace="nav"></div>
 
 <div class="container-fluid">
     <!--首页头-->
@@ -49,7 +49,7 @@
                 <!-- 编辑文章标题               -->
                 <div class="input-group input-group-lg margin_top">
                     <span class="input-group-addon" id="sizing-addon1">title</span>
-                    <input v-model="md_title" class=" form-control"  type="text"  placeholder="在此输入标题..."
+                    <input v-model="md_title" class=" form-control" type="text" placeholder="在此输入标题..."
                            aria-describedby="sizing-addon1"
                            name="title">
                 </div>
@@ -58,7 +58,7 @@
                 <h2><label for="content">Content</label></h2>
                 <!--md编辑器-->
                 <div id="editor" class="sh_MdEditor">
-                    <textarea  style="display:none;" name="content" id="content"
+                    <textarea style="display:none;" name="content" id="content"
                               placeholder="在此输入文章内容..."></textarea>
                 </div>
                 <!--空文本错误警告-->
@@ -100,37 +100,83 @@
     $(function () {
         const vue_Editor = new Vue({
             el: "#vue_Editor",
-            data:{
-                md_title:"",
-                fileUploadErr:false
+            data: {
+                sectionId: 1,
+                md_title: "",
+                fileUploadErr: false
             },
             methods: {
+                //读取sessionStorage中的sectionId（当前版块的id）
+                readSectionId() {
+                    var id = JSON.parse(sessionStorage.getItem('sectionId'));
+                    console.log('读取sessionStorage：' + id);
+                    if (id != null) {
+                        //赋值
+                        this.sectionId = id;
+                    }
+
+                },
+                //登录状态检查
+                loginCheck: function () {
+                    axios.get('/shApi/loginCheck').then(res => {
+                        var shCode = res.data.code;
+                        var message = res.data.message;
+                        if (shCode == 200) {
+                            console.log("用户已登录")
+                        } else if (shCode == 4001) {
+                            this.$confirm(message, '未登录提示', {
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                type: 'info'
+                            }).then(() => {
+                                //回调地址
+                                var redirect = window.location.pathname;
+                                //1s后调转到登录页面，带上回调地址
+                                setTimeout(function () {
+                                    window.location.href = "/loginPage?shRedirect=" + redirect;
+                                }, 1000);
+
+                            }).catch(() => {
+                                this.$message({
+                                    type: 'info',
+                                    message: '已取消登录'
+                                });
+                            });
+                        }
+                    })
+                },
+                //提交Md数据
                 submitMd: function () {
-                    var md_content=editor.getMarkdown();
-                    console.log('输出title：\n'+vue_Editor.md_title);
-                    console.log('输出content：\n'+md_content);
+                    //登录状态检查
+                    this.loginCheck();
+                    var md_content = editor.getMarkdown();
+                    console.log('输出title：\n' + vue_Editor.md_title);
+                    console.log('输出content：\n' + md_content);
+                    console.log('版块id：\n' + this.sectionId);
                     //提交数据给后台
-                    axios.post('/createInvitation',{
-                        title:vue_Editor.md_title,
-                        content:md_content,
-                        isAxios:true
+                    axios.post('/createInvitation', {
+                        title: vue_Editor.md_title,
+                        content: md_content,
+                        sectionId: this.sectionId,
+                        isAxios: true
                     }).then(function (response) {
                         //成功提交的情况
-                        if (response.data.code==200){
+                        if (response.data.code == 200) {
                             //通知
                             vue_Editor.$notify({
                                 title: 'OK~',
-                                message: response.data.message+"，即将跳转...",
+                                message: response.data.message + "，即将跳转...",
                                 type: 'success'
                             });
-                            //1.5秒后跳转到最后一页
+                            //1.5秒后跳转
                             setTimeout(function () {
-                                window.location.href="/?curPage=999999"
-                            },1500);
-                        }else if(response.data.code==400){
+                                window.location.href = "/shPub/sectionDetail"
+                            }, 1500);
+                        } else if (response.data.code == 400) {
                             vue_Editor.$notify.error({
                                 title: 'No~',
-                                message: response.data.message
+                                message: response.data.message,
+                                duration:1500
                             });
                         }
                     }).catch(function (error) {

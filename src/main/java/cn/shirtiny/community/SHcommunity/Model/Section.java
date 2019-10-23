@@ -21,10 +21,10 @@ public class Section {
     @TableField(value = "section_avatar_image", insertStrategy = FieldStrategy.NOT_EMPTY)
     String sectionAvatarImage;
     //帖子总数
-    @TableField(value = "invitation_total_num", insertStrategy = FieldStrategy.DEFAULT)
+    @TableField(value = "invitation_total_num", insertStrategy = FieldStrategy.IGNORED)
     long invitationTotalNum;
     //精帖数
-    @TableField(value = "invitation_star_num", insertStrategy = FieldStrategy.DEFAULT)
+    @TableField(value = "invitation_star_num", insertStrategy = FieldStrategy.IGNORED)
     long invitationStarNum;
     //版主id
     @TableField(value = "section_owner_id", insertStrategy = FieldStrategy.DEFAULT)

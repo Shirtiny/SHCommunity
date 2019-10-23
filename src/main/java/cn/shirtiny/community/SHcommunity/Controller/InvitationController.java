@@ -31,7 +31,7 @@ public class InvitationController {
 
     @PostMapping(value = "/createInvitation")
     @ResponseBody
-    public ShResultDTO createInvitation(@RequestBody Invitation invitation, Model model, HttpServletRequest request){
+    public ShResultDTO createInvitation(@RequestBody Invitation invitation, HttpServletRequest request){
 
         Long userId=((User)request.getSession().getAttribute("user")).getId();
         invitation.setAuthorId(userId);

@@ -25,23 +25,51 @@
 
             <div>
                 <el-row>
-                    <!-- 版块信息头部-->
+                    <!-- 版块信息头部 图片-->
                     <el-col :span="2" class="clumn_avatar_block">
                         <el-avatar class="imageBlock" :shape="circle " :size="large" fit="cover"
                                    :src="section.sectionAvatarImage"></el-avatar>
                     </el-col>
-
+                    <!-- 版块信息头部 信息描述-->
                     <el-col :span="4" class="clumn_info_block">
-                        <p class="font_title"><a  @click="saveSectionId(section.sectionId)">{{section.sectionTitle}}</a><span class="badge section_badge">{{section.invitationTotalNum}}</span>
+                        <p class="font_title"><a
+                                @click="saveSectionId(section.sectionId)">{{section.sectionTitle}}</a><span
+                                class="badge section_badge">{{section.invitationTotalNum}}</span>
                         </p>
                         <p class="font_description">{{section.sectionDescription}}</p>
-                        <p class="font_description"><span class="label label-info">子版块：暂无</span></p>
+                        <p class="font_description"><span class="label label-info font_childSection">子版块：暂无</span></p>
                     </el-col>
-                    <el-col :span="10">
-                        <div>sd</div>
+
+                    <!-- 中部-->
+                    <el-col :span="6" class="clumn_section_block">
+                        <div>
+                            <p style="line-height: 13px;color: #a7aab0"><span class="el-icon-collection-tag" style="font-size: 18px"></span><span>标题</span></p>
+                            <p style="line-height: 13px;color: #a7aab0"><span class="el-icon-user " style="font-size: 18px"></span><span>作者</span></p>
+                            <p style="color: #a7aab0"><span class="el-icon-date" style="font-size: 18px"></span><span>日期</span></p>
+                        </div>
                     </el-col>
-                    <el-col :span="8">
-                        <div>ddd</div>
+
+                    <!--后部-->
+                    <el-col :span="6" class="clumn_section_block">
+                        <p class="font_invitation_title"><a
+                                :href="'/shPub/invitationDetail/'+section.latestInvitation.invitationId">【{{section.latestInvitation.title}}】</a>
+                        </p>
+                        <p class="font_invitation_authorP"><span
+                                class="label label-info font_invitation_author">Author</span>：<a href="#">{{section.latestInvitation.nickName}}</a>
+                        </p>
+                        <p>
+                            <span class="label label-default font_invitation_createdTime">{{formatDate(section.latestInvitation.gmtCreated)}}</span>
+                        </p>
+                    </el-col>
+
+                    <!--尾部-->
+                    <el-col :span="6" class="clumn_section_block">
+                        <div><span class="el-icon-sugar" style="color: rgb(235, 60, 166);font-size: 16px;">{{section.invitationStarNum}}</span></div>
+                        <div>
+                            <span class="font_invitation_leftNum">{{section.latestInvitation.replyNum}}</span>
+                            <span style="font-size: 50px;font-style: italic;line-height: 75px;color: #999999">/</span>
+                            <span style="font-size: 16px;color: #999999">{{section.latestInvitation.views}}</span>
+                        </div>
                     </el-col>
                 </el-row>
 
@@ -79,6 +107,11 @@
         margin: 15px 0 0 0;
     }
 
+    .clumn_section_block {
+        text-align: center;
+        margin: 15px 0 0 0;
+    }
+
     .font_title {
         font-style: normal;
         font-size: 16px;
@@ -97,9 +130,45 @@
         color: #888888;
     }
 
-    a{
+    .font_childSection {
+        font-size: 90%;
+    }
+
+    .font_invitation_title {
+        font-size: 14px;
+        line-height: 24px;
+        font-style: italic;
+    }
+
+    .font_invitation_author {
+        font-size: 95%;
+    }
+
+    .font_invitation_authorP {
+        line-height: 13px;
+    }
+
+    .font_invitation_createdTime {
+        font-size: 84%;
+    }
+
+    .font_invitation_leftNum{
+        position: relative;
+        top: -23px;
+        right: -3px;
+        font-size: 18px;
+        font-weight: 400;
+        font-style: italic;
+        color: #999999
+    }
+
+    .font_title a {
         color: #258686;
         cursor: pointer;
+    }
+
+    .font_invitation_title a {
+        color: #101111
     }
 
     .section_badge {
@@ -134,13 +203,18 @@
                 sessionStorage.setItem("sectionId", JSON.stringify(sectionId));
                 console.log('存入sessionStorage：' + sectionId);
                 //跳转页面
-                window.location.href="/shPub/sectionDetail"
+                window.location.href = "/shPub/sectionDetail"
             },
             readSectionId() {
                 var id = JSON.parse(sessionStorage.getItem('sectionId'));
                 console.log('读取sessionStorage：' + id)
+            },
+            formatDate: function (gmtimeStr) {
+                var gmtime = Number(gmtimeStr);
+                return new Date(gmtime).toLocaleDateString();
             }
         },
+        //初始化数据
         created: function () {
             axios.get('/shApi/listSections').then((res) => {
 

@@ -30,62 +30,28 @@
 <!--引用条幅、大广告位-->
 <div th:replace="banner_lg"></div>
 <!--首页头-->
-<div class="page-header">
-    <h1><span class="glyphicon glyphicon-home"></span>
-        <small class="font_color_aliceBlue">测试列表</small>
-    </h1>
-    <hr/>
-    <!-- Split button -->
-    <div class="btn-group">
-        <button type="button" class="btn btn-success">Action</button>
-        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-        </ul>
-    </div>
-    <div class="btn-group">
-        <button type="button" class="btn btn-danger">Action</button>
-        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-        </ul>
-    </div>
+<div th:replace="section_header"></div>
 
-    <a href="/newInvitation">
-        <button type="button" class="btn btn-success" aria-label="Left Align">
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-        </button>
-    </a>
+<!--面包屑导航-->
+<div class="row">
+    <div class="col-md-12">
+        <div th:replace="el_breadcrumb"></div>
+    </div>
 </div>
 <!--我的body-->
 <div class="mybody">
     <div class="container-fluid contentbody">
         <div class="row">
-
             <!--栅格左-->
             <div class="col-xs-12  col-sm-8  row_left " id="vue_invitaions_body">
                 <div class="col-md-12 col-sm-12 col-xs-12  padding_around_0px margin_bottom_15px">
 
                     <el-menu mode="horizontal" default-active="1-4-1" class="el-menu-vertical-demo margin_right_10px">
-                        <el-menu-item index="2">
-                            <i class="el-icon-menu"></i>
-                            <span slot="title">导航二 </span>
+                        <el-menu-item index="/newInvitation">
+                            <el-tooltip content="发帖" placement="top" effect="light">
+                                <a style="font-size: 20px;" class="el-icon-edit" @click="loginCheck"></a>
+                                <span slot="title"></span>
+                            </el-tooltip>
                         </el-menu-item>
                         <el-menu-item index="3" disabled>
                             <i class="el-icon-document"></i>
@@ -201,8 +167,8 @@
     const vue_invitaions_body = new Vue({
         el: "#vue_invitaions_body",
         data: {
-            //版块id
-            sectionId:1,
+            //版块id，默认1，从sessionStorage读取
+            sectionId: 1,
             //无或0按默认顺序，id升序,其他值按更新时间倒序排列（Controller默认）orderBy
             orderStatus: 'on',
             //服务器返回的总结果
@@ -231,9 +197,10 @@
             //读取sectionId
             this.readSectionId();
             //初始化数据
-            this.getInvitations(1, this.orderBy,this.sectionId);
+            this.getInvitations(1, this.orderBy, this.sectionId);
         },
         methods: {
+            //获取帖子列表
             getInvitations: function (pageNum, orderBy, sectionId) {
                 //0默认按创建时间顺序排序，1按更新时间排序
                 //这里要用es6写，不知道为什么
@@ -248,13 +215,13 @@
             },
             //刷新数据
             refreshInvitations: function () {
-                this.getInvitations(this.curPage, this.orderBy,this.sectionId);
+                this.getInvitations(this.curPage, this.orderBy, this.sectionId);
                 //后端传来的页码数组
                 console.log(this.pageNumArray);
             },
             //刷新数据，换页
             refreshInvitationsPage: function (pageNum) {
-                this.getInvitations(pageNum, this.orderBy,this.sectionId);
+                this.getInvitations(pageNum, this.orderBy, this.sectionId);
                 //后端传来的页码数组
                 console.log(this.pageNumArray);
                 //最后一页时弹出提示
@@ -276,9 +243,45 @@
             //读取sessionStorage中的sectionId（当前版块的id）
             readSectionId() {
                 var id = JSON.parse(sessionStorage.getItem('sectionId'));
-                console.log('读取sessionStorage：' + id);
-                //赋值
-                this.sectionId=id;
+                console.log('读取sessionStorage中的版块id：' + id);
+                if (id != null) {
+                    //赋值
+                    this.sectionId = id;
+                }
+            },
+            //保存回调地址，暂时没用到
+            saveRedirectURL(url) {
+                sessionStorage.setItem("shRedirect", JSON.stringify(url));
+                console.log('存入sessionStorage：' + url);
+            },
+            //登录状态检查
+            loginCheck:function () {
+                axios.get('/shApi/loginCheck').then(res=>{
+                    var shCode=res.data.code;
+                    var message=res.data.message;
+                    if (shCode==200){
+                        window.location.href="/newInvitation"
+                    }else if (shCode==4001){
+                        this.$confirm(message, '未登录提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'info'
+                        }).then(() => {
+                            //回调地址
+                            var redirect = window.location.pathname;
+                            //1s后调转到登录页面，带上回调地址
+                            setTimeout(function () {
+                                window.location.href = "/loginPage?shRedirect=" + redirect;
+                            }, 1000);
+
+                        }).catch(() => {
+                            this.$message({
+                                type: 'info',
+                                message: '已取消登录'
+                            });
+                        });
+                    }
+                })
             }
         }
 

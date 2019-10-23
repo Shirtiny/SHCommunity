@@ -8,4 +8,8 @@ import java.util.List;
 public interface IsectionService {
     //查询全部版块
     List<Section> selectAllSection();
+
+    //单个版块的信息
+    Section selectOneSection(Long sectionId);
+
 }

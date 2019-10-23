@@ -24,4 +24,12 @@ public interface IinvitationService {
 
     //分页查询全部帖子，包含用户信息，根据最后更新时间 倒序排列
     IPage<InvitationDTO> selectDtoBypageDesc(Page<InvitationDTO> page,Long sectionId);
+
+    //查询出指定版块的一个最新创建的帖子（该帖应有最大的帖子id），包含创建者、标题等
+    InvitationDTO selectOneLatestDto(long sectionId);
+
+    //查询出版块列表的每一个最新创建的帖子（该帖应有最大的帖子id），包含创建者、标题等
+    List<InvitationDTO> selectAllLatestDto(List<Long> sectionIds);
+
+
 }

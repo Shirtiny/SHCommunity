@@ -19,8 +19,14 @@ public class SectionServiceImpl implements IsectionService {
     //查询全部版块
     @Override
     public List<Section> selectAllSection() {
-        return sectionMapper.selectList(null);
+        return sectionMapper.listAllSection();
     }
 
+    //单个版块的信息
 
+
+    @Override
+    public Section selectOneSection(Long sectionId) {
+        return sectionMapper.selectById(sectionId);
+    }
 }
