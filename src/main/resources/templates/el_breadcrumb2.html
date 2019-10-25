@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--使用的是js的面包屑-->
+<div id="vue_el_breadcrumb2" th:fragment="el_breadcrumb2" class="img-rounded ">
+    <!--    分割线-->
+    <el-divider></el-divider>
+    <el-breadcrumb separator=">">
+        <el-breadcrumb-item><span class="el-icon-location-information"></span></el-breadcrumb-item>
+
+        <el-breadcrumb-item v-for="page in breadcrumb"><a :href="page.path">{{page.title}}</a></el-breadcrumb-item>
+
+    </el-breadcrumb>
+    <!--    分割线-->
+    <el-divider></el-divider>
+</div>
+<script>
+    const vue_el_breadcrumb2 = new Vue({
+        el: "#vue_el_breadcrumb2",
+        data: {
+            //面包屑数组
+            breadcrumb: [],
+            //存储当前页信息的对象
+            curPage:{
+                title:'',
+                path:''
+            }
+        },
+        created:function () {
+            //获取当前页信息，并保存
+            this.curPage.title=document.title;
+            this.curPage.path=window.location.pathname;
+
+            //读取数组
+            let breadcrumb= JSON.parse(sessionStorage.getItem("breadcrumb"));
+            //新建一个过渡数组
+            let newArray=[];
+            //表示当前页是否已经存在于数组中
+            let isExist=false;
+            //当获取到的数组不为空时
+            if (breadcrumb!=null){
+                //遍历数组
+                for (let index in breadcrumb){
+                    //把数组中的元素存入过渡数组中
+                    newArray.push(breadcrumb[Number(index)]);
+                    //验证当前页是否已存在
+                    if (breadcrumb[Number(index)].path==this.curPage.path){
+                        //覆盖原数组
+                        breadcrumb=newArray;
+                        isExist=true;
+                        break;
+                    }
+                }
+                //为空则使用当前值
+            }else{
+                breadcrumb=this.breadcrumb;
+            }
+            //不存在时，将当前页添加入数组
+            if (!isExist){
+                breadcrumb.push(this.curPage)
+            }
+
+            //存入sessionStorage
+            sessionStorage.setItem("breadcrumb",JSON.stringify(breadcrumb));
+            //存入vue data 以遍历
+            this.breadcrumb=breadcrumb;
+
+
+
+        }
+
+    })
+</script>
+<style>
+
+    /* 元素 | http://localhost:8888/ */
+
+    #vue_el_breadcrumb2 {
+        background-color: aliceblue;
+        padding-left: 20px;
+    }
+
+</style>
+</html>
