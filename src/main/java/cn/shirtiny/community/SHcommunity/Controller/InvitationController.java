@@ -5,6 +5,7 @@ import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
 import cn.shirtiny.community.SHcommunity.Model.Invitation;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
+import cn.shirtiny.community.SHcommunity.Service.IjsHelperService;
 import cn.shirtiny.community.SHcommunity.Service.ServiceImpl.InvitationService;
 import cn.shirtiny.community.SHcommunity.Utils.ShArrayQueue;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -27,6 +28,9 @@ public class InvitationController {
 
     @Autowired
     private IinvitationService invitationService;
+
+    @Autowired
+    private IjsHelperService jsHelperService;
 
 
     @PostMapping(value = "/createInvitation")
@@ -76,16 +80,7 @@ public class InvitationController {
             return listInvitationsByPage(pages,orderBy,sectionId);
         }
         //控制的打印前端标签
-        long[] pageNumArray=null;
-        long pageNum = curPage - 3;
-        ShArrayQueue queue=new ShArrayQueue(7);
-        for (int i=0;i<queue.getMaxSize();i++){
-            if (pageNum>0 && pageNum<=pages){
-                queue.add(pageNum);
-            }
-            pageNum++;
-        }
-        pageNumArray=queue.toArray();
+        long[] pageNumArray=jsHelperService.createPageNumArray(curPage,pages);
         dataMap.put("pageNumArray", pageNumArray);
 
         return new ShResultDTO<>(200,"分页查询完成",dataMap,null);

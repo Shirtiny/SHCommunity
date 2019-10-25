@@ -21,6 +21,8 @@ public class Invitation {//论坛帖子
     private long gmtModified;//更新时间
     private Long authorId;//发帖者的id
     private Long sectionId;//所属版块的id
+    private Long candyNum;//帖子获得的糖数
+
 
 
 }

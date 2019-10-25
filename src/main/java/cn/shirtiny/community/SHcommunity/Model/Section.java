@@ -23,9 +23,9 @@ public class Section {
     //帖子总数
     @TableField(value = "invitation_total_num", insertStrategy = FieldStrategy.IGNORED)
     long invitationTotalNum;
-    //精帖数
-    @TableField(value = "invitation_star_num", insertStrategy = FieldStrategy.IGNORED)
-    long invitationStarNum;
+    //版块总糖数(本版所有帖子的糖数总计)
+    @TableField(value = "section_total_candy", insertStrategy = FieldStrategy.IGNORED)
+    long sectionTotalCandy;
     //版主id
     @TableField(value = "section_owner_id", insertStrategy = FieldStrategy.DEFAULT)
     long sectionOwnerId;

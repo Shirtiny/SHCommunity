@@ -15,8 +15,8 @@ public class SectionDTO {
     String sectionAvatarImage;
     //帖子总数
     long invitationTotalNum;
-    //精帖数
-    long invitationStarNum;
+    //版块糖数
+    long sectionTotalCandy;
     //版主id
     long sectionOwnerId;
     //版块评分

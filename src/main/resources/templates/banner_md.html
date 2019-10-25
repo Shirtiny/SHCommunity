@@ -3,15 +3,37 @@
 
 <!--走马灯广告中型-->
 <div id="vue_banner_md" th:fragment="banner_md">
-    <el-carousel height="252px" direction="vertical" :autoplay="false">
-        <el-carousel-item v-for="item in 3" :key="item">
-            <h3 class="medium">{{ item }}</h3>
+    <el-carousel height="252px" direction="vertical" indicator-position="" :autoplay="true" :interval=interval>
+        <el-carousel-item v-for="(banner,index) in banners" :key="index">
+            <el-image
+                    style="width: 100%; height: 100%"
+                    :src="banner.bannerUrl"
+                    fit="cover" @click="clickBanner"></el-image>
         </el-carousel-item>
     </el-carousel>
 </div>
 <script>
     const vue_banner_md = new Vue({
-        el: '#vue_banner_md'
+        el: '#vue_banner_md',
+        data:{
+            banners:[],
+            //切换间隔、毫秒
+            interval:5000
+        },
+        created:function () {
+            axios.get('/shApi/getBannersByShape/md').then(res=>{
+                console.log("获取的res md");
+                console.log(res);
+                this.banners=res.data.data.banners;
+                console.log("获取的banners md");
+                console.log(this.banners);
+            })
+        },
+        methods:{
+            clickBanner:function () {
+                console.log("clickBanner_md")
+            }
+        }
     })
 </script>
 <style>

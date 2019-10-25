@@ -19,6 +19,7 @@ public class InvitationDTO {
     private int replyNum;//回复数
     //浏览量views
     private long views;
+    private Long candyNum;//帖子获得的糖数
     //可以直接设为字符串，赋值时会自动转换
     @JsonSerialize(using = ToStringSerializer.class)
     private long gmtCreated;//创建时间

@@ -4,6 +4,7 @@ public enum ShErrorCode {
     NoLogin_Error(4001,"未登录，请先登录再进行此操作"),
 
     NotFound_Error(4004,"找不到对应资源"),
+    BannerShape_Args_Error(4501,"bannerShape参数错误，必须是lg/md/sm/cr之一"),
 
     Create_Invitation_Failed_Error(4502,"帖子创建失败，数据库插入失败"),
 
