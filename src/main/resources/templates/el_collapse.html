@@ -182,7 +182,7 @@
         el: "#vue_index_el_collapse",
         data: {
             rateValue: 3.7,
-            activeIds: [0, 1, 2],
+            activeIds: [],
             sections: [],
             large: 'large',
             circle: 'circle',
@@ -219,7 +219,10 @@
             axios.get('/shApi/listSections').then((res) => {
 
                 this.sections = res.data.data.sections;
-                console.log(this.sections);
+                console.log();
+                for (let index in this.sections) {
+                    this.activeIds.push(Number(index));
+                }
             })
         }
     })

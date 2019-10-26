@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class UserDTO {
+
+    private Long id;
     //账户创建时间
     long gmtCreate;
     //昵称

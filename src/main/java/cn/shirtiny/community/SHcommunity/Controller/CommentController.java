@@ -1,6 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
+import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Model.Comment;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.ICommentService;
@@ -26,7 +27,7 @@ public class CommentController {
             , HttpServletRequest request) {
         Comment comment = new Comment();
         //从session中取用户id，以后改
-        Long userId = ((User) request.getSession().getAttribute("user")).getId();
+        Long userId = ((UserDTO) request.getSession().getAttribute("user")).getId();
         comment.setTargetId(invitationId);
         comment.setReviewerId(userId);
         comment.setCommentContent(commentContent);

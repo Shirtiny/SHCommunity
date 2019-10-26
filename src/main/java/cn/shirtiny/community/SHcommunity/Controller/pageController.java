@@ -3,6 +3,7 @@ package cn.shirtiny.community.SHcommunity.Controller;
 import cn.shirtiny.community.SHcommunity.DTO.InvitationDTO;
 import cn.shirtiny.community.SHcommunity.DTO.PageDTO;
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
+import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Exception.NotFoundException;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
@@ -85,7 +86,7 @@ public class pageController {
         return "sectionDetail";
     }
 
-    //前往版块详情首页并分页 _旧
+    //前往版块详情首页并分页 _旧，已不用
     @GetMapping("/index_old")//首页，分页展示首页的帖子，包含对应用户信息
     public String toIndexByPage(@RequestParam(value = "curPage", defaultValue = "1") long curPage,
                                 @RequestParam(value = "orderBy", defaultValue = "1", required = false) Integer orderBy
@@ -137,22 +138,45 @@ public class pageController {
         return "page";
     }
 
-    @GetMapping("/newInvitation")//前往创建帖子的页面
+    @GetMapping("/ShPri/newInvitation")//前往创建帖子的页面
     public String toNewInvitation() {
 
         return "newInvitationMd";
     }
 
 
-    @GetMapping("/shPub/invitationDetail/{invitationId}")//前往帖子详情页面，传递一个帖子id
-    public String toInvitationDetail(@PathVariable("invitationId") long invitationId, Model model) {
+    //前往帖子详情页面
+    @GetMapping("/shPub/invitationDetail/{invitationId}")
+    public String toInvitationDetail(@PathVariable("invitationId") long invitationId) {
+
+        return "invitationDetail";
+    }
+
+
+    @GetMapping("/shApi/invitationDetail/{invitationId}")//获得帖子详情，传递一个帖子id
+    @ResponseBody
+    public ShResultDTO<String,Object> getInvitationDetail(@PathVariable("invitationId") long invitationId,HttpServletRequest request) {
+
+        InvitationDTO invitationDetail = invitationService.selectOneDtoAndCs(invitationId);
+        if (invitationDetail == null) {
+            throw new NotFoundException(NotFound_Error);
+        }
+        Map<String,Object> map =new HashMap<>();
+        map.put("invitationDetail",invitationDetail);
+        Object user = request.getSession().getAttribute("user");
+        map.put("user",user);
+        return new ShResultDTO<>(200,"已获取帖子详情",map,null);
+    }
+
+    @GetMapping("/shPub/invitationDetail_Old/{invitationId}")//前往帖子详情页面_旧，传递一个帖子id
+    public String toInvitationDetail_Old(@PathVariable("invitationId") long invitationId, Model model) {
 
         InvitationDTO invitationDetail = invitationService.selectOneDtoAndCs(invitationId);
         if (invitationDetail == null) {
             throw new NotFoundException(NotFound_Error);
         }
         model.addAttribute("invitationDetail", invitationDetail);
-        return "invitationDetail";
+        return "invitationDetail_Old";
     }
 
 

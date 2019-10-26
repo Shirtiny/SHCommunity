@@ -46,7 +46,7 @@
                 <div class="col-md-12 col-sm-12 col-xs-12  padding_around_0px margin_bottom_15px">
 
                     <el-menu mode="horizontal" default-active="1-4-1" class="el-menu-vertical-demo margin_right_10px">
-                        <el-menu-item index="/newInvitation">
+                        <el-menu-item index="/ShPri/newInvitation">
                             <el-tooltip content="发帖" placement="top" effect="light">
                                 <a style="font-size: 20px;" class="el-icon-edit" @click="loginCheck"></a>
                                 <span slot="title"></span>
@@ -94,6 +94,11 @@
                         <a :href="'/shPub/invitationDetail/'+invitation.invitationId">
                             <h4 class="media-heading">
                                 <span>{{invitation.title}}</span>
+                                <span class="float_right">
+                                <span class="el-icon-sugar "
+                                      style="color: rgb(235, 60, 166);">{{invitation.candyNum}}</span>
+                                <span>&nbsp;</span>
+                                </span>
                             </h4>
                         </a>
                         <span>
@@ -101,9 +106,14 @@
                             <span class="label label-info">{{invitation.views}}次查看</span>  •
                             <!--                            <span class="label label-default">{{invitation.gmtCreated | dateFrm(invitation.gmtCreated)}}</span>-->
                             <span class="label label-default">创建于 {{formatDate(invitation.gmtCreated)}}</span>
+
+                            <span class="float_right">
+                               <span style="font-size: 14px;font-style: italic;font-weight: 600;color: #3b868a;">{{invitation.nickName}}</span>
+                                <span>&nbsp;</span>
+                            </span>
+
                         </span>
                     </div>
-
                 </div>
 
 
@@ -254,13 +264,13 @@
                 console.log('存入sessionStorage：' + url);
             },
             //登录状态检查
-            loginCheck:function () {
-                axios.get('/shApi/loginCheck').then(res=>{
-                    var shCode=res.data.code;
-                    var message=res.data.message;
-                    if (shCode==200){
-                        window.location.href="/newInvitation"
-                    }else if (shCode==4001){
+            loginCheck: function () {
+                axios.get('/shApi/loginCheck').then(res => {
+                    var shCode = res.data.code;
+                    var message = res.data.message;
+                    if (shCode == 200) {
+                        window.location.href = "/ShPri/newInvitation"
+                    } else if (shCode == 4001) {
                         this.$confirm(message, '未登录提示', {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',

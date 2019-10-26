@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>详情页</title>
+    <title>帖子详情页</title>
     <link rel="stylesheet" href="/css/myCss.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
@@ -58,108 +58,104 @@
             });
         </script>
 
+
         <div class="container-fluid contentbody">
             <div class="row">
                 <!--栅格左-->
                 <div class="col-xs-12  col-sm-8  row_left ">
-                    <div class="invitation_paper ">
+                    <!--面包屑导航-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div th:replace="el_breadcrumb"></div>
+                        </div>
+                    </div>
+
+                    <!-- 帖子面版 vue托管-->
+                    <div class="invitation_paper" id="vue_invitationDetail_paper">
                         <!--用页头做为标题-->
                         <div class="page-header well well-sm ">
                             <h1 class="invitationDetail_title"><span class=" glyphicon glyphicon-bookmark "></span>
-                                <small th:text="${invitationDetail.title}">Subtext for header</small>
+                                <small>{{invitationDetail.title}}</small>
                             </h1>
 
                         </div>
                         <!--头像-->
                         <div class="thumbnail avatar_image-df float_right my_Bgcolor invitationDetail_avatar_margin">
-                            <img class=" img-circle" th:src="@{${invitationDetail.avatarImage}}" alt="image">
+                            <img class=" img-circle" :src="invitationDetail.avatarImage" alt="image">
                         </div>
                         <blockquote class="float_right blockquote-reverse user_quote img-rounded">
-                            <p th:text="${invitationDetail.description}"></p>
-                            <footer>SH社区@ <cite title="Source Title"><span
-                                    th:text="${invitationDetail.nickName}"></span></cite></footer>
+                            <p>{{invitationDetail.description}}</p>
+                            <footer>SH社区@ <cite title="Source Title"><span>{{invitationDetail.nickName}}</span></cite>
+                            </footer>
                         </blockquote>
                         <!--内容-->
                         <div class="invitationDetail_content well">
                             <span class="glyphicon glyphicon-tag"></span>
-                            <!--                                                <p class="lead">&nbsp;&nbsp;<span th:text="${invitationDetail.content}"></span></p>-->
+                            <!--                                                <p class="lead">&nbsp;&nbsp;<span text="${invitationDetail.content}"></span></p>-->
                             <!--md查看器                        -->
                             <div id="md_viewer" class="sh_MdViewer">
-                                <textarea style="display:none;" th:text="${invitationDetail.content}"></textarea>
+                                <textarea style="display:none;"></textarea>
                             </div>
-                            <script>
-                                $(function () {
-                                    //md查看器
-                                    var md_viewer = editormd.markdownToHTML("md_viewer", {
-                                        // markdown : "[TOC]\n### Hello world!\n## Heading 2", // Also, you can dynamic set Markdown text
-                                        htmlDecode: true  // Enable / disable HTML tag encode.
-                                        // htmlDecode : "style,script,iframe",  // Note: If enabled, you should filter some dangerous HTML tags for website security.
-                                    });
-                                });
-                            </script>
                         </div>
-                        <hr/>
+
                         <!-- 历史回复-->
                         <!--遍历                    -->
-                        <div class=""
-                             th:each="comment:${invitationDetail.comments}">
+                        <div class="" v-for="(comment,index) in comments" :key="index">
                             <!-- 左媒体    id是2的整数倍                   -->
-                            <div class="media invitationDetail_comment  img-rounded" th:if="${comment.commentId}%2==0">
-                                <div class="">
-                                    <span th:text="${#dates.format(invitationDetail.gmtCreated,'yy.MM.dd')}"></span>
+                            <div class="media invitationDetail_comment  img-rounded" v-if="comment.commentId%2==0">
+                                <div class="" style="padding: 5px 5px 5px 5px;">
+                                    <span>{{toformatDate(invitationDetail.gmtCreated)}}</span>
                                 </div>
                                 <div class="media-left ">
                                     <a href="#">
                                         <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
-                                             th:src="@{${comment.userDTO.avatarImage}}"
+                                             :src="comment.userDTO.avatarImage"
                                              alt="头像">
                                     </a>
                                 </div>
                                 <div class="media-body">
-                                    <h4 class="media-heading"><em><strong><span
-                                            th:text="${comment.userDTO.nickName}"></span></strong></em></h4>
-                                    <p class="text-left"><span th:text="${comment.commentContent}"></span></p>
+                                    <h4 class="media-heading">
+                                        <em><strong><span> {{comment.userDTO.nickName}}</span></strong></em></h4>
+                                    <p class="text-left"><span>{{comment.commentContent}}</span></p>
                                 </div>
                             </div>
-                            <!-- 右媒体       不是2的整数倍                -->
+                            <!--                             右媒体       不是2的整数倍                -->
                             <div class="media invitationDetail_comment_right  img-rounded"
-                                 th:if="${comment.commentId}%2!=0">
-                                <div class="text-right"><span
-                                        th:text="${#dates.format(invitationDetail.gmtCreated,'yy.MM.dd')}"></span></div>
+                                 v-if="comment.commentId%2!=0">
+                                <div class="text-right" style="padding: 5px 5px 5px 5px;"><span >{{toformatDate(invitationDetail.gmtCreated)}}</span></div>
                                 <div class="media-body">
-                                    <h4 class="media-heading text-right"><em><strong><span
-                                            th:text="${comment.userDTO.nickName}"></span></strong></em></h4>
-                                    <p class="text-right"><span th:text="${comment.commentContent}"></span></p>
+                                    <h4 class="media-heading text-right"><em><strong><span >{{comment.userDTO.nickName}}</span></strong></em></h4>
+                                    <p class="text-right"><span >{{comment.commentContent}}</span></p>
                                 </div>
                                 <div class="media-right ">
                                     <a href="#">
                                         <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
-                                             th:src="@{${comment.userDTO.avatarImage}}"
+                                             :src="comment.userDTO.avatarImage"
                                              alt="头像">
                                     </a>
                                 </div>
                             </div>
                         </div>
                         <!-- 发送评论栏 -->
-                        <div id="vue_sendComment" class="invitationDetail_commentor ">
+                        <div class="invitationDetail_commentor ">
                             <div class="media-left padding_bottom">
                                 <a href="#">
-                                    <img th:if="${session.user==null}"
+                                    <img v-if="user==null"
                                          class="media-object img-thumbnail avatar_image-sm"
                                          src="https://file.moetu.org/images/2019/09/23/49fa536255fd49b50a3978d1620a50dd00139ced90265d42628488939e82dfc3.png"
                                          alt="头像">
                                 </a>
                                 <a href="#">
-                                    <img th:if="${session.user!=null}"
+                                    <img v-if="user!=null"
                                          class="media-object img-thumbnail avatar_image-sm"
-                                         th:src="@{${session.user.avatarImage}}"
+                                         :src="user.avatarImage"
                                          alt="头像">
                                 </a>
                             </div>
                             <form method="post" action="/sendComment">
                                 <input id="sendComment_InvitaionId" type="hidden" readonly="readonly" unselectable="on"
                                        name="invitationId"
-                                       th:value="${invitationDetail.invitationId}">
+                                       :value="invitationDetail.invitationId">
                                 <textarea id="sendComment_Content" class="form-control " name="commentContent" rows="3"
                                           placeholder="在此写下你的评论..." v-model="commentContent"></textarea>
                                 <br/>
@@ -173,150 +169,166 @@
                 </div>
 
                 <!--栅格右-->
-<!--                <div th:replace="row_right"></div>-->
+                <!--                <div replace="row_right"></div>-->
+
             </div>
         </div>
     </div>
 </div>
 </body>
 
-<!-- Vue jS 发送评论           -->
+<!-- Vue jS           -->
 <script>
-    $(function () {
-        const vue_sendComment = new Vue({
-                el: "#vue_sendComment",
-                data: {
-                    commentContent: ''
-                },
-                //vue钩子函数，在vue挂载完成后执行
-                mounted: function getUnSendCommentCookieValue() {
-                    //得到位于根目录下的cookie数组
-                    var cookies=document.cookie.split(";");
-                    for(var i=0; i<cookies.length; i++){
-                        //去掉空格
-                        var cookie = cookies[i].trim();
-                        if (cookie.indexOf("shUnSendComment")==0){
-                            //找到对应cookie后，按等号拆开k和v
-                            var cookieAtr = cookie.split("=");
-                            //取v
-                            console.log(cookieAtr[1]);
-                            //赋值
-                            this.commentContent =cookieAtr[1];
-                        }
+    //vue
+    const vue_invitationDetail_paper = new Vue({
+            el: "#vue_invitationDetail_paper",
+            data: {
+                //不能用数字，js精度不够
+                invitationId: '',
+                //帖子对象
+                invitationDetail: {},
+                //评论数组
+                comments:[],
+                user: {},
+                //未发送的评论内容
+                commentContent: '',
+            },
+            //vue钩子函数，在vue挂载完成后执行
+            mounted: function getUnSendCommentCookieValue() {
+                //得到未发送的评论
+                this.commentContent = sessionStorage.getItem("shUnSendComment");
 
-                    }
+            },
+            created: function () {
+                //获取帖子id
+                this.getInvitationIdFromUrl();
+                console.log("拿到的帖子id为：" + this.invitationId);
+                //调用api，初始化数据
+                this.refreshData();
+            },
+            methods: {
+                //读取url，拿到要获得的帖子id
+                getInvitationIdFromUrl: function () {
+                    // /shPub/invitationDetail/11760373892580232222
+                    let path = window.location.pathname;
+                    //用正则表达式比较好
+                    let array = path.match("/([0-9]+)");
+                    console.log("正则表达匹配结果");
+                    console.log(array);
+                    //取得要查询的id
+                    this.invitationId = array[1];
                 },
-                methods: {
-                    //通知 示例
-                    open2() {
-                        vue_sendComment.$message({
-                            showClose: true,
-                            message: '恭喜你，这是一条成功消息',
-                            type: 'success'
+                //刷新数据
+                refreshData:function () {
+                    axios.get('/shApi/invitationDetail/' + this.invitationId).then(res => {
+                        console.log("获取到的数据：");
+                        console.log(res);
+                        this.invitationDetail = res.data.data.invitationDetail;
+                        this.user = res.data.data.user;
+                        this.comments=res.data.data.invitationDetail.comments;
+
+                        let content = res.data.data.invitationDetail.content;
+                        console.log("帖子内容" + content);
+                        //把帖子内容解析为markdown
+                        editormd.markdownToHTML("md_viewer", {
+                            markdown: content, // Also, you can dynamic set Markdown text
+                            htmlDecode: true  // Enable / disable HTML tag encode.
+                            // htmlDecode : "style,script,iframe",  // Note: If enabled, you should filter some dangerous HTML tags for website security.
                         });
-                    },
-                    //invitaionDetail.html里发送评论的方法
-                    sendComment() {
-                        var invitationId = $("#sendComment_InvitaionId").val();
-                        var commentContent = $("#sendComment_Content").val();
-                        $.ajax({
-                            url: "/sendComment",
-                            type: "post",
-                            cache: false,
-                            data: {
-                                "invitationId": invitationId,
-                                "commentContent": commentContent,
-                                "isAjax": true
-                            },
-                            success: function (result) {
-                                //200为成功发送评论
-                                if (result.code == 200) {
-                                    //成功通知
-                                    // vue_sendComment.$options.methods.open2();
-                                    vue_sendComment.$notify({
-                                        title: '发送成功',
-                                        message: '获得奖励：10点S币，即将刷新...',
-                                        showClose: true,
-                                        type: 'success'
-                                    });
-                                    //清空输入框的值
-                                    vue_sendComment.commentContent="";
-                                    //修改临时保存的评论cookie为默认值
-                                    document.cookie = "shUnSendComment="+""+"; path=/";
-                                    //刷新页面
-                                    // window.location.reload();
-                                    //延迟1秒刷新，为了让通知能正常显示
-                                    setTimeout(function () {
-                                        window.location.reload();
-                                    }, 1000);
-                                    return;
-                                }
-                                //4001是我自定义的状态码，表示未登录
-                                if (result.code == 4001) {
-                                    //弹出确认框，询问是否登录
-                                    vue_sendComment.$confirm(result.message, '未登录提示', {
-                                        confirmButtonText: '确定',
-                                        cancelButtonText: '取消',
-                                        type: 'info'
-                                    }).then(
-                                        function () {
-                                            //document.location.origin返回当前domain地址
-                                            //window.location.pathname返回路径
-                                            //window.location.href完整url
-                                            //回调地址
-                                            var redirect = window.location.pathname;
-                                            //拿到输入框的值，在vue的data里，给cookie命名
-                                            var cookieName = 'shUnSendComment';
-                                            var cookieValue = vue_sendComment.commentContent;
-                                            //后台存cookie的方式
-                                            // axios.post('/cookieController/addCookie', {
-                                            //     cookieName: cookieName,
-                                            //     cookieValue: cookieValue
-                                            // }).then(function (res) {
-                                            //     if (res.data.code == 200) {
-                                            //         vue_sendComment.$message({
-                                            //             showClose: true,
-                                            //             message: '已把评论内容暂存到cookie',
-                                            //             type: 'success'
-                                            //         });
-                                            //         console.log(cookieName);
-                                            //         console.log(cookieValue);
-                                            //     }
-                                            // });
-                                            //js存储cookie，在本站根目录，emmm只能保存1行数据
-                                            document.cookie = cookieName+"="+cookieValue+"; path=/";
-                                            //1s后调转到登录页面，带上回调地址
-                                            setTimeout(function () {
-                                                window.location.href = "/loginPage?shRedirect=" + redirect;
-                                            }, 1000);
-
-                                        }
-                                    ).catch(
-                                        function () {
-                                            return vue_sendComment.$message({
-                                                showClose: true,
-                                                type: 'info',
-                                                message: '已取消'
-                                            });
-                                        }
-                                    )
-                                } else {
-                                    vue_sendComment.$alert(
-                                        result.code + "：" + result.message, '出错了~', {
-                                            confirmButtonText: '确定'
-                                        }
-                                    )
-                                }
-
+                    });
+                },
+                //日期格式化
+                toformatDate:function(gmtStr){
+                    return new Date(Number(gmtStr)).toLocaleString();
+                },
+                //通知 示例
+                open2() {
+                    vue_invitationDetail_paper.$message({
+                        showClose: true,
+                        message: '恭喜你，这是一条成功消息',
+                        type: 'success'
+                    });
+                },
+                //invitaionDetail.html里发送评论的方法
+                sendComment() {
+                    var invitationId = $("#sendComment_InvitaionId").val();
+                    var commentContent = $("#sendComment_Content").val();
+                    $.ajax({
+                        url: "/sendComment",
+                        type: "post",
+                        cache: false,
+                        data: {
+                            "invitationId": invitationId,
+                            "commentContent": commentContent,
+                            "isAjax": true
+                        },
+                        success: function (result) {
+                            //200为成功发送评论
+                            if (result.code == 200) {
+                                //成功通知
+                                // vue_sendComment.$options.methods.open2();
+                                vue_invitationDetail_paper.$notify({
+                                    title: '发送成功',
+                                    message: '获得奖励：10点S币，即将刷新...',
+                                    showClose: true,
+                                    type: 'success'
+                                });
+                                //更新评论
+                                axios.get('/shApi/invitationDetail/' + vue_invitationDetail_paper.invitationId).then(res=>{
+                                    vue_invitationDetail_paper.comments=res.data.data.invitationDetail.comments;
+                                });
+                                return;
                             }
-                        })
+                            //4001是我自定义的状态码，表示未登录
+                            if (result.code == 4001) {
+                                //弹出确认框，询问是否登录
+                                vue_invitationDetail_paper.$confirm(result.message, '未登录提示', {
+                                    confirmButtonText: '确定',
+                                    cancelButtonText: '取消',
+                                    type: 'info'
+                                }).then(
+                                    function () {
+                                        //document.location.origin返回当前domain地址
+                                        //window.location.pathname返回路径
+                                        //window.location.href完整url
+                                        //回调地址
+                                        var redirect = window.location.pathname;
 
-                    }
+                                        //拿到输入框的值,是使用v-model与vue的commentContent绑定的,现在将它保存在sessionStorage中
+                                        var shUnSendComment = vue_invitationDetail_paper.commentContent;
+                                        //存入sessionStorage
+                                        sessionStorage.setItem("shUnSendComment",shUnSendComment);
+
+                                        //1s后调转到登录页面，带上回调地址
+                                        setTimeout(function () {
+                                            window.location.href = "/loginPage?shRedirect=" + redirect;
+                                        }, 1000);
+
+                                    }
+                                ).catch(
+                                    function () {
+                                        return vue_invitationDetail_paper.$message({
+                                            showClose: true,
+                                            type: 'info',
+                                            message: '已取消'
+                                        });
+                                    }
+                                )
+                            } else {
+                                vue_invitationDetail_paper.$alert(
+                                    result.code + "：" + result.message, '出错了~', {
+                                        confirmButtonText: '确定'
+                                    }
+                                )
+                            }
+
+                        }
+                    })
+
                 }
             }
-        );
+        }
+    );
 
-    });
 </script>
-
 </html>

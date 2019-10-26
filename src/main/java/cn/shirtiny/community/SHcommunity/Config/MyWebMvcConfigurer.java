@@ -29,7 +29,7 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         excludePatterns.add("/");
         excludePatterns.add("/github/**");
         excludePatterns.add("/loginPage");
-        excludePatterns.add("/invitationDetail/*");//这里只填一个*才不被拦截，不知道为什么
+//        excludePatterns.add("/invitationDetail/*");//这里只填一个*才不被拦截，不知道为什么
         excludePatterns.add("/error");
         excludePatterns.add("/cookieController/**");
         //测试
@@ -43,10 +43,10 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         excludePatterns.add("/shPub/**");
 
         //登录检测拦截器、拦截未登录者
-        registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**").excludePathPatterns(excludePatterns);
+        registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**","/ShPri/**").excludePathPatterns(excludePatterns);
     }
 
-    //文件上次大小限制，不设的话，默认1M
+    //文件上传大小限制，不设的话，默认1M
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();

@@ -1,12 +1,14 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.GithubUserInfoDTO;
+import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Mapper.Pre_UserMapper;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IGithubService;
 import cn.shirtiny.community.SHcommunity.Service.IloginService;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
 import com.alibaba.fastjson.JSON;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -60,8 +62,11 @@ public class LoginWithGithubController {
         List<User> users = userService.selectOneUserByGithubId(Long.parseLong(userInfo.getId()));
         if (users.size()>0){
             //若已经存在
+            User user = users.get(0);
+            UserDTO userDTO=new UserDTO();
+            BeanUtils.copyProperties(user,userDTO);
             //存入session
-            httpServletRequest.getSession().setAttribute("user", users.get(0));
+            httpServletRequest.getSession().setAttribute("user", userDTO);
             //转到从cookie中找到的回调地址（没找到的话会返回"/ "）
             return "redirect:"+loginService.getRedirectFromCookie(httpServletRequest,response);
 //            return "redirect:/";
@@ -74,7 +79,10 @@ public class LoginWithGithubController {
         System.out.println("github上获得的用户信息："+userInfo);
         System.out.println("存储的用户信息："+user);
         //存入session
-        httpServletRequest.getSession().setAttribute("user", user);
+        //存入dto，避免隐私信息
+        UserDTO userDTO=new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
+        httpServletRequest.getSession().setAttribute("user", userDTO);
         //转到从cookie中找到的回调地址（没找到的话会返回"/ "）
         return "redirect:"+loginService.getRedirectFromCookie(httpServletRequest,response);
     }
