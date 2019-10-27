@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Property;
 public class User {//论坛用户
 
     @TableId(value = "user_id",type = IdType.AUTO)
-    private Long id;//用户唯一主键，自增长
+    private Long userId;//用户唯一主键，自增长
     private String nickName;//昵称
     private String passWord;//密码
     private String email;//邮箱

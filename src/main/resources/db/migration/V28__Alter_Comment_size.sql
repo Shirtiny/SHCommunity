@@ -1,0 +1,1 @@
+alter table COMMENT alter column CITED_COMMENT_CONTENT VARCHAR(512);

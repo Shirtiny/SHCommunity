@@ -2,6 +2,8 @@ package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.InvitationDTO;
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
+import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
+import cn.shirtiny.community.SHcommunity.Exception.NotFoundException;
 import cn.shirtiny.community.SHcommunity.Model.Invitation;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
@@ -22,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cn.shirtiny.community.SHcommunity.Enum.ShErrorCode.NotFound_Error;
+
 @Controller
 public class InvitationController {
 
@@ -37,7 +41,7 @@ public class InvitationController {
     @ResponseBody
     public ShResultDTO createInvitation(@RequestBody Invitation invitation, HttpServletRequest request){
 
-        Long userId=((User)request.getSession().getAttribute("user")).getId();
+        Long userId=((UserDTO)request.getSession().getAttribute("user")).getUserId();
         invitation.setAuthorId(userId);
         boolean flag = invitationService.addInvitation(invitation);
         if(flag){
@@ -86,7 +90,20 @@ public class InvitationController {
         return new ShResultDTO<>(200,"分页查询完成",dataMap,null);
     }
 
+    @GetMapping("/shApi/invitationDetail/{invitationId}")//获得帖子详情，传递一个帖子id
+    @ResponseBody
+    public ShResultDTO<String,Object> getInvitationDetail(@PathVariable("invitationId") long invitationId,HttpServletRequest request) {
 
+        InvitationDTO invitationDetail = invitationService.selectOneDtoAndCs(invitationId);
+        if (invitationDetail == null) {
+            throw new NotFoundException(NotFound_Error);
+        }
+        Map<String,Object> map =new HashMap<>();
+        map.put("invitationDetail",invitationDetail);
+        Object user = request.getSession().getAttribute("user");
+        map.put("user",user);
+        return new ShResultDTO<>(200,"已获取帖子详情",map,null);
+    }
 
     //测试，返回1号 帖子、帖子的评论以及评论人
     @RequestMapping("/test/i")

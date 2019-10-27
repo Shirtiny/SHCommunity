@@ -7,7 +7,7 @@
     <el-breadcrumb separator=">">
         <el-breadcrumb-item><span class="el-icon-location-information"></span></el-breadcrumb-item>
 
-        <el-breadcrumb-item v-for="page in breadcrumb"><a :href="page.path">{{page.title}}</a></el-breadcrumb-item>
+        <el-breadcrumb-item v-for="(page,index) in breadcrumb" :key="index"><a :href="page.path">{{page.title}}</a></el-breadcrumb-item>
 
     </el-breadcrumb>
     <!--    分割线-->

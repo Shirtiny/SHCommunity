@@ -101,41 +101,175 @@
                         <!-- 历史回复-->
                         <!--遍历                    -->
                         <div class="" v-for="(comment,index) in comments" :key="index">
-                            <!-- 左媒体    id是2的整数倍                   -->
-                            <div class="media invitationDetail_comment  img-rounded" v-if="comment.commentId%2==0">
+                            <!-- 左媒体  没有引用其他评论 -->
+                            <div :id="comment.commentId" class="media invitationDetail_comment  img-rounded"
+                                 v-if="comment.citedComment==null">
                                 <div class="" style="padding: 5px 5px 5px 5px;">
-                                    <span>{{toformatDate(invitationDetail.gmtCreated)}}</span>
+                                    <span style="color: #796161;">{{toformatDate(comment.createdTime)}}</span>
                                 </div>
                                 <div class="media-left ">
                                     <a href="#">
                                         <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
-                                             :src="comment.userDTO.avatarImage"
+                                             :src="comment.reviewer.avatarImage"
                                              alt="头像">
                                     </a>
                                 </div>
-                                <div class="media-body">
+                                <div class="media-body  ">
                                     <h4 class="media-heading">
-                                        <em><strong><span> {{comment.userDTO.nickName}}</span></strong></em></h4>
-                                    <p class="text-left"><span>{{comment.commentContent}}</span></p>
+                                        <em><strong><span> {{comment.reviewer.nickName}}</span></strong></em></h4>
+                                    <div class="text-left "><p class="shText_pre_wrap">{{comment.commentContent}}</p>
+                                    </div>
                                 </div>
+                                <div class="pull-right padding_bottom">
+                                    <el-button style="background: #f3dcaf;" @click="openDrawer(comment)" size="small"
+                                               icon="el-icon-chat-line-round">回复
+                                    </el-button>
+                                </div>
+
                             </div>
-                            <!--                             右媒体       不是2的整数倍                -->
-                            <div class="media invitationDetail_comment_right  img-rounded"
-                                 v-if="comment.commentId%2!=0">
-                                <div class="text-right" style="padding: 5px 5px 5px 5px;"><span >{{toformatDate(invitationDetail.gmtCreated)}}</span></div>
+                            <!--右媒体 引用了其他评论-->
+                            <div :id="comment.commentId" class="media invitationDetail_comment_right  img-rounded"
+                                 v-if="comment.citedComment!=null">
+                                <div class="text-right" style="padding: 5px 5px 5px 5px;"><span style="color: #796161">{{toformatDate(invitationDetail.gmtCreated)}}</span>
+                                </div>
                                 <div class="media-body">
-                                    <h4 class="media-heading text-right"><em><strong><span >{{comment.userDTO.nickName}}</span></strong></em></h4>
-                                    <p class="text-right"><span >{{comment.commentContent}}</span></p>
+                                    <h4 class="media-heading text-right">
+                                        <em><strong><span>{{comment.reviewer.nickName}}</span></strong></em></h4>
+                                    <p class="pull-right">
+                                    <div id="quote" class="shText_pre_wrap">
+                                        <a><span>@</span>{{comment.citedComment.reviewer.nickName}}</a>
+                                        <a><span>userID: </span>{{comment.citedComment.reviewer.userId}}</a><br/>
+
+                                        <span>“</span>{{comment.citedComment.commentContent}}<span>”</span>
+
+                                    </div>
+                                    <div id="reply">
+                                        <span>{{comment.commentContent}}</span>
+                                    </div>
+                                    </p>
                                 </div>
                                 <div class="media-right ">
                                     <a href="#">
                                         <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
-                                             :src="comment.userDTO.avatarImage"
+                                             :src="comment.reviewer.avatarImage"
                                              alt="头像">
                                     </a>
                                 </div>
+                                <div class="pull-right padding_bottom">
+                                    <el-button style="background: rgb(84, 178, 174);border: 1px solid #3F8985;" @click="openDrawer(comment)"
+                                               size="small"
+                                               icon="el-icon-chat-line-round">回复
+                                    </el-button>
+                                </div>
                             </div>
                         </div>
+                        <!-- 回复评论的抽屉 在vue托管的范围内-->
+                        <el-drawer
+                                :visible.sync="drawer.enable"
+                                :direction="drawer.direction"
+                                :before-close="drawer_handleClose"
+                                size="60%"
+                        >
+                            <!-- 标题内容 -->
+                            <span slot="title" class="el-icon-chat-line-round">：回复评论</span>
+                            <div class="mywraper">
+
+
+                                <el-row :gutter="2">
+                                    <el-col :xs="3" :sm="1" :md="2" :lg="1" :xl="1">
+                                        <span>&nbsp;</span>
+                                    </el-col>
+                                    <!-- el卡片1 被回复的评论-->
+                                    <el-col :xs="24" :sm="11" :md="10" :lg="11" :xl="11" class="hidden-xs">
+
+                                        <el-card shadow="never">
+                                            <el-row type="flex">
+                                                <p style="color: #84868c;font-size: 16px;">被回复的评论：</p>
+                                            </el-row>
+
+                                            <el-row type="flex" justify="center" :gutter="10">
+                                                <el-col :xs="6" :sm="4" :md="4" :lg="4" :xl="3">
+                                                    <a href="#">
+                                                        <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
+                                                             style="margin-bottom: 5px !important;"
+                                                             :src="drawer.comment.reviewer.avatarImage"
+                                                             alt="头像">
+                                                        <em><strong><span
+                                                                style="color: black;">{{drawer.comment.reviewer.nickName}}</span></strong></em>
+                                                    </a>
+
+                                                </el-col>
+                                                <el-col :xs="18" :sm="20" :md="20" :lg="20" :xl="21"
+                                                        style="align-content: center">
+                                                    <span style="color: #796161;">{{toformatDate(drawer.comment.createdTime)}}</span>
+                                                    <blockquote>
+                                                        <p>{{drawer.comment.commentContent}}</p>
+                                                    </blockquote>
+                                                </el-col>
+                                            </el-row>
+
+                                        </el-card>
+                                    </el-col>
+                                    <!-- el卡片2 写入回复-->
+                                    <el-col :xs="24" :sm="11" :md="10" :lg="11" :xl="11">
+                                        <el-card shadow="hover">
+                                            <el-row type="flex">
+                                                <p style="color: #84868c;font-size: 16px;">你的回复：</p>
+                                            </el-row>
+
+                                            <el-row type="flex" justify="center" :gutter="10">
+                                                <el-col :xs="6" :sm="4" :md="4" :lg="4" :xl="3">
+                                                    <!-- 未登录时 头像默认-->
+                                                    <a href="#" v-if="user==null">
+                                                        <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
+                                                             style="margin-bottom: 5px !important;"
+                                                             src="https://file.moetu.org/images/2019/09/23/49fa536255fd49b50a3978d1620a50dd00139ced90265d42628488939e82dfc3.png"
+                                                             alt="头像">
+                                                        <em><strong><span
+                                                                style="color: black;">看板娘</span></strong></em>
+                                                    </a>
+                                                    <!-- 登录后 用户头像和名字-->
+                                                    <a href="#" v-if="user!=null">
+                                                        <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
+                                                             style="margin-bottom: 5px !important;"
+                                                             :src="user.avatarImage"
+                                                             alt="头像">
+                                                        <em><strong><span
+                                                                style="color: black;">{{user.nickName}}</span></strong></em>
+                                                    </a>
+
+                                                </el-col>
+                                                <el-col :xs="18" :sm="20" :md="20" :lg="20" :xl="21">
+                                                    <span style="color: #796161;">{{systemDate()}}</span>
+                                                    <blockquote>
+                                                        <el-input
+                                                                type="textarea"
+                                                                show-word-limit
+                                                                maxlength="512"
+                                                                rows=6
+                                                                placeholder="请输入内容"
+                                                                v-model="drawer.commentContent">
+                                                        </el-input>
+                                                    </blockquote>
+                                                    <el-button @click="sendDrawerComment" icon="el-icon-s-promotion"
+                                                               type="success" class="float_right margin_top_15px"
+                                                               circle></el-button>
+                                                    <el-button @click="clearDrawerInput" icon="el-icon-refresh-left"
+                                                               type="danger" class="float_left margin_top_15px"
+                                                               circle></el-button>
+                                                </el-col>
+                                            </el-row>
+
+                                        </el-card>
+                                    </el-col>
+                                    <el-col :xs="3" :sm="1" :md="2" :lg="1" :xl="1">
+                                        <span>&nbsp;</span>
+                                    </el-col>
+                                </el-row>
+                            </div>
+                        </el-drawer>
+
+
                         <!-- 发送评论栏 -->
                         <div class="invitationDetail_commentor ">
                             <div class="media-left padding_bottom">
@@ -152,28 +286,40 @@
                                          alt="头像">
                                 </a>
                             </div>
-                            <form method="post" action="/sendComment">
+                            <form method="post" >
                                 <input id="sendComment_InvitaionId" type="hidden" readonly="readonly" unselectable="on"
                                        name="invitationId"
                                        :value="invitationDetail.invitationId">
-                                <textarea id="sendComment_Content" class="form-control " name="commentContent" rows="3"
-                                          placeholder="在此写下你的评论..." v-model="commentContent"></textarea>
-                                <br/>
+                                <el-input
+                                        type="textarea"
+                                        show-word-limit
+                                        maxlength="512"
+                                        rows=6
+                                        placeholder="在此写下你的评论..."
+                                        v-model="commentContent"
+                                        id="sendComment_Content"
+                                        name="commentContent">
+                                </el-input>
+
+
                                 <button id="sendCommentBtn" @click="sendComment" type="button"
-                                        class="btn btn-success btn-sm float_right">发送评论
+                                        class="btn btn-success btn-sm float_right margin_top_15px">发送评论
                                 </button>
+                                <el-button @click="clearCommentInput" icon="el-icon-refresh-left" type="danger"
+                                           class="float_left margin_top_15px" circle></el-button>
                             </form>
                         </div>
                     </div>
-
                 </div>
 
-                <!--栅格右-->
-                <!--                <div replace="row_right"></div>-->
-
             </div>
+
+            <!--栅格右-->
+            <!--                <div replace="row_right"></div>-->
+
         </div>
     </div>
+</div>
 </div>
 </body>
 
@@ -188,16 +334,48 @@
                 //帖子对象
                 invitationDetail: {},
                 //评论数组
-                comments:[],
+                comments: [],
+                //当前登录的用户
                 user: {},
                 //未发送的评论内容
                 commentContent: '',
+                //回复抽屉相关
+                drawer: {
+                    enable: false,
+                    direction: 'btt',
+                    //被回复的评论对象
+                    comment:{
+                        commentId: '被回复者评论的id',
+                        commentContent: '被回复的评论内容',
+                        createdTime: '被回复者评论创建时间',
+                        //被回复的评论者
+                        reviewer:{
+                            userId: '被回复者的id',
+                            avatarImage: '被回复者的用户头像',
+                            nickName: '被回复者的用户昵称',
+                        },
+                    },
+                    //要发送的回复内容
+                    commentContent: ''
+                }
+
             },
             //vue钩子函数，在vue挂载完成后执行
-            mounted: function getUnSendCommentCookieValue() {
+            mounted: function getUnSendContentValue() {
                 //得到未发送的评论
-                this.commentContent = sessionStorage.getItem("shUnSendComment");
-
+                let commentContent = sessionStorage.getItem("shUnSendComment");
+                if (commentContent == null) {
+                    this.commentContent = ''
+                } else {
+                    this.commentContent = commentContent;
+                }
+                //得到未发送的回复
+                let drawerCommentContent = sessionStorage.getItem("shUnSendReply");
+                if (drawerCommentContent == null) {
+                    this.drawer.commentContent = ''
+                } else {
+                    this.drawer.commentContent = drawerCommentContent;
+                }
             },
             created: function () {
                 //获取帖子id
@@ -219,13 +397,13 @@
                     this.invitationId = array[1];
                 },
                 //刷新数据
-                refreshData:function () {
+                refreshData: function () {
                     axios.get('/shApi/invitationDetail/' + this.invitationId).then(res => {
                         console.log("获取到的数据：");
                         console.log(res);
                         this.invitationDetail = res.data.data.invitationDetail;
                         this.user = res.data.data.user;
-                        this.comments=res.data.data.invitationDetail.comments;
+                        this.comments = res.data.data.invitationDetail.comments;
 
                         let content = res.data.data.invitationDetail.content;
                         console.log("帖子内容" + content);
@@ -238,93 +416,179 @@
                     });
                 },
                 //日期格式化
-                toformatDate:function(gmtStr){
+                toformatDate: function (gmtStr) {
                     return new Date(Number(gmtStr)).toLocaleString();
                 },
-                //通知 示例
-                open2() {
-                    vue_invitationDetail_paper.$message({
-                        showClose: true,
-                        message: '恭喜你，这是一条成功消息',
-                        type: 'success'
-                    });
+                //返回当前系统的时间
+                systemDate: function () {
+                    return new Date().toLocaleString()
                 },
-                //invitaionDetail.html里发送评论的方法
-                sendComment() {
-                    var invitationId = $("#sendComment_InvitaionId").val();
-                    var commentContent = $("#sendComment_Content").val();
-                    $.ajax({
-                        url: "/sendComment",
-                        type: "post",
-                        cache: false,
-                        data: {
-                            "invitationId": invitationId,
-                            "commentContent": commentContent,
-                            "isAjax": true
-                        },
-                        success: function (result) {
-                            //200为成功发送评论
-                            if (result.code == 200) {
-                                //成功通知
-                                // vue_sendComment.$options.methods.open2();
-                                vue_invitationDetail_paper.$notify({
-                                    title: '发送成功',
-                                    message: '获得奖励：10点S币，即将刷新...',
-                                    showClose: true,
-                                    type: 'success'
+                //关闭抽屉时的回调
+                drawer_handleClose(done) {
+                    done();
+                    console.log("关闭抽屉前做的事情")
+                },
+                //打开抽屉
+                openDrawer(comment) {
+                    console.log("打开抽屉");
+                    this.drawer.enable = true;
+                    this.getCitedData(comment);
+                },
+                //关闭抽屉
+                closeDrawer() {
+                    this.drawer.enable = false;
+                    console.log("关闭了抽屉")
+                },
+                //初始化抽屉的数据
+                getCitedData(comment) {
+                    this.drawer.comment=comment;
+                },
+                //保存未发送的评论和回复
+                saveUnsendContent: function () {
+                    sessionStorage.setItem("shUnSendComment", this.commentContent);
+                    sessionStorage.setItem("shUnSendReply", this.drawer.commentContent);
+                },
+                //清空sessionStorage中的评论
+                clearUnsendComment: function () {
+                    sessionStorage.removeItem("shUnSendComment");
+                },
+                //清空sessionStorage中的回复
+                clearUnsendReply: function () {
+                    sessionStorage.removeItem("shUnSendReply");
+                },
+                //清空抽屉的输入框
+                clearDrawerInput: function () {
+                    console.log("清空抽屉的输入框");
+                    this.drawer.commentContent = '';
+                },
+                //清空评论的输入框
+                clearCommentInput: function () {
+                    console.log("清空评论的输入框");
+                    this.commentContent = '';
+                },
+                //登录状态检查
+                loginCheck: function () {
+                    axios.get('/shApi/loginCheck').then(res => {
+                        var shCode = res.data.code;
+                        var message = res.data.message;
+                        if (shCode == 200) {
+
+                            return true;
+                        } else if (shCode == 4001) {
+                            this.$confirm(message, '未登录提示', {
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                type: 'info'
+                            }).then(() => {
+                                //保存未发送的数据
+                                this.saveUnsendContent();
+                                //回调地址
+                                var redirect = window.location.pathname;
+                                //1s后调转到登录页面，带上回调地址
+                                setTimeout(function () {
+                                    window.location.href = "/loginPage?shRedirect=" + redirect;
+                                }, 1000);
+
+                            }).catch(() => {
+                                this.$message({
+                                    type: 'info',
+                                    message: '已取消登录'
                                 });
-                                //更新评论
-                                axios.get('/shApi/invitationDetail/' + vue_invitationDetail_paper.invitationId).then(res=>{
-                                    vue_invitationDetail_paper.comments=res.data.data.invitationDetail.comments;
-                                });
-                                return;
-                            }
-                            //4001是我自定义的状态码，表示未登录
-                            if (result.code == 4001) {
-                                //弹出确认框，询问是否登录
-                                vue_invitationDetail_paper.$confirm(result.message, '未登录提示', {
-                                    confirmButtonText: '确定',
-                                    cancelButtonText: '取消',
-                                    type: 'info'
-                                }).then(
-                                    function () {
-                                        //document.location.origin返回当前domain地址
-                                        //window.location.pathname返回路径
-                                        //window.location.href完整url
-                                        //回调地址
-                                        var redirect = window.location.pathname;
-
-                                        //拿到输入框的值,是使用v-model与vue的commentContent绑定的,现在将它保存在sessionStorage中
-                                        var shUnSendComment = vue_invitationDetail_paper.commentContent;
-                                        //存入sessionStorage
-                                        sessionStorage.setItem("shUnSendComment",shUnSendComment);
-
-                                        //1s后调转到登录页面，带上回调地址
-                                        setTimeout(function () {
-                                            window.location.href = "/loginPage?shRedirect=" + redirect;
-                                        }, 1000);
-
-                                    }
-                                ).catch(
-                                    function () {
-                                        return vue_invitationDetail_paper.$message({
-                                            showClose: true,
-                                            type: 'info',
-                                            message: '已取消'
-                                        });
-                                    }
-                                )
-                            } else {
-                                vue_invitationDetail_paper.$alert(
-                                    result.code + "：" + result.message, '出错了~', {
-                                        confirmButtonText: '确定'
-                                    }
-                                )
-                            }
-
+                                return false;
+                            });
                         }
                     })
+                },
+                //发送评论和回复的反馈和提示
+                resultNotify: function (code, message) {
+                    //200为成功发送评论
+                    if (code == 200) {
+                        //成功通知
+                        // vue_sendComment.$options.methods.open2();
+                        this.$notify({
+                            title: '发送成功',
+                            message: '获得奖励：10点S币',
+                            showClose: true,
+                            type: 'success'
+                        });
+                        //更新评论
+                        axios.get('/shApi/invitationDetail/' + this.invitationId).then(res => {
+                            this.comments = res.data.data.invitationDetail.comments;
+                        });
 
+                        return;
+
+                        //发送失败，字符输入有误，或者服务器问题
+                    } else {
+                        this.$alert(message, '提示', {
+                            confirmButtonText: '确定',
+                        })
+                    }
+                },
+                //发送抽屉的回复
+                sendDrawerComment: function () {
+                    console.log("发送抽屉的回复前的检查");
+                    //登录提示
+                    this.loginCheck();
+                    //登录检查
+                    if (this.user == null) {
+                        return;
+                    }
+                    //帖子id
+                    let targetId = this.invitationId;
+                    //回复内容
+                    let commentContent = this.drawer.commentContent;
+                    //被回复评论的id
+                    let citedCommentId = this.drawer.comment.commentId;
+                    //发送数据
+                    console.log("开始发送抽屉的回复");
+                    axios.post('/shApi/sendComment', {
+                        targetId: targetId,
+                        commentContent: commentContent,
+                        citedCommentId: citedCommentId
+                    }).then(res => {
+                        console.log("回复的响应数据");
+                        console.log(res);
+                        if (res.data.code == 200) {
+                            //发送成功则清空未发送的回复
+                            this.clearUnsendReply();
+                            //清空输入框
+                            this.clearDrawerInput();
+                            //关闭抽屉
+                            this.closeDrawer();
+                        }
+                        //发送完成后的反馈
+                        this.resultNotify(res.data.code, res.data.message);
+                    });
+
+                },
+                //发送评论
+                sendComment() {
+                    console.log("发送评论");
+                    //登录提示
+                    this.loginCheck(this.commentContent);
+                    //登录检查
+                    if (this.user == null) {
+                        return;
+                    }
+                    var targetId = this.invitationId;
+                    var commentContent = this.commentContent;
+                    //发送评论
+                    axios.post('/shApi/sendComment', {
+                        targetId: targetId,
+                        commentContent: commentContent
+                    }).then(res => {
+                        console.log("发送后的响应内容");
+                        console.log(res);
+                        if (res.data.code == 200) {
+                            //清空评论的输入框
+                            this.clearCommentInput();
+                            //发送成功则清空未发送的评论
+                            this.clearUnsendComment();
+                        }
+                        //发送完成后的反馈
+                        this.resultNotify(res.data.code, res.data.message);
+                    });
                 }
             }
         }

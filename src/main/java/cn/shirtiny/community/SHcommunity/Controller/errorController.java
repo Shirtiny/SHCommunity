@@ -24,6 +24,7 @@ public class errorController implements ErrorController {
     @RequestMapping
     public String toError(HttpServletRequest request,Model model){
         HttpStatus status = getStatus(request);
+
         model.addAttribute("code",status.value());
         if (status.is4xxClientError()) {
             model.addAttribute("message", "请求出错");

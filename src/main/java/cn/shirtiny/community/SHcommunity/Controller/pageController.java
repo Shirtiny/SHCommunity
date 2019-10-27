@@ -153,20 +153,7 @@ public class pageController {
     }
 
 
-    @GetMapping("/shApi/invitationDetail/{invitationId}")//获得帖子详情，传递一个帖子id
-    @ResponseBody
-    public ShResultDTO<String,Object> getInvitationDetail(@PathVariable("invitationId") long invitationId,HttpServletRequest request) {
 
-        InvitationDTO invitationDetail = invitationService.selectOneDtoAndCs(invitationId);
-        if (invitationDetail == null) {
-            throw new NotFoundException(NotFound_Error);
-        }
-        Map<String,Object> map =new HashMap<>();
-        map.put("invitationDetail",invitationDetail);
-        Object user = request.getSession().getAttribute("user");
-        map.put("user",user);
-        return new ShResultDTO<>(200,"已获取帖子详情",map,null);
-    }
 
     @GetMapping("/shPub/invitationDetail_Old/{invitationId}")//前往帖子详情页面_旧，传递一个帖子id
     public String toInvitationDetail_Old(@PathVariable("invitationId") long invitationId, Model model) {

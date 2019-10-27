@@ -9,25 +9,22 @@ import lombok.Data;
 public class Comment {
     //评论的主键id
     @TableId(value = "comment_id",type = IdType.AUTO)
-    long commentId;
+    Long commentId;
     //评论者id
     @TableField(value = "reviewer_id",insertStrategy = FieldStrategy.NOT_NULL)
-    long reviewerId;
-    //被评论的对象id
+    Long reviewerId;
+    //被评论的帖子对象id
     @TableField(value = "target_id",insertStrategy = FieldStrategy.NOT_NULL)
-    long targetId;
+    Long targetId;
     //评论内容
     @TableField(value = "comment_content",insertStrategy = FieldStrategy.NOT_NULL)
     String commentContent;
     //创建时间
     @TableField(value = "created_time",insertStrategy = FieldStrategy.NOT_NULL)
-    long createdTime;
-    //评论者DTO信息
-    @TableField(exist = false)
-    UserDTO userDTO;
-
-
-
+    Long createdTime;
+    //被此评论引用的评论id
+    @TableField(value = "cited_comment_id")
+    Long citedCommentId;
 
 
 }

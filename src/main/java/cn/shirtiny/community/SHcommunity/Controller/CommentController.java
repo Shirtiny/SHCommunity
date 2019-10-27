@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
+import cn.shirtiny.community.SHcommunity.DTO.CommentDTO;
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
 import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Model.Comment;
@@ -19,18 +20,14 @@ public class CommentController {
     @Autowired
     private ICommentService commentService;
 
-    @RequestMapping(value = "/sendComment", method = RequestMethod.POST)
+    @RequestMapping(value = "/shApi/sendComment", method = RequestMethod.POST)
     @ResponseBody
     public ShResultDTO sendComment(
-            @RequestParam(value = "commentContent") String commentContent,
-            @RequestParam(value = "invitationId") long invitationId
+            @RequestBody Comment comment
             , HttpServletRequest request) {
-        Comment comment = new Comment();
         //从session中取用户id，以后改
-        Long userId = ((UserDTO) request.getSession().getAttribute("user")).getId();
-        comment.setTargetId(invitationId);
+        Long userId = ((UserDTO) request.getSession().getAttribute("user")).getUserId();
         comment.setReviewerId(userId);
-        comment.setCommentContent(commentContent);
         comment.setCreatedTime(System.currentTimeMillis());
         boolean flag = commentService.addOneComment(comment);
 
@@ -42,7 +39,7 @@ public class CommentController {
     //测试，返回0号帖子的评论
     @RequestMapping(value="/test/c")
     @ResponseBody
-    public List<Comment> testComments() {
+    public List<CommentDTO> testComments() {
         return commentService.findAllComment(0);
     }
 }

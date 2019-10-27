@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
+import cn.shirtiny.community.SHcommunity.DTO.CommentDTO;
 import cn.shirtiny.community.SHcommunity.Mapper.CommentMapper;
 import cn.shirtiny.community.SHcommunity.Mapper.InvitationMapper;
 import cn.shirtiny.community.SHcommunity.Model.Comment;
@@ -46,7 +47,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public List<Comment> findAllComment(long invitationId) {
+    public List<CommentDTO> findAllComment(long invitationId) {
         return commentMapper.selectAllByInvitatonId(invitationId);
     }
 

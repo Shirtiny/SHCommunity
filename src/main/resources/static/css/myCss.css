@@ -1,3 +1,9 @@
+
+/*文本识别\n和多个空格并且正常换行*/
+.shText_pre_wrap{
+    white-space: pre-wrap;
+}
+
 /*字体颜色*/
 .font_color_aliceBlue {
     color: aliceblue !important;
