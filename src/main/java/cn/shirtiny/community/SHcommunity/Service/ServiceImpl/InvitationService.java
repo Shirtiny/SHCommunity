@@ -42,7 +42,7 @@ public class InvitationService implements IinvitationService {
         boolean titleIsEmpty = StringUtils.isEmpty(invitation.getTitle());
         boolean contentIsEmpty = StringUtils.isEmpty(invitation.getContent());
         //判断标题或内容是不是空、标题或内容长度是否超限
-        if (titleIsEmpty || contentIsEmpty || invitation.getTitle().length() > 20 || invitation.getContent().length() > 2000) {
+        if (titleIsEmpty || contentIsEmpty || invitation.getTitle().length() > 30 || invitation.getContent().length() > 2000) {
             return false;
         } else {
             invitation.setGmtCreated(System.currentTimeMillis());

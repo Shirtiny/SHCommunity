@@ -181,4 +181,10 @@ public class pageController {
     public String toTestPage() {
         return "test";
     }
+
+    @RequestMapping(value = "/test/ws")
+    public String toTestWebSocket() {
+        return "webSocket";
+    }
+
 }

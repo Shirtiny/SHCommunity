@@ -25,6 +25,7 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         excludePatterns.add("/image/**");
         excludePatterns.add("/fonts/**");
         excludePatterns.add("/editormd/**");
+        excludePatterns.add("/webjars/**");
         //登录页、github登录、主页、帖子详情页、错误页、cookie操作
         excludePatterns.add("/");
         excludePatterns.add("/github/**");
@@ -41,9 +42,11 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         excludePatterns.add("/shApi/**");
         //公开页面，无需登录即可访问
         excludePatterns.add("/shPub/**");
+        //socket
+        excludePatterns.add("/socket/**");
 
-        //登录检测拦截器、拦截未登录者
-        registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**","/ShPri/**").excludePathPatterns(excludePatterns);
+        //登录检测拦截器、对需要登录的页面拦截未登录者
+        registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/ShPri/**").excludePathPatterns(excludePatterns);
     }
 
     //文件上传大小限制，不设的话，默认1M

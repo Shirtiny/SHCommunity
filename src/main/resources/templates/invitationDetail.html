@@ -105,7 +105,11 @@
                             <div :id="comment.commentId" class="media invitationDetail_comment  img-rounded"
                                  v-if="comment.citedComment==null">
                                 <div class="" style="padding: 5px 5px 5px 5px;">
-                                    <span style="color: #796161;">{{toformatDate(comment.createdTime)}}</span>
+                                    <span><span class="el-icon-guide"></span>{{index+1}}<sup
+                                            style="font-style: italic;">L</sup></span>
+                                    <span style="color: #796161;padding: 25px;">{{toformatDate(comment.createdTime)}}</span>
+                                    <span class="el-icon-paperclip float_right">{{comment.commentId}}<sup
+                                            style="font-style: italic;">C</sup></span>
                                 </div>
                                 <div class="media-left ">
                                     <a href="#">
@@ -128,22 +132,34 @@
 
                             </div>
                             <!--右媒体 引用了其他评论-->
-                            <div :id="comment.commentId" class="media invitationDetail_comment_right  img-rounded"
+                            <div :id="index" class="media invitationDetail_comment_right  img-rounded"
                                  v-if="comment.citedComment!=null">
-                                <div class="text-right" style="padding: 5px 5px 5px 5px;"><span style="color: #796161">{{toformatDate(invitationDetail.gmtCreated)}}</span>
+                                <div class="text-right" style="padding: 5px 5px 5px 5px;">
+                                    <span class="el-icon-paperclip float_left">{{comment.commentId}}<sup
+                                            style="font-style: italic;">C</sup></span>
+                                    Reply：
+                                    <el-tooltip content="查看该评论" placement="top" effect="light">
+
+                                        <a :href="'#'+comment.citedComment.commentId" class="sh_a"><span
+                                                class="el-icon-paperclip"></span>{{comment.citedComment.commentId}}<sup
+                                                style="font-style: italic;">C</sup></a>
+
+                                    </el-tooltip>
+                                    <span style="color: #dacfa1;">@</span><a
+                                        :href="'#'+comment.citedComment.reviewer.userId" class="sh_a">{{comment.citedComment.reviewer.nickName}}</a>
+                                    <span style="color: #796161;padding: 25px;">{{toformatDate(comment.createdTime)}}</span>
+                                    <span><span class="el-icon-guide"></span>{{index+1}}<sup
+                                            style="font-style: italic;">L</sup></span>
                                 </div>
                                 <div class="media-body">
                                     <h4 class="media-heading text-right">
                                         <em><strong><span>{{comment.reviewer.nickName}}</span></strong></em></h4>
-                                    <p class="pull-right">
-                                    <div id="quote" class="shText_pre_wrap">
-                                        <a><span>@</span>{{comment.citedComment.reviewer.nickName}}</a>
-                                        <a><span>userID: </span>{{comment.citedComment.reviewer.userId}}</a><br/>
-
-                                        <span>“</span>{{comment.citedComment.commentContent}}<span>”</span>
-
+                                    <p class="">
+                                    <div id="quote" class="shText_pre_wrap" style="color: #e0ddd9;">
+                                        <span style="font-size: 50px;line-height: 0;">“</span>{{comment.citedComment.commentContent}}<span
+                                            class="quote_right">”</span>
                                     </div>
-                                    <div id="reply">
+                                    <div id="reply" style="margin-top: 10px;">
                                         <span>{{comment.commentContent}}</span>
                                     </div>
                                     </p>
@@ -156,7 +172,8 @@
                                     </a>
                                 </div>
                                 <div class="pull-right padding_bottom">
-                                    <el-button style="background: rgb(84, 178, 174);border: 1px solid #3F8985;" @click="openDrawer(comment)"
+                                    <el-button style="background: rgb(84, 178, 174);border: 1px solid #3F8985;"
+                                               @click="openDrawer(comment)"
                                                size="small"
                                                icon="el-icon-chat-line-round">回复
                                     </el-button>
@@ -286,7 +303,7 @@
                                          alt="头像">
                                 </a>
                             </div>
-                            <form method="post" >
+                            <form method="post">
                                 <input id="sendComment_InvitaionId" type="hidden" readonly="readonly" unselectable="on"
                                        name="invitationId"
                                        :value="invitationDetail.invitationId">
@@ -344,12 +361,12 @@
                     enable: false,
                     direction: 'btt',
                     //被回复的评论对象
-                    comment:{
+                    comment: {
                         commentId: '被回复者评论的id',
                         commentContent: '被回复的评论内容',
                         createdTime: '被回复者评论创建时间',
                         //被回复的评论者
-                        reviewer:{
+                        reviewer: {
                             userId: '被回复者的id',
                             avatarImage: '被回复者的用户头像',
                             nickName: '被回复者的用户昵称',
@@ -441,7 +458,7 @@
                 },
                 //初始化抽屉的数据
                 getCitedData(comment) {
-                    this.drawer.comment=comment;
+                    this.drawer.comment = comment;
                 },
                 //保存未发送的评论和回复
                 saveUnsendContent: function () {

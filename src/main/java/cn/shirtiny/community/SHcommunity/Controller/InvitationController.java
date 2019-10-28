@@ -50,7 +50,7 @@ public class InvitationController {
             return new ShResultDTO<>(200,"提交成功了哦~");
         }else {
 //            return "newInvitation";
-            return new ShResultDTO<>(400,"标题或内容不能为空，并且字数不能大于20和400");
+            return new ShResultDTO<>(400,"标题和内容不能为空，并且字数不能大于30和2000");
         }
 
     }

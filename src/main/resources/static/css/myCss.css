@@ -4,6 +4,22 @@
     white-space: pre-wrap;
 }
 
+/*a标签 连接*/
+.sh_a{
+    text-decoration: none;
+    color: #9effff;
+    }
+
+/*备引用评论的右引号*/
+.quote_right{
+    font-size: 50px;
+    line-height: 0;
+    position: relative;
+    top: 25px;
+    left: 15px;
+}
+
+
 /*字体颜色*/
 .font_color_aliceBlue {
     color: aliceblue !important;

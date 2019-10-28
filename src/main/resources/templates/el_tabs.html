@@ -1,10 +1,45 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
 <div id="vue_el_tab" th:fragment="el_tab" class="img-rounded">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="用户管理" name="first">用户管理用户管理用户管理用户管理用户管理<br>
-            用户管理用户管理用户管理用户管理用户管理<br>
-            用户管理用户管理用户管理</el-tab-pane>
+    <el-tabs v-model="activeName" @tab-click="clickTab" type="border-card">
+
+        <el-tab-pane label="聊天室" name="first">
+            <el-row style="height: 400px">
+                <el-col :span="24">
+                    <div><p>{{retMessageArray}}</p></div>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="24">
+                    <el-input
+                            placeholder="请输入要发送的消息..."
+                            v-model="unsendChatMessage"
+                            clearable>
+                    </el-input>
+                    <p></p>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="24">
+                    <el-tooltip content="发送" placement="bottom" effect="light">
+                        <el-button icon="el-icon-s-promotion" @click="sendMessage" circle></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="登出" placement="bottom" effect="light">
+                        <el-button icon="el-icon-close" type="danger" class="float_right" @click="unsubscribeChat"
+                                   circle></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="登入" placement="bottom" effect="light">
+                        <el-button icon="el-icon-user-solid" type="success" class="float_right"
+                                   @click="subscribeChatRoom"
+                                   circle></el-button>
+                    </el-tooltip>
+                </el-col>
+            </el-row>
+        </el-tab-pane>
+
         <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
         <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
         <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
@@ -22,14 +57,99 @@
         el: "#vue_el_tab",
         data() {
             return {
-                activeName: 'second'
+                activeName: 'second',
+                //聊天室输入消息
+                unsendChatMessage: '',
+                retMessageArray: [],
+                retMessage: '',
+                //聊天室订阅的对象
+                chatSubscribe: null
             };
         },
         methods: {
-            handleClick(tab, event) {
-                console.log(tab, event);
+            //切换tab时触发
+            clickTab(tab, event) {
+                console.log("点击tab");
+                console.log(tab.index);
+                if (tab.index == 0) {
+                    //订阅聊天室
+                    this.subscribeChatRoom()
+                }
+            },
+            //订阅频道
+            subscribeChatRoom: function () {
+                //已订阅聊天室则不再订阅
+                if (this.chatSubscribe != null) {
+                    return;
+                }
+                //订阅 /room/chat 频道
+                this.chatSubscribe = stompClient.subscribe('/room/chat', retData => {
+                    console.log("频道: /room/chat，响应数据为：");
+                    console.log(retData);
+                    this.retMessage = retData.body;
+                    console.log(this.retMessage);
+                    this.retMessageArray.push(this.retMessage);
+                });
+                console.log("订阅频道，接收到的对象：");
+                console.log(this.chatSubscribe);
+                this.$notify.success({
+                    title: '√',
+                    message: '已登入聊天室'
+                });
+            },
+            //取消订阅聊天室频道
+            unsubscribeChat: function () {
+                this.chatSubscribe.unsubscribe();
+                //把聊天室订阅对象置为null
+                this.chatSubscribe = null;
+                this.$notify.info({
+                    title: '消息',
+                    message: '已退出聊天室'
+                });
+            },
+            //发送消息
+            sendMessage: function () {
+                stompClient.send("/app/sendToRoom", {}, this.unsendChatMessage);
+                //在已订阅时，才清空输入框
+                if (this.chatSubscribe != null) {
+                    //清空输入框
+                    this.unsendChatMessage = '';
+                }
+
+            },
+            //连接socket
+            connect: function () {
+                //建立socket连接
+                let socket = new SockJS('/websocket');
+                stompClient = Stomp.over(socket);
+                //连接socket
+                stompClient.connect({}, function (frame) {
+                    console.log("连接socket: /websocket");
+                    console.log(frame);
+                });
+            },
+            //断开socket连接
+            disconnect: function () {
+                if (stompClient !== null) {
+                    stompClient.disconnect(() => {
+                        console.log("断开socket连接");
+                    });
+                }
             }
+        },
+        //vue创建后
+        created: function () {
+            this.connect();
+            //订阅聊天室
+            // this.subscribeChatRoom()
+        },
+        //Vue销毁前  暂时不行
+        beforeDestroy: function () {
+            //断开socket连接
+            this.disconnect();
         }
+
+
     })
 </script>
 </html>
