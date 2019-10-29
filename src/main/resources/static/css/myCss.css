@@ -4,6 +4,15 @@
     white-space: pre-wrap;
 }
 
+/*强制在一行显示数据，溢出的元素显示点点点*/
+.shText_title{
+    display: block; /* 当前元素本身是inline的，因此需要设置成block模式 */
+    white-space: nowrap; /* 因为设置了block，所以需要设置nowrap来确保不换行 */
+    overflow: hidden; /* 超出隐藏结合width使用截取采用效果*/
+    text-overflow: ellipsis; /* 本功能的主要功臣，超出部分的剪裁方式 */
+    -o-text-overflow: ellipsis; /* 特定浏览器前缀 */
+}
+
 /*a标签 连接*/
 .sh_a{
     text-decoration: none;

@@ -156,7 +156,7 @@
                                         <em><strong><span>{{comment.reviewer.nickName}}</span></strong></em></h4>
                                     <p class="">
                                     <div id="quote" class="shText_pre_wrap" style="color: #e0ddd9;">
-                                        <span style="font-size: 50px;line-height: 0;">“</span>{{comment.citedComment.commentContent}}<span
+                                        <span style="font-size: 50px;line-height: 0;">“</span>{{subCommentQuote(comment.citedComment.commentContent,160,4)}}<span
                                             class="quote_right">”</span>
                                     </div>
                                     <div id="reply" style="margin-top: 10px;">
@@ -220,7 +220,8 @@
                                                         style="align-content: center">
                                                     <span style="color: #796161;">{{toformatDate(drawer.comment.createdTime)}}</span>
                                                     <blockquote>
-                                                        <p>{{drawer.comment.commentContent}}</p>
+                                                        <p>
+                                                            {{subCommentQuote(drawer.comment.commentContent,224,null)}}</p>
                                                     </blockquote>
                                                 </el-col>
                                             </el-row>
@@ -327,12 +328,16 @@
                             </form>
                         </div>
                     </div>
+
+                </div>
+                <!--栅格右-->
+                <div class="col-xs-12  col-sm-4   hidden-xs hidden-sm" style="margin-top: 25px;">
+                    <div th:replace="el_tabs"></div>
                 </div>
 
             </div>
 
-            <!--栅格右-->
-            <!--                <div replace="row_right"></div>-->
+
 
         </div>
     </div>
@@ -400,6 +405,7 @@
                 console.log("拿到的帖子id为：" + this.invitationId);
                 //调用api，初始化数据
                 this.refreshData();
+
             },
             methods: {
                 //读取url，拿到要获得的帖子id
@@ -606,6 +612,39 @@
                         //发送完成后的反馈
                         this.resultNotify(res.data.code, res.data.message);
                     });
+                },
+                //限制帖子评论中，被引用的评论的显示长度和换行数，评论内容、要限制的最大长度、最大行数
+                subCommentQuote(commentContent, maxLength, maxN) {
+                    if (commentContent == null) {
+                        console.log("被引用的评论为空");
+                        return;
+                    }
+                    //字符串长度限制
+                    if (maxLength != null) {
+                        if (commentContent.length > Number(maxLength)) {
+                            //截取字符串长度
+                            commentContent = commentContent.substring(0, Number(maxLength)) + '...';
+                        }
+                    }
+                    //换行限制
+                    if (maxN != null) {
+                        let array = commentContent.split("\n");
+                        if (array.length > Number(maxN)) {
+                            //截取字符串换行
+                            array.length = Number(maxN) + 1;
+                            array[Number(maxN)] = '...';
+                            //遍历数组，把\n再放回去
+                            let tempStr='';
+                            for (let index in array) {
+                                if (Number(index) < Number(maxN)-1) {
+                                    array[index] = array[index] + "\n"
+                                }
+                                tempStr=tempStr+array[index];
+                            }
+                            commentContent = tempStr;
+                        }
+                    }
+                    return commentContent;
                 }
             }
         }

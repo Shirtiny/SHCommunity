@@ -93,7 +93,7 @@
                     <div class="media-body">
                         <a :href="'/shPub/invitationDetail/'+invitation.invitationId">
                             <h4 class="media-heading">
-                                <span>{{invitation.title}}</span>
+                                <span >{{invitation.title.substring(0,20)}}</span><span v-if="invitation.title.length>20">...</span>
                                 <span class="float_right">
                                 <span class="el-icon-sugar "
                                       style="color: rgb(235, 60, 166);">{{invitation.candyNum}}</span>

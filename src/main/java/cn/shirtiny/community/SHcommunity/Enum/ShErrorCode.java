@@ -1,6 +1,8 @@
 package cn.shirtiny.community.SHcommunity.Enum;
 
 public enum ShErrorCode {
+
+    Github_Connect_Error(4503,"github连接失败"),
     NoLogin_Error(4001,"未登录，请先登录再进行此操作"),
 
     NotFound_Error(4004,"找不到对应资源"),

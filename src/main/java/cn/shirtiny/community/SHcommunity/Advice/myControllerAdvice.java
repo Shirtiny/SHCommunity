@@ -16,6 +16,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class myControllerAdvice {
 
 
+    @ExceptionHandler(GithubConnectedTimeOutException.class)
+    @ResponseBody
+    public ShResultDTO GithubConnectedTimeOutHandler(GithubConnectedTimeOutException e){
+        log.error("github连接超时,{}",e.getShErrorCode().getCode());
+        e.printStackTrace();
+        return new ShResultDTO(e.getShErrorCode().getCode(),e.getShErrorCode().getMessage());
+    }
+
     @ExceptionHandler(NoLoginException.class)
     @ResponseBody
     public ShResultDTO noLoginHandler(NoLoginException e){

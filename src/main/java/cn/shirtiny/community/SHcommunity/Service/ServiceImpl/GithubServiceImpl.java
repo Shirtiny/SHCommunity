@@ -2,6 +2,7 @@ package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
 import cn.shirtiny.community.SHcommunity.DTO.GithubOauthDTO;
 import cn.shirtiny.community.SHcommunity.DTO.GithubUserInfoDTO;
+import cn.shirtiny.community.SHcommunity.Exception.GithubConnectedTimeOutException;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IGithubService;
 import com.alibaba.fastjson.JSON;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 public class GithubServiceImpl implements IGithubService {
@@ -25,13 +27,12 @@ public class GithubServiceImpl implements IGithubService {
     private GithubOauthDTO githubOauthDTO;//保存所有github授权信息的对象
 
 
-
     @Override
     public String getAccessToken(String code, String state) throws IOException {
 
         OkHttpClient httpClient = new OkHttpClient();
         //json MediaType
-        final MediaType MediaType_JSON= MediaType.get("application/json; charset=utf-8");
+        final MediaType MediaType_JSON = MediaType.get("application/json; charset=utf-8");
         //需要实体类对象 然后转成json字符串
         githubOauthDTO.setCode(code);
         githubOauthDTO.setState(state);
@@ -40,30 +41,40 @@ public class GithubServiceImpl implements IGithubService {
         //创建请求体
         RequestBody requestBody = RequestBody.create(MediaType_JSON, json);
         //建立请求，post方式调用
-        Request request= new Request.Builder().url(url_AccessToken).post(requestBody).build();
+        Request request = new Request.Builder().url(url_AccessToken).post(requestBody).build();
         //执行请求
         Response response = httpClient.newCall(request).execute();
         //拿到响应结果
         String tokenAndType = response.body().string();
-        System.out.println("得到通关令牌和令牌类型："+tokenAndType);
+        System.out.println("得到通关令牌和令牌类型：" + tokenAndType);
         return tokenAndType;
     }
 
     @Override
-    public String getUserInfoJson(String access_token) throws IOException {
+    public String getUserInfoJson(String access_token) {
         //根据github回调code取用户信息，需要post请求
         OkHttpClient httpClient = new OkHttpClient();
-        Request request = new Request.Builder().url(url_User+"?access_token="+access_token).build();
-        Response response = httpClient.newCall(request).execute();
+        Request request = new Request.Builder().url(url_User + "?access_token=" + access_token).build();
+        Response response = null;
+        try {
+            response = httpClient.newCall(request).execute();
+        } catch (Exception e) {
+            throw new GithubConnectedTimeOutException(e);
+        }
         //得到响应的json字符串
-        String userInfoJson = response.body().string();
-        System.out.println("用令牌调用github的user_api，得到github用户信息："+userInfoJson);
+        String userInfoJson = null;
+        try {
+            userInfoJson = Objects.requireNonNull(response.body()).string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("用令牌调用github的user_api，得到github用户信息：" + userInfoJson);
         return userInfoJson;
     }
 
     @Override
     public User localisationGithubUser(GithubUserInfoDTO githubUser) {
-        User user=new User();
+        User user = new User();
         //存到本地数据库的user对象
         user.setNickName(githubUser.getLogin());
         user.setEmail(githubUser.getEmail());

@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -32,6 +33,11 @@ public class InvitationService implements IinvitationService {
     @Autowired
     private SectionMapper sectionMapper;
 
+    //帖子长度限制
+    @Value("${INVITATION_TITLE_MAX_LENGTH}")
+    private Integer INVITATION_TITLE_MAX_LENGTH;
+    @Value("${INVITATION_CONTENT_MAX_LENGTH}")
+    private Integer INVITATION_CONTENT_MAX_LENGTH;
 
     //增加帖子
     @Override
@@ -42,7 +48,7 @@ public class InvitationService implements IinvitationService {
         boolean titleIsEmpty = StringUtils.isEmpty(invitation.getTitle());
         boolean contentIsEmpty = StringUtils.isEmpty(invitation.getContent());
         //判断标题或内容是不是空、标题或内容长度是否超限
-        if (titleIsEmpty || contentIsEmpty || invitation.getTitle().length() > 30 || invitation.getContent().length() > 2000) {
+        if (titleIsEmpty || contentIsEmpty || invitation.getTitle().length() > INVITATION_TITLE_MAX_LENGTH || invitation.getContent().length() > INVITATION_CONTENT_MAX_LENGTH) {
             return false;
         } else {
             invitation.setGmtCreated(System.currentTimeMillis());
