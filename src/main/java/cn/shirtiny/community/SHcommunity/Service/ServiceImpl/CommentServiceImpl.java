@@ -29,7 +29,7 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public boolean addOneComment(Comment comment) {
         //校验评论是否为null或是否全为空格
-        if (comment == null || comment.getCommentContent().trim().isEmpty()) {
+        if (comment == null || comment.getCommentContent() == null || comment.getCommentContent().trim().isEmpty()) {
             return false;
         }
         //校验评论内容长度是否超限

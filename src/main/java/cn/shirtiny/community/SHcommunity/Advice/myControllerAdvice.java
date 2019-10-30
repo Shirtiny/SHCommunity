@@ -4,11 +4,14 @@ import cn.shirtiny.community.SHcommunity.DTO.Md_ImageUpResultDTO;
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
 import cn.shirtiny.community.SHcommunity.Exception.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.logging.SocketHandler;
 
 @ControllerAdvice//结合@ExceptionHandler用于全局异常的处理
 //注入日志
@@ -52,6 +55,7 @@ public class myControllerAdvice {
         //返回图片上传的失败结果，以及错误信息
         return new Md_ImageUpResultDTO(0,e.getMessage(),null);
     }
+
 
 
 //    @ExceptionHandler(Exception.class)//捕获所有异常
