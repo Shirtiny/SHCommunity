@@ -1,2 +1,5 @@
-alter table USER alter column ID rename to "user_id";
-alter table INVITATION alter column ID rename to "invitation_id";
+alter table user change id user_id bigint auto_increment;
+
+
+alter table invitation change id invitation_id bigint auto_increment comment '帖子主键id';
+

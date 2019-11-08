@@ -16,6 +16,9 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <mysql_url>jdbc:mysql://localhost:3306/shcommunity?charset=utf8&amp;serverTimezone=GMT</mysql_url>
+        <mysql_username>root</mysql_username>
+        <mysql_password>123456</mysql_password>
     </properties>
 
     <dependencies>
@@ -152,17 +155,29 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>6.0.2</version>
                 <configuration>
-                    <url>jdbc:h2:~/H2database</url>
-                    <user>root</user>
-                    <password>123456</password>
+                    <url>${mysql_url}</url>
+                    <user>${mysql_username}</user>
+                    <password>${mysql_password}</password>
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>com.h2database</groupId>
-                        <artifactId>h2</artifactId>
-                        <version>1.4.197</version>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>8.0.17</version>
                     </dependency>
                 </dependencies>
+<!--                <configuration>-->
+<!--                    <url>jdbc:h2:~/H2database</url>-->
+<!--                    <user>root</user>-->
+<!--                    <password>123456</password>-->
+<!--                </configuration>-->
+<!--                <dependencies>-->
+<!--                    <dependency>-->
+<!--                        <groupId>com.h2database</groupId>-->
+<!--                        <artifactId>h2</artifactId>-->
+<!--                        <version>1.4.197</version>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
             </plugin>
         </plugins>
     </build>

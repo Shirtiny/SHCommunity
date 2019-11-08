@@ -1,1 +1,2 @@
-alter table INVITATION alter column CONTENT VARCHAR(2000) not null;
+alter table invitation modify content varchar(2000) not null comment '内容';
+

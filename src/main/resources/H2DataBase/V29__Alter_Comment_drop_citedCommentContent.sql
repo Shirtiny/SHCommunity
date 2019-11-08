@@ -1,0 +1,1 @@
+alter table COMMENT drop column CITED_COMMENT_CONTENT;

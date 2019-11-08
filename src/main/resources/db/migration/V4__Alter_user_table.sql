@@ -1,1 +1,1 @@
-alter table USER alter column EMAIL set null;
+alter table user modify email varchar(200) null;

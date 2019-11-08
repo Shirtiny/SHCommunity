@@ -15,8 +15,9 @@
                             max-height="500"
                             id="messageTable"
                     >
+                        <!--暂时只支持游客-->
                         <el-table-column
-                                label="消息记录 暂时只支持游客"
+                                label="消息记录 "
                                 min-width="280"
                                 show-overflow-tooltip>
 
@@ -157,7 +158,7 @@
                 },
                 //取消订阅聊天室频道
                 unsubscribeChat: function () {
-                    if (this.chatSubscribe==null){
+                    if (this.chatSubscribe == null) {
                         this.$notify.info({
                             title: '消息',
                             message: '已经退出聊天室了'

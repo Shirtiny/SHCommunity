@@ -1,1 +1,1 @@
-alter table COMMENT drop column CITED_COMMENT_CONTENT;
+alter table comment drop column cited_comment_content;

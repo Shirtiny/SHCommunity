@@ -1,5 +1,5 @@
 alter table USER
-	add token varchar2(500);
+	add token varchar(500);
 
 create unique index USER_token_uindex
 	on USER (token);

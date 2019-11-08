@@ -1,5 +1,4 @@
-alter table SECTION
-	add section_rate int default 0;
+alter table section
+	add section_rate int default 0 comment '版块评分';
 
-comment on column SECTION.section_rate is '版块评分';
 

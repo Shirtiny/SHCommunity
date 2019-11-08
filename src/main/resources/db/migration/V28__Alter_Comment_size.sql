@@ -1,1 +1,1 @@
-alter table COMMENT alter column CITED_COMMENT_CONTENT VARCHAR(512);
+alter table comment modify cited_comment_content varchar(512) comment '被引用的评论内容';

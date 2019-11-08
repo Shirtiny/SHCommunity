@@ -1,5 +1,5 @@
-alter table COMMENT
-	add CITED_COMMENT_ID bigint;
+alter table comment
+	add cited_comment_id bigint comment '被引用的评论id';
 
-comment on column COMMENT.CITED_COMMENT_ID is '被引用的评论id';
+
 

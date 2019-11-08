@@ -1,26 +1,22 @@
-create table USER
+create table user
 (
-    ID           BIGINT auto_increment,
-    NICKNAME     VARCHAR(100) not null,
-    PASSWORD     VARCHAR(100),
-    EMAIL        VARCHAR(200) not null
-        constraint USER_EMAIL_UINDEX
-            unique,
-    AVATARIMAGE  VARCHAR(500),
-    GITHUB_ID    VARCHAR(500)
-        constraint USER_GITHUB_ID_UINDEX
-            unique,
-    GMT_CREATE   BIGINT       not null,
-    GMT_MODIFIED BIGINT       not null,
-    constraint USER_PK
-        primary key (ID)
-);
+    id           bigint auto_increment,
+    nickname     varchar(100) not null,
+    password     varchar(100),
+    email        varchar(200) not null,
+    avatarimage  varchar(500),
+    github_id    varchar(500),
+    gmt_create   bigint       not null comment '创建时间戳',
+    gmt_modified bigint       not null comment '变更时间戳',
+    constraint user_pk
+        primary key (id)
+) comment '论坛的用户表';
 
-comment on table USER is '论坛的用户表';
+create unique index user_id_uindex
+    on user (id);
 
-comment on column USER.GMT_CREATE is '创建时间戳';
+create unique index user_email_uindex
+    on user (email);
 
-comment on column USER.GMT_MODIFIED is '变更时间戳';
-
-create unique index USER_ID_UINDEX
-    on USER (ID);
+create unique index user_github_id_uindex
+    on user (github_id);

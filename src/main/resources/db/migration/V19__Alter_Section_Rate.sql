@@ -1,2 +1,2 @@
-alter table SECTION alter column SECTION_RATE decimal default 0;
+alter table section modify section_rate decimal default 0 comment '版块评分';
 

@@ -219,7 +219,7 @@
             axios.get('/shApi/listSections').then((res) => {
 
                 this.sections = res.data.data.sections;
-                console.log();
+                console.log(this.sections);
                 for (let index in this.sections) {
                     this.activeIds.push(Number(index));
                 }

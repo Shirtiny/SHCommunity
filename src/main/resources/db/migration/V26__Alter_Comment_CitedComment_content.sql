@@ -1,5 +1,4 @@
-alter table COMMENT
-	add CITED_COMMENT_CONTENT VARCHAR(256);
+alter table comment
+	add cited_comment_content varchar(256) comment '被引用的评论的内容';
 
-comment on column COMMENT.CITED_COMMENT_CONTENT is '被引用的评论的内容';
 
