@@ -51,6 +51,6 @@ public interface InvitationMapper extends BaseMapper<Invitation> {
 
     //查询出指定版块的一个最新创建的帖子（该帖应有最大的帖子id），包含创建者、标题等
     @Select("select * from user u join invitation i on u.user_id = i.author_id " +
-            "where i.invitation_id = (select max(invitation_id) from invitation where section_id = #{sectionId})")
+            "where i.gmt_modified = (select max(gmt_modified) from invitation where section_id = #{sectionId})")
     InvitationDTO selectOneLatestDto(@Param("sectionId") long sectionId);
 }

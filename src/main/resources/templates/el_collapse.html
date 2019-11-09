@@ -43,29 +43,37 @@
                     <!-- 中部-->
                     <el-col :span="6" class="clumn_section_block">
                         <div>
-                            <p style="line-height: 13px;color: #a7aab0"><span class="el-icon-collection-tag" style="font-size: 18px"></span><span>标题</span></p>
-                            <p style="line-height: 13px;color: #a7aab0"><span class="el-icon-user " style="font-size: 18px"></span><span>作者</span></p>
-                            <p style="color: #a7aab0"><span class="el-icon-date" style="font-size: 18px"></span><span>日期</span></p>
+                            <p style="line-height: 13px;color: #a7aab0"><span class="el-icon-collection-tag"
+                                                                              style="font-size: 18px"></span><span>标题</span>
+                            </p>
+                            <p style="line-height: 13px;color: #a7aab0"><span class="el-icon-user "
+                                                                              style="font-size: 18px"></span><span>作者</span>
+                            </p>
+                            <p style="color: #a7aab0"><span class="el-icon-date"
+                                                            style="font-size: 18px"></span><span>日期</span></p>
                         </div>
                     </el-col>
 
                     <!--后部-->
                     <el-col :span="6" class="clumn_section_block">
-                        <p class="font_invitation_title"><a
-                                :href="'/shPub/invitationDetail/'+section.latestInvitation.invitationId">【{{section.latestInvitation.title}}】</a>
-                        </p>
-                        <p class="font_invitation_authorP"><span
-                                class="label label-info font_invitation_author">Author</span>：<a href="#">{{section.latestInvitation.nickName}}</a>
-                        </p>
-                        <p>
-                            <span class="label label-default font_invitation_createdTime">{{formatDate(section.latestInvitation.gmtCreated)}}</span>
-                        </p>
+                        <div v-if="section.latestInvitation!=null">
+                            <p class="font_invitation_title"><a
+                                    :href="'/shPub/invitationDetail/'+section.latestInvitation.invitationId">【{{section.latestInvitation.title}}】</a>
+                            </p>
+                            <p class="font_invitation_authorP"><span
+                                    class="label label-info font_invitation_author">Author</span>：<a href="#">{{section.latestInvitation.nickName}}</a>
+                            </p>
+                            <p>
+                                <span class="label label-default font_invitation_createdTime">{{formatDate(section.latestInvitation.gmtCreated)}}</span>
+                            </p>
+                        </div>
                     </el-col>
 
                     <!--尾部-->
                     <el-col :span="6" class="clumn_section_block">
-                        <div><span class="el-icon-sugar" style="color: rgb(235, 60, 166);font-size: 16px;">{{section.sectionTotalCandy}}</span></div>
-                        <div>
+                        <div><span class="el-icon-sugar" style="color: rgb(235, 60, 166);font-size: 16px;">{{section.sectionTotalCandy}}</span>
+                        </div>
+                        <div v-if="section.latestInvitation!=null">
                             <span class="font_invitation_leftNum">{{section.latestInvitation.replyNum}}</span>
                             <span style="font-size: 50px;font-style: italic;line-height: 75px;color: #999999">/</span>
                             <span style="font-size: 16px;color: #999999">{{section.latestInvitation.views}}</span>
@@ -152,7 +160,7 @@
         font-size: 84%;
     }
 
-    .font_invitation_leftNum{
+    .font_invitation_leftNum {
         position: relative;
         top: -23px;
         right: -3px;
