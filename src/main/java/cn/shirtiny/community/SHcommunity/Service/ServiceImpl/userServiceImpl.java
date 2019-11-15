@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
+import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Mapper.UserMapper;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
@@ -41,5 +42,10 @@ public class userServiceImpl implements IuserService {
         map.put("github_id",githubId);
         //返回查找结果
         return userMapper.selectByMap(map);
+    }
+
+    @Override
+    public User selectOneUserByUid(Long uid) {
+        return userMapper.selectUserByid(uid);
     }
 }

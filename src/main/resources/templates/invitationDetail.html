@@ -84,7 +84,8 @@
                             <img class=" img-circle" :src="invitationDetail.avatarImage" alt="image">
                         </div>
                         <blockquote class="float_right blockquote-reverse user_quote img-rounded">
-                            <p>{{invitationDetail.description}}</p>
+                            <p v-if="invitationDetail.description==null || invitationDetail.description==''">大家好，这是默认签名</p>
+                            <p v-else>{{invitationDetail.description}}</p>
                             <footer>SH社区@ <cite title="Source Title"><span>{{invitationDetail.nickName}}</span></cite>
                             </footer>
                         </blockquote>

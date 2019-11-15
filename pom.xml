@@ -63,9 +63,33 @@
             <version>1.4.199</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- mysql连接驱动-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!--连接池-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.0.20</version>
+        </dependency>
+        <!--shiro-->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <!-- thymeleaf对shiro的扩展坐标 -->
+        <dependency>
+            <groupId>com.github.theborakompanioni</groupId>
+            <artifactId>thymeleaf-extras-shiro</artifactId>
+            <version>2.0.0</version>
         </dependency>
         <!--     mybatis   -->
         <!--        <dependency>-->
@@ -166,18 +190,18 @@
                         <version>8.0.17</version>
                     </dependency>
                 </dependencies>
-<!--                <configuration>-->
-<!--                    <url>jdbc:h2:~/H2database</url>-->
-<!--                    <user>root</user>-->
-<!--                    <password>123456</password>-->
-<!--                </configuration>-->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>com.h2database</groupId>-->
-<!--                        <artifactId>h2</artifactId>-->
-<!--                        <version>1.4.197</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
+                <!--                <configuration>-->
+                <!--                    <url>jdbc:h2:~/H2database</url>-->
+                <!--                    <user>root</user>-->
+                <!--                    <password>123456</password>-->
+                <!--                </configuration>-->
+                <!--                <dependencies>-->
+                <!--                    <dependency>-->
+                <!--                        <groupId>com.h2database</groupId>-->
+                <!--                        <artifactId>h2</artifactId>-->
+                <!--                        <version>1.4.197</version>-->
+                <!--                    </dependency>-->
+                <!--                </dependencies>-->
             </plugin>
         </plugins>
     </build>

@@ -11,6 +11,6 @@ import org.springframework.stereotype.Component;
 
 public interface UserMapper extends BaseMapper<User> {
 
-    @Select("select user_id,nick_name,avatar_image,description,gmt_create from user where user_id=#{userId} ")
-    UserDTO selectDTObyid(long userId);
+    @Select("select * from user where user_id=#{userId} ")
+    User selectUserByid(long userId);
 }
