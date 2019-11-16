@@ -3,6 +3,8 @@ package cn.shirtiny.community.SHcommunity.Encryption;
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
@@ -31,17 +33,28 @@ public class RSAKey {
     public RSAKey(byte[] publicKeyBytes, byte[] privateKeyBytes) throws GeneralSecurityException {
         //RSA密钥工厂
         KeyFactory rsaFC = KeyFactory.getInstance("RSA");
-        //恢复publicKey
+        //恢复publicKey 需要X509EncodedKeySpec格式
         X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
         this.publicKey = rsaFC.generatePublic(publicKeySpec);
-        //恢复privateKet
-        X509EncodedKeySpec privateKeySpec = new X509EncodedKeySpec(privateKeyBytes);
+        //恢复privateKet 需要PKCS8EncodedKeySpec格式
+        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
         this.privateKey = rsaFC.generatePrivate(privateKeySpec);
     }
 
+    //从已有的Base64字符串中回复密钥
+    public RSAKey(String publicKeyBase64Str,String privateKeyBase64Str) throws GeneralSecurityException {
+        this(Base64.getDecoder().decode(publicKeyBase64Str),Base64.getDecoder().decode(privateKeyBase64Str));
+    }
 
+
+    //获得公钥对象
     public PublicKey getPublicKey() {
         return publicKey;
+    }
+
+    //获得私钥对象
+    public PrivateKey getPrivateKey() {
+        return privateKey;
     }
 
     //得到公钥字符数组
@@ -49,14 +62,21 @@ public class RSAKey {
         return this.publicKey.getEncoded();
     }
 
-    public PrivateKey getPrivateKey() {
-        return privateKey;
-    }
-
     //得到私钥字符数组
     public byte[] getPrivateKeyBytes() {
         return this.privateKey.getEncoded();
     }
+
+    //得到公钥Base64编码的字符串
+    public String getPublicKeyBase64Str(){
+        return Base64.getEncoder().encodeToString(getPublicKeyBytes());
+    }
+
+    //得到私钥Base64编码的字符串
+    public String getPrivateKeyBase64Str(){
+        return Base64.getEncoder().encodeToString(getPrivateKeyBytes());
+    }
+
 
     //加密
     public byte[] encript(byte[] str,Key key) throws GeneralSecurityException{

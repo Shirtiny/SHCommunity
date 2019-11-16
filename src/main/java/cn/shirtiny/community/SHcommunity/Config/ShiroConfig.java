@@ -1,9 +1,13 @@
 package cn.shirtiny.community.SHcommunity.Config;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import cn.shirtiny.community.SHcommunity.Shiro.ShFilter;
 import cn.shirtiny.community.SHcommunity.Shiro.ShPwdMatcher;
 import cn.shirtiny.community.SHcommunity.Shiro.ShRealm;
+import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
+import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -12,7 +16,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Configuration
 public class ShiroConfig {
@@ -38,10 +45,20 @@ public class ShiroConfig {
         //管理器，接口的实现使用默认web管理器
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(shRealm);
+        /*
+         * 关闭shiro自带的session，详情见文档
+         * http://shiro.apache.org/session-management.html#SessionManagement-StatelessApplications%28Sessionless%29
+
+        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
+        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
+        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
+        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
+        securityManager.setSubjectDAO(subjectDAO);
+        */
         return securityManager;
     }
 
-    //过滤器 实例名为shiroFilter 注入上面的管理器securityManager实例
+    //过滤器工厂 实例名为shiroFilter 注入上面的管理器securityManager实例
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean generateFilterFactory(@Qualifier("securityManager") SecurityManager securityManager) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
@@ -54,6 +71,11 @@ public class ShiroConfig {
         factoryBean.setSuccessUrl("/");
         //设置未授权状态跳转的地址
         factoryBean.setUnauthorizedUrl("/403");
+
+        // 添加自己的过滤器并且取名为ShFilter
+        Map<String, Filter> filterMap = new HashMap<>();
+        filterMap.put("shFilter", new ShFilter());
+        factoryBean.setFilters(filterMap);
 
         LinkedHashMap<String, String> filterChainMap = new LinkedHashMap<>();
         /*DefaultFilter:
@@ -83,13 +105,22 @@ public class ShiroConfig {
     //使用代理
     @Bean
     public DefaultAdvisorAutoProxyCreator useProxy() {
+        // 强制使用cglib，防止重复代理和可能引起代理出错的问题
+        // https://zhuanlan.zhihu.com/p/29161098
         DefaultAdvisorAutoProxyCreator proxyCreator = new DefaultAdvisorAutoProxyCreator();
         proxyCreator.setProxyTargetClass(true);
         return proxyCreator;
     }
 
 
+//    @Bean
+//    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+//        return new LifecycleBeanPostProcessor();
+//    }
+
+
     //需要在shiro配置文件中增加一个方法，用于thymeleaf和shiro标签配合使用
+    @Bean
     public ShiroDialect getShiroDialect() {
         return new ShiroDialect();
     }
