@@ -77,6 +77,7 @@ public class GithubServiceImpl implements IGithubService {
         User user = new User();
         //存到本地数据库的user对象
         user.setNickName(githubUser.getLogin());
+        user.setUserName(user.getNickName());
         user.setEmail(githubUser.getEmail());
         user.setGithubId(githubUser.getId());
         user.setAvatarImage(githubUser.getAvatar_url());

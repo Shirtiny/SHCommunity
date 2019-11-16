@@ -56,7 +56,11 @@ public class myControllerAdvice {
         return new Md_ImageUpResultDTO(0,e.getMessage(),null);
     }
 
-
+    @ExceptionHandler(UserAlreadyExsitException.class)
+    @ResponseBody
+    public ShResultDTO userAlreadExsitErr(UserAlreadyExsitException e){
+        return new ShResultDTO(5004,e.getMessage());
+    }
 
 //    @ExceptionHandler(Exception.class)//捕获所有异常
 //    @ResponseStatus

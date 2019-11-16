@@ -46,8 +46,9 @@ public class ShRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
         String username = token.getUsername();
-        System.out.println("用户输入的用户名："+username+"；测试状态，固定查询0号id用户");
-        User user = userService.selectOneUserByUid(0L);
+        System.out.println("用户输入的用户名："+username);
+        User user = userService.selectOneUserByUserName(username);
+        System.out.println("查询到的用户："+user);
         //当前的realm名 this.getClass().getName()
         return new SimpleAuthenticationInfo(user,user.getPassWord(),this.getClass().getName());
     }

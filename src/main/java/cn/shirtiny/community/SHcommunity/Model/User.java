@@ -14,6 +14,7 @@ public class User {//论坛用户
     @TableId(value = "user_id",type = IdType.AUTO)
     private Long userId;//用户唯一主键，自增长
     private String nickName;//昵称
+    private String userName;//用户名
     private String passWord;//密码
     private String email;//邮箱
     private String avatarImage;//头像

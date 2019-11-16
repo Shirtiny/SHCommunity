@@ -10,4 +10,5 @@ public interface IuserService {
     void addUser(User user);
     List<User> selectOneUserByGithubId(Long githubId);
     User selectOneUserByUid(Long uid);
+    User selectOneUserByUserName(String userName);
 }

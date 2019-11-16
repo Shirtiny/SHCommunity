@@ -10,6 +10,8 @@ public class UserDTO {
     long gmtCreate;
     //昵称
     private String nickName;
+    //用户名
+    private String userName;
     //头像
     private String avatarImage;
     //签名、描述、自我介绍

@@ -3,7 +3,6 @@ package cn.shirtiny.community.SHcommunity.Encryption;
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -79,7 +78,7 @@ public class RSAKey {
 
 
     //加密
-    public byte[] encript(byte[] str,Key key) throws GeneralSecurityException{
+    public byte[] encrypt(byte[] str, Key key) throws GeneralSecurityException{
         Cipher rsaCipher = Cipher.getInstance("RSA");
         //初始化 加密模式
         rsaCipher.init(Cipher.ENCRYPT_MODE, key);
@@ -87,7 +86,7 @@ public class RSAKey {
     }
 
     //解密
-    public byte[] decript(byte[] str,Key key) throws GeneralSecurityException{
+    public byte[] decrypt(byte[] str, Key key) throws GeneralSecurityException{
         Cipher rsaCipher = Cipher.getInstance("RSA");
         //初始化 解密模式
         rsaCipher.init(Cipher.DECRYPT_MODE, key);
@@ -100,19 +99,19 @@ public class RSAKey {
         String message = "公钥加密的消息";
         //公钥加密私钥解
         //公钥加密
-        byte[] encriptedMessage = rsaKey.encript(message.getBytes(), rsaKey.getPublicKey());
+        byte[] encriptedMessage = rsaKey.encrypt(message.getBytes(), rsaKey.getPublicKey());
         System.out.println(new String(encriptedMessage, StandardCharsets.UTF_8));
         //私钥解密
-        byte[] decriptedMessage = rsaKey.decript(encriptedMessage, rsaKey.getPrivateKey());
+        byte[] decriptedMessage = rsaKey.decrypt(encriptedMessage, rsaKey.getPrivateKey());
         System.out.println(new String(decriptedMessage, StandardCharsets.UTF_8));
 
         //私钥加密公钥解
         message = "私钥加密的消息";
         //私钥加密
-        encriptedMessage = rsaKey.encript(message.getBytes(),rsaKey.getPrivateKey());
+        encriptedMessage = rsaKey.encrypt(message.getBytes(),rsaKey.getPrivateKey());
         System.out.println(new String(encriptedMessage, StandardCharsets.UTF_8));
         //公钥解密
-        decriptedMessage = rsaKey.decript(encriptedMessage,rsaKey.getPublicKey());
+        decriptedMessage = rsaKey.decrypt(encriptedMessage,rsaKey.getPublicKey());
         System.out.println(new String(decriptedMessage, StandardCharsets.UTF_8));
     }
 }

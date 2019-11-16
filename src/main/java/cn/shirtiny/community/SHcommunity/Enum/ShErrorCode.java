@@ -4,6 +4,7 @@ public enum ShErrorCode {
 
     Github_Connect_Error(4503,"github连接失败"),
     NoLogin_Error(4001,"未登录，请先登录再进行此操作"),
+    User_Already_Exsit_Error(5004,"用户已存在"),
 
     NotFound_Error(4004,"找不到对应资源"),
     BannerShape_Args_Error(4501,"bannerShape参数错误，必须是lg/md/sm/cr之一"),
