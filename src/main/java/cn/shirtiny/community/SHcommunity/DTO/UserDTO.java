@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.DTO;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 @Data
@@ -16,4 +17,5 @@ public class UserDTO {
     private String avatarImage;
     //签名、描述、自我介绍
     private String description;
+    private String createdTime;//创建日期字符串
 }

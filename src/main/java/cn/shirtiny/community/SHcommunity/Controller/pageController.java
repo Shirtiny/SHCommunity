@@ -6,6 +6,7 @@ import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
 import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Exception.NotFoundException;
 import cn.shirtiny.community.SHcommunity.Model.User;
+import cn.shirtiny.community.SHcommunity.Service.IcookieService;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
 import cn.shirtiny.community.SHcommunity.Service.IjsHelperService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -28,10 +29,10 @@ public class pageController {
 
     @Autowired
     private IinvitationService invitationService;
-
     @Autowired
     private IjsHelperService jsHelperService;
-
+    @Autowired
+    private IcookieService cookieService;
 
 
     /**面包屑导航 辅助
@@ -75,10 +76,7 @@ public class pageController {
     @GetMapping("/login")//跳转到登录界面
     public String toSignUpPage(@RequestParam(value = "shRedirect", defaultValue = "/") String shRedirect, HttpServletResponse response) {
         //设置回调cookie
-        Cookie redirectCookie = new Cookie("shRedirectCookie", shRedirect);
-        //位于本站根目录下
-        redirectCookie.setPath("/");
-        response.addCookie(redirectCookie);
+        cookieService.addOneCookie(response,"shRedirectCookie",shRedirect,"/",-1);
         return "login";
     }
 

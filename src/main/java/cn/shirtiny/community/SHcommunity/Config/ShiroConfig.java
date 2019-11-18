@@ -1,6 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Config;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import cn.shirtiny.community.SHcommunity.Shiro.NoSessionWebSubjectFactory;
 import cn.shirtiny.community.SHcommunity.Shiro.ShFilter;
 import cn.shirtiny.community.SHcommunity.Shiro.ShPwdMatcher;
 import cn.shirtiny.community.SHcommunity.Shiro.ShRealm;
@@ -39,22 +40,30 @@ public class ShiroConfig {
         return shRealm;
     }
 
+    //不启用session的自定subject工厂
+    @Bean("noSessionWebSubjectFactory")
+    public NoSessionWebSubjectFactory generateNoSessionWebSubjectFactory(){
+        return new NoSessionWebSubjectFactory();
+    }
+
     //管理器 实例名为securityManager 注入上面的认证授权器shRealm实例
     @Bean("securityManager")
-    public SecurityManager generateSecurityManager(@Qualifier("shRealm") ShRealm shRealm) {
+    public SecurityManager generateSecurityManager(@Qualifier("shRealm") ShRealm shRealm
+    ,@Qualifier("noSessionWebSubjectFactory") NoSessionWebSubjectFactory noSessionWebSubjectFactory) {
         //管理器，接口的实现使用默认web管理器
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(shRealm);
         /*
          * 关闭shiro自带的session，详情见文档
          * http://shiro.apache.org/session-management.html#SessionManagement-StatelessApplications%28Sessionless%29
-
+         */
         DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
         DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
         defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
         securityManager.setSubjectDAO(subjectDAO);
-        */
+        //使用自定的无session工厂
+        securityManager.setSubjectFactory(noSessionWebSubjectFactory);
         return securityManager;
     }
 
@@ -64,14 +73,12 @@ public class ShiroConfig {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
         //设置管理器
         factoryBean.setSecurityManager(securityManager);
-
         //设置登录地址
         factoryBean.setLoginUrl("/loginPage");
         //设置登录成功后的跳转地址
         factoryBean.setSuccessUrl("/");
         //设置未授权状态跳转的地址
         factoryBean.setUnauthorizedUrl("/403");
-
         // 添加自己的过滤器并且取名为ShFilter
         Map<String, Filter> filterMap = new HashMap<>();
         filterMap.put("shFilter", new ShFilter());
@@ -85,12 +92,13 @@ public class ShiroConfig {
         perms：该资源必须得到资源权限才可以访问
         role：该资源必须得到角色权限才可以访问
         */
-        filterChainMap.put("/index", "authc");
-        filterChainMap.put("/loginPage", "anon");
+        filterChainMap.put("/login", "anon");
+        filterChainMap.put("/index", "shFilter");
         //设置拦截规则
         factoryBean.setFilterChainDefinitionMap(filterChainMap);
         return factoryBean;
     }
+
 
     //处理shiro与spring的关联
 

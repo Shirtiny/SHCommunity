@@ -280,9 +280,8 @@
                             var redirect = window.location.pathname;
                             //1s后调转到登录页面，带上回调地址
                             setTimeout(function () {
-                                window.location.href = "/loginPage?shRedirect=" + redirect;
+                                window.location.href = "/login?shRedirect=" + redirect;
                             }, 1000);
-
                         }).catch(() => {
                             this.$message({
                                 type: 'info',

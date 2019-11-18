@@ -8,6 +8,7 @@ import cn.shirtiny.community.SHcommunity.Model.Invitation;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IinvitationService;
 import cn.shirtiny.community.SHcommunity.Service.IjsHelperService;
+import cn.shirtiny.community.SHcommunity.Service.IjwtService;
 import cn.shirtiny.community.SHcommunity.Service.ServiceImpl.InvitationService;
 import cn.shirtiny.community.SHcommunity.Utils.ShArrayQueue;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -36,6 +37,8 @@ public class InvitationController {
     @Autowired
     private IjsHelperService jsHelperService;
 
+    @Autowired
+    private IjwtService jwtService;
 
     @PostMapping(value = "/createInvitation")
     @ResponseBody
@@ -100,8 +103,10 @@ public class InvitationController {
         }
         Map<String,Object> map =new HashMap<>();
         map.put("invitationDetail",invitationDetail);
-        Object user = request.getSession().getAttribute("user");
-        map.put("user",user);
+        Map<String, Object> calims = jwtService.parseJwtByRequest(request);
+        if (calims!=null){
+            map.put("user",calims.get("user"));
+        }
         return new ShResultDTO<>(200,"已获取帖子详情",map,null);
     }
 

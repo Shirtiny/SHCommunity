@@ -28,14 +28,19 @@ public class CommentServiceImpl implements ICommentService {
     //增加一条评论
     @Override
     public boolean addOneComment(Comment comment) {
+        //校验评论发送人是否为空
+        if (comment == null || comment.getReviewerId() == null) {
+            return false;
+        }
         //校验评论是否为null或是否全为空格
-        if (comment == null || comment.getCommentContent() == null || comment.getCommentContent().trim().isEmpty()) {
+        if (comment.getCommentContent() == null || comment.getCommentContent().trim().isEmpty()) {
             return false;
         }
         //校验评论内容长度是否超限
         if (comment.getCommentContent().length() > COMMENT_CONTENT_MAX_LENGTH) {
             return false;
         }
+
         boolean isSuccess = false;
         try {
             //向数据库插入评论

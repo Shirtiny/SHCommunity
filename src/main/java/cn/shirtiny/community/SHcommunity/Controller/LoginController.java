@@ -1,14 +1,17 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
-import cn.shirtiny.community.SHcommunity.Encryption.ShaEncryptor;
+import cn.shirtiny.community.SHcommunity.JWT.JwtRsaHelper;
 import cn.shirtiny.community.SHcommunity.Model.User;
+import cn.shirtiny.community.SHcommunity.Service.IcookieService;
+import cn.shirtiny.community.SHcommunity.Service.IjwtService;
+import cn.shirtiny.community.SHcommunity.Service.IloginService;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
+import io.jsonwebtoken.Claims;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,33 +20,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @Controller
 public class LoginController {
 
     @Autowired
     private IuserService userService;
+    @Autowired
+    private IloginService loginService;
+    @Autowired
+    private IjwtService jwtService;
+    @Autowired
+    private IcookieService cookieService;
 
 
     @PostMapping("/shApi/login")
     @ResponseBody
-    public ShResultDTO<String,Object> userLogin(@RequestBody User user){
-        if (user==null || user.getUserName()==null || user.getUserName().trim().length()==0 || user.getPassWord()==null || user.getPassWord().trim().length()==0){
-            return new ShResultDTO<>(400,"登录失败，用户信息无效");
-        }
-        //shiro登录认证
-        Subject subject = SecurityUtils.getSubject();
-        //用户名和密码
-        UsernamePasswordToken token = new UsernamePasswordToken(user.getUserName(), user.getPassWord(),false);
-        try {
-            //登录 登录失败将抛出异常
-            subject.login(token);
-            System.out.println(subject.getPrincipal()+"登录成功");
-            return new ShResultDTO<>(200,"登录成功");
-        }catch (AuthenticationException e){
-            e.printStackTrace();
-            return new ShResultDTO<>(403,"登录失败，用户名或密码不正确");
-        }
+    public ShResultDTO<String,Object> userLogin(@RequestBody User user, HttpServletResponse response){
+        ShResultDTO<String, Object> parseResult = loginService.userLoginByPWD(user);
+        String jwt = (String)parseResult.getData().get("jwt");
+        cookieService.addOneCookie(response,"shJwt",jwt,"/",-1);
+        return parseResult;
     }
 
     @PostMapping("/shApi/signUp")
@@ -76,7 +75,8 @@ public class LoginController {
     @GetMapping("/shApi/loginCheck")
     @ResponseBody
     public ShResultDTO loginChecker(HttpServletRequest request){
-        if (request.getSession().getAttribute("user")!=null){
+        Map<String, Object> claims = jwtService.parseJwtByRequest(request);
+        if (claims!=null){
             return new ShResultDTO(200,"已登录");
         }else {
             return new ShResultDTO(4001,"未登录，请先登录再进行此操作");

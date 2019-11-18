@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/editormd/css/editormd.min.css"/>
 
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="/js/myJs/jquery.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/myJs/vue.js"></script>
@@ -84,7 +85,8 @@
                             <img class=" img-circle" :src="invitationDetail.avatarImage" alt="image">
                         </div>
                         <blockquote class="float_right blockquote-reverse user_quote img-rounded">
-                            <p v-if="invitationDetail.description==null || invitationDetail.description==''">大家好，这是默认签名</p>
+                            <p v-if="invitationDetail.description==null || invitationDetail.description==''">
+                                大家好，这是默认签名</p>
                             <p v-else>{{invitationDetail.description}}</p>
                             <footer>SH社区@ <cite title="Source Title"><span>{{invitationDetail.nickName}}</span></cite>
                             </footer>
@@ -107,10 +109,10 @@
                                  v-if="comment.citedComment==null">
                                 <div class="" style="padding: 5px 5px 5px 5px;">
                                     <span><span class="el-icon-guide"></span>{{index+1}}<sup
-                                            style="font-style: italic;">L</sup></span>
+                                                style="font-style: italic;">L</sup></span>
                                     <span style="color: #796161;padding: 25px;">{{toformatDate(comment.createdTime)}}</span>
                                     <span class="el-icon-paperclip float_right">{{comment.commentId}}<sup
-                                            style="font-style: italic;">C</sup></span>
+                                                style="font-style: italic;">C</sup></span>
                                 </div>
                                 <div class="media-left ">
                                     <a href="#">
@@ -137,28 +139,31 @@
                                  v-if="comment.citedComment!=null">
                                 <div class="text-right" style="padding: 5px 5px 5px 5px;">
                                     <span class="el-icon-paperclip float_left">{{comment.commentId}}<sup
-                                            style="font-style: italic;">C</sup></span>
+                                                style="font-style: italic;">C</sup></span>
                                     Reply：
                                     <el-tooltip content="查看该评论" placement="top" effect="light">
 
                                         <a :href="'#'+comment.citedComment.commentId" class="sh_a"><span
-                                                class="el-icon-paperclip"></span>{{comment.citedComment.commentId}}<sup
-                                                style="font-style: italic;">C</sup></a>
+                                                    class="el-icon-paperclip"></span>{{comment.citedComment.commentId}}
+                                            <sup
+                                                    style="font-style: italic;">C</sup></a>
 
                                     </el-tooltip>
                                     <span style="color: #dacfa1;">@</span><a
-                                        :href="'#'+comment.citedComment.reviewer.userId" class="sh_a">{{comment.citedComment.reviewer.nickName}}</a>
+                                            :href="'#'+comment.citedComment.reviewer.userId"
+                                            class="sh_a">{{comment.citedComment.reviewer.nickName}}</a>
                                     <span style="color: #796161;padding: 25px;">{{toformatDate(comment.createdTime)}}</span>
                                     <span><span class="el-icon-guide"></span>{{index+1}}<sup
-                                            style="font-style: italic;">L</sup></span>
+                                                style="font-style: italic;">L</sup></span>
                                 </div>
                                 <div class="media-body">
                                     <h4 class="media-heading text-right">
                                         <em><strong><span>{{comment.reviewer.nickName}}</span></strong></em></h4>
                                     <p class="">
                                     <div id="quote" class="shText_pre_wrap" style="color: #e0ddd9;">
-                                        <span style="font-size: 50px;line-height: 0;">“</span>{{subCommentQuote(comment.citedComment.commentContent,160,4)}}<span
-                                            class="quote_right">”</span>
+                                        <span style="font-size: 50px;line-height: 0;">“</span>{{subCommentQuote(comment.citedComment.commentContent,160,4)}}
+                                        <span
+                                                class="quote_right">”</span>
                                     </div>
                                     <div id="reply" style="margin-top: 10px;">
                                         <span>{{comment.commentContent}}</span>
@@ -213,7 +218,7 @@
                                                              :src="drawer.comment.reviewer.avatarImage"
                                                              alt="头像">
                                                         <em><strong><span
-                                                                style="color: black;">{{drawer.comment.reviewer.nickName}}</span></strong></em>
+                                                                        style="color: black;">{{drawer.comment.reviewer.nickName}}</span></strong></em>
                                                     </a>
 
                                                 </el-col>
@@ -245,7 +250,7 @@
                                                              src="https://file.moetu.org/images/2019/09/23/49fa536255fd49b50a3978d1620a50dd00139ced90265d42628488939e82dfc3.png"
                                                              alt="头像">
                                                         <em><strong><span
-                                                                style="color: black;">看板娘</span></strong></em>
+                                                                        style="color: black;">看板娘</span></strong></em>
                                                     </a>
                                                     <!-- 登录后 用户头像和名字-->
                                                     <a href="#" v-if="user!=null">
@@ -254,7 +259,7 @@
                                                              :src="user.avatarImage"
                                                              alt="头像">
                                                         <em><strong><span
-                                                                style="color: black;">{{user.nickName}}</span></strong></em>
+                                                                        style="color: black;">{{user.nickName}}</span></strong></em>
                                                     </a>
 
                                                 </el-col>
@@ -339,7 +344,6 @@
             </div>
 
 
-
         </div>
     </div>
 </div>
@@ -406,9 +410,22 @@
                 console.log("拿到的帖子id为：" + this.invitationId);
                 //调用api，初始化数据
                 this.refreshData();
-
             },
             methods: {
+                //取jwt
+                getShJwt() {
+                    let shJwt;
+                    try {
+                        shJwt = Cookies.get('shJwt');
+                        if (shJwt == "undeined") {
+
+                        }
+                    } catch (e) {
+                        console.log(e);
+                        shJwt = '';
+                    }
+                    return shJwt;
+                },
                 //读取url，拿到要获得的帖子id
                 getInvitationIdFromUrl: function () {
                     // /shPub/invitationDetail/11760373892580232222
@@ -422,13 +439,16 @@
                 },
                 //刷新数据
                 refreshData: function () {
-                    axios.get('/shApi/invitationDetail/' + this.invitationId).then(res => {
+                    //获取帖子数据
+                    let shJwt = this.getShJwt();
+                    axios.get('/shApi/invitationDetail/' + this.invitationId, {
+                        headers: {'Authorization': shJwt},
+                    }).then(res => {
                         console.log("获取到的数据：");
                         console.log(res);
-                        this.invitationDetail = res.data.data.invitationDetail;
                         this.user = res.data.data.user;
+                        this.invitationDetail = res.data.data.invitationDetail;
                         this.comments = res.data.data.invitationDetail.comments;
-
                         let content = res.data.data.invitationDetail.content;
                         console.log("帖子内容" + content);
                         //把帖子内容解析为markdown
@@ -492,11 +512,14 @@
                 },
                 //登录状态检查
                 loginCheck: function () {
-                    axios.get('/shApi/loginCheck').then(res => {
+                    //从cookie中取出jwt
+                    let shJwt = this.getShJwt();
+                    axios.get('/shApi/loginCheck', {
+                        headers: {'Authorization': shJwt},
+                    }).then(res => {
                         var shCode = res.data.code;
                         var message = res.data.message;
                         if (shCode == 200) {
-
                             return true;
                         } else if (shCode == 4001) {
                             this.$confirm(message, '未登录提示', {
@@ -510,9 +533,8 @@
                                 var redirect = window.location.pathname;
                                 //1s后调转到登录页面，带上回调地址
                                 setTimeout(function () {
-                                    window.location.href = "/loginPage?shRedirect=" + redirect;
+                                    window.location.href = "/login?shRedirect=" + redirect;
                                 }, 1000);
-
                             }).catch(() => {
                                 this.$message({
                                     type: 'info',
@@ -539,7 +561,6 @@
                         axios.get('/shApi/invitationDetail/' + this.invitationId).then(res => {
                             this.comments = res.data.data.invitationDetail.comments;
                         });
-
                         return;
 
                         //发送失败，字符输入有误，或者服务器问题
@@ -566,10 +587,13 @@
                     let citedCommentId = this.drawer.comment.commentId;
                     //发送数据
                     console.log("开始发送抽屉的回复");
+                    let shJwt = this.getShJwt();
                     axios.post('/shApi/sendComment', {
                         targetId: targetId,
                         commentContent: commentContent,
                         citedCommentId: citedCommentId
+                    }, {
+                        headers: {'Authorization': shJwt},
                     }).then(res => {
                         console.log("回复的响应数据");
                         console.log(res);
@@ -592,15 +616,18 @@
                     //登录提示
                     this.loginCheck(this.commentContent);
                     //登录检查
-                    if (this.user == null) {
+                    if (this.user.userName == null) {
                         return;
                     }
                     var targetId = this.invitationId;
                     var commentContent = this.commentContent;
                     //发送评论
+                    let shJwt = this.getShJwt();
                     axios.post('/shApi/sendComment', {
                         targetId: targetId,
                         commentContent: commentContent
+                    }, {
+                        headers: {'Authorization': shJwt},
                     }).then(res => {
                         console.log("发送后的响应内容");
                         console.log(res);
@@ -635,12 +662,12 @@
                             array.length = Number(maxN) + 1;
                             array[Number(maxN)] = '...';
                             //遍历数组，把\n再放回去
-                            let tempStr='';
+                            let tempStr = '';
                             for (let index in array) {
-                                if (Number(index) < Number(maxN)-1) {
+                                if (Number(index) < Number(maxN) - 1) {
                                     array[index] = array[index] + "\n"
                                 }
-                                tempStr=tempStr+array[index];
+                                tempStr = tempStr + array[index];
                             }
                             commentContent = tempStr;
                         }

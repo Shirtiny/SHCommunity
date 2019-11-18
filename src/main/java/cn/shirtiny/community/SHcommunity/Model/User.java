@@ -23,5 +23,7 @@ public class User {//论坛用户
     private long gmtCreate;//创建账户时的时间戳
     private long  gmtModified;//修改用户时的时间戳
     private String token;//cookie里的登录令牌
+    @TableField(exist = false)
+    private String createdTime;//创建日期字符串
 
 }

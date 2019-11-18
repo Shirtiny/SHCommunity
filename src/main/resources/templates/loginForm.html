@@ -5,11 +5,13 @@
 <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="https://unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css">
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="/js/myJs/jquery.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/myJs/vue.js"></script>
 <script src="/js/myJs/element.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
 
 <div th:fragment="loginForm" id="vue_loginForm" element-loading-text="努力与服务器交互中"
      v-loading="dLoading"
@@ -18,7 +20,7 @@
     <el-card class="box-card">
         <div slot="header" class="clearfix">
             <span class="el-icon-coffee-cup"></span>
-            <span style="color: #727780">登录</span>
+            <span style="color: #727780">登录<a href="/">社区</a></span>
             <el-link href="/signup" style="float: right;" icon="el-icon-user-solid" type="primary">注册</el-link>
         </div>
         <div class="text item">
@@ -48,7 +50,8 @@
             </el-form>
             <el-divider>
                 <el-tooltip content="使用第三方登录" placement="top" effect="light">
-                    <el-button type="text" size="small" round @click="showOtherLogin = !showOtherLogin" ><span class="el-icon-mouse" style="font-size: 20px;"></span></el-button>
+                    <el-button type="text" size="small" round @click="showOtherLogin = !showOtherLogin"><span
+                                class="el-icon-mouse" style="font-size: 20px;"></span></el-button>
                 </el-tooltip>
             </el-divider>
             <el-collapse-transition>
@@ -151,6 +154,7 @@
                 }, 21000);
 
             },
+            //提交表单
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
@@ -161,8 +165,12 @@
                                     message: res.data.message + "，即将跳转...",
                                     type: 'success'
                                 });
+                                //把后台颁发的token放入cookie 改为由服务器设置
+                                // Cookies.set('shJwt',res.data.data.jwt);
                                 setTimeout(() => {
-                                    window.location.href = "/";
+                                    //从cookie中取回调地址
+                                    let shRedirectCookie = Cookies.get('shRedirectCookie');
+                                    window.location.href = shRedirectCookie;
                                 }, 600)
                             } else {
                                 this.$message(res.data.message + "，请检查用户名密码");

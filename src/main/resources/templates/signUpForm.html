@@ -15,7 +15,7 @@
     <el-card class="box-card">
         <div slot="header" class="clearfix">
             <span class="el-icon-coffee-cup"></span>
-            <span style="color: #727780">加入社区</span>
+            <span style="color: #727780">加入 <a href="/">社区</a> </span>
             <el-link href="/login" style="float: right;" icon="el-icon-user-solid" type="primary">登录</el-link>
         </div>
         <div class="text item">
@@ -33,7 +33,7 @@
                 </el-form-item>
                 <el-form-item prop="email">
                     <span slot="label"><span class="el-icon-message"></span> Email</span>
-                    <el-autocomplete type="text" v-model="ruleForm.email" placeholder="邮箱地址..."
+                    <el-autocomplete type="text" v-model="ruleForm.email" placeholder="邮箱地址..." autocomplete="off"
                                      :fetch-suggestions="loadSuggestions" @select="selectSuggest"
                                      :trigger-on-focus="false" style="width: 100%"></el-autocomplete>
                 </el-form-item>
@@ -48,7 +48,7 @@
                               placeholder="确认密码..."></el-input>
                 </el-form-item>
 
-                <el-form-item >
+                <el-form-item>
                     <el-tooltip content="清空全部输入" placement="top" effect="light">
                         <el-button @click="resetForm('ruleForm')" type="danger" icon="el-icon-refresh-left"
                                    plain circle></el-button>
@@ -188,7 +188,7 @@
                                     type: 'success'
                                 });
                                 setTimeout(() => {
-                                    window.location.href = "/loginPage"
+                                    window.location.href = "/login"
                                 }, 800)
                             } else {
                                 this.$notify({
