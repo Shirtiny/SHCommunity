@@ -397,12 +397,30 @@ div.container-fluid:nth-child(11) {
     margin: auto;
     padding: 50px;
     position: absolute;
+    top: -500px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    /*background: rgba(255, 252, 251, 0.82);*/
+}
+
+
+
+
+/*登录界面表单div*/
+.myLoginForm {
+    height: 500px;
+    width: 600px;
+    margin: auto;
+    padding: 50px;
+    position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     background: rgba(255, 252, 251, 0.82);
 }
+
 
 /*主页el-header*/
 .index_el-header {

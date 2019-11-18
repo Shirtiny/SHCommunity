@@ -65,15 +65,21 @@ public class pageController {
         return new ShResultDTO<>(200, "面包屑数组已处理", map, null);
     }
 
+    @GetMapping("/signup")//跳转到注册界面
+    public String toSignUpPage() {
 
-    @GetMapping("/loginPage")//跳转到登录界面
+        return "signUp";
+    }
+
+
+    @GetMapping("/login")//跳转到登录界面
     public String toSignUpPage(@RequestParam(value = "shRedirect", defaultValue = "/") String shRedirect, HttpServletResponse response) {
         //设置回调cookie
         Cookie redirectCookie = new Cookie("shRedirectCookie", shRedirect);
         //位于本站根目录下
         redirectCookie.setPath("/");
         response.addCookie(redirectCookie);
-        return "loginPage";
+        return "login";
     }
 
     @GetMapping("/")//首页
@@ -153,28 +159,15 @@ public class pageController {
     }
 
 
-
-
     @GetMapping("/shPub/invitationDetail_Old/{invitationId}")//前往帖子详情页面_旧，传递一个帖子id
     public String toInvitationDetail_Old(@PathVariable("invitationId") long invitationId, Model model) {
 
         InvitationDTO invitationDetail = invitationService.selectOneDtoAndCs(invitationId);
         if (invitationDetail == null) {
-            throw new NotFoundException(NotFound_Error);
+            throw new NotFoundException("未找到要请求的帖子");
         }
         model.addAttribute("invitationDetail", invitationDetail);
         return "invitationDetail_Old";
-    }
-
-
-    //测试
-    @RequestMapping(value = "signup")
-    public String signup(Model model) {
-
-        model.addAttribute(new User());
-
-        return "index :: signupForm";
-
     }
 
     @RequestMapping(value = "/test")

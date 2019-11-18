@@ -99,19 +99,19 @@ public class RSAKey {
         String message = "公钥加密的消息";
         //公钥加密私钥解
         //公钥加密
-        byte[] encriptedMessage = rsaKey.encrypt(message.getBytes(), rsaKey.getPublicKey());
-        System.out.println(new String(encriptedMessage, StandardCharsets.UTF_8));
+        byte[] encryptedMessage = rsaKey.encrypt(message.getBytes(), rsaKey.getPublicKey());
+        System.out.println(new String(encryptedMessage, StandardCharsets.UTF_8));
         //私钥解密
-        byte[] decriptedMessage = rsaKey.decrypt(encriptedMessage, rsaKey.getPrivateKey());
-        System.out.println(new String(decriptedMessage, StandardCharsets.UTF_8));
+        byte[] decryptedMessage = rsaKey.decrypt(encryptedMessage, rsaKey.getPrivateKey());
+        System.out.println(new String(decryptedMessage, StandardCharsets.UTF_8));
 
         //私钥加密公钥解
         message = "私钥加密的消息";
         //私钥加密
-        encriptedMessage = rsaKey.encrypt(message.getBytes(),rsaKey.getPrivateKey());
-        System.out.println(new String(encriptedMessage, StandardCharsets.UTF_8));
+        encryptedMessage = rsaKey.encrypt(message.getBytes(),rsaKey.getPrivateKey());
+        System.out.println(new String(encryptedMessage, StandardCharsets.UTF_8));
         //公钥解密
-        decriptedMessage = rsaKey.decrypt(encriptedMessage,rsaKey.getPublicKey());
-        System.out.println(new String(decriptedMessage, StandardCharsets.UTF_8));
+        decryptedMessage = rsaKey.decrypt(encryptedMessage,rsaKey.getPublicKey());
+        System.out.println(new String(decryptedMessage, StandardCharsets.UTF_8));
     }
 }

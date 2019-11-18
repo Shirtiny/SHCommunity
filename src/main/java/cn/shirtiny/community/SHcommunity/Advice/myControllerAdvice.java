@@ -2,8 +2,10 @@ package cn.shirtiny.community.SHcommunity.Advice;
 
 import cn.shirtiny.community.SHcommunity.DTO.Md_ImageUpResultDTO;
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
+import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
 import cn.shirtiny.community.SHcommunity.Exception.*;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -21,45 +23,73 @@ public class myControllerAdvice {
 
     @ExceptionHandler(GithubConnectedTimeOutException.class)
     @ResponseBody
-    public ShResultDTO GithubConnectedTimeOutHandler(GithubConnectedTimeOutException e){
-        log.error("github连接超时,{}",e.getShErrorCode().getCode());
+    public ShResultDTO GithubConnectedTimeOutHandler(@NotNull GithubConnectedTimeOutException e) {
         e.printStackTrace();
-        return new ShResultDTO(e.getShErrorCode().getCode(),e.getShErrorCode().getMessage());
+        //github连接超时
+        log.error(ShErrorCode.Github_Connect_Error.getMessage()+",{}", ShErrorCode.Github_Connect_Error.getCode(),e);
+        e.printStackTrace();
+        return new ShResultDTO(ShErrorCode.Github_Connect_Error.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(NoLoginException.class)
     @ResponseBody
-    public ShResultDTO noLoginHandler(NoLoginException e){
-        log.error("未登录异常,{}",e.getShErrorCode());
-        return new ShResultDTO(4001,"未登录，请先登录再进行此操作");
+    public ShResultDTO noLoginHandler(@NotNull NoLoginException e) {
+        e.printStackTrace();
+        //用户未登录
+        log.error(ShErrorCode.NoLogin_Error.getMessage()+",{}", e.getShErrorCode(),e);
+        return new ShResultDTO(ShErrorCode.NoLogin_Error.getCode(), "未登录，请先登录再进行此操作");
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseBody
-    public ShResultDTO NotFoundHandler(NotFoundException e){
-        log.error("找不到资源,{}",e.getShErrorCode());
-        return new ShResultDTO(e.getShErrorCode().getCode(),e.getShErrorCode().getMessage());
+    public ShResultDTO NotFoundHandler(@NotNull NotFoundException e) {
+        e.printStackTrace();
+        //找不到请求的资源
+        log.error(ShErrorCode.NotFound_Error.getMessage()+",{}",ShErrorCode.NotFound_Error.getCode(),e);
+        return new ShResultDTO(ShErrorCode.NotFound_Error.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(CreateInvitationErrException.class)
     @ResponseBody
-    public ShResultDTO createInvitationErr(CreateInvitationErrException e){
-        System.out.println(e.getShErrorCode());
-        return new ShResultDTO(4502,e.getMessage());
+    public ShResultDTO createInvitationErr(@NotNull CreateInvitationErrException e) {
+        e.printStackTrace();
+        //帖子创建失败
+        log.error(ShErrorCode.Create_Invitation_Failed_Error.getMessage(), e);
+        return new ShResultDTO(ShErrorCode.Create_Invitation_Failed_Error.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(Md_ImageUploadFailedException.class)
     @ResponseBody
-    public Md_ImageUpResultDTO uploadFileErr(Throwable e){
-        System.out.println("文件上传失败");
+    public Md_ImageUpResultDTO uploadFileErr(@NotNull Throwable e) {
+        e.printStackTrace();
+        log.error("文件上传失败", e);
         //返回图片上传的失败结果，以及错误信息
-        return new Md_ImageUpResultDTO(0,e.getMessage(),null);
+        return new Md_ImageUpResultDTO(0, e.getMessage(), null);
     }
 
     @ExceptionHandler(UserAlreadyExsitException.class)
     @ResponseBody
-    public ShResultDTO userAlreadExsitErr(UserAlreadyExsitException e){
-        return new ShResultDTO(5004,e.getMessage());
+    public ShResultDTO userAlreadExsitErr(@NotNull UserAlreadyExsitException e) {
+        e.printStackTrace();
+        //要注册的用户名已经存在
+        return new ShResultDTO(ShErrorCode.User_Already_Exsit_Error.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(UserInfoNotAllowException.class)
+    @ResponseBody
+    public ShResultDTO userInfoNotAllowedErr(@NotNull UserInfoNotAllowException e) {
+        e.printStackTrace();
+        //用户信息不规范
+        return new ShResultDTO(ShErrorCode.User_Info_NotAllowed_Error.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(CreateUserFailedException.class)
+    @ResponseBody
+    public ShResultDTO createUserFailedErr(@NotNull CreateUserFailedException e) {
+        e.printStackTrace();
+        //用户数据入库失败
+        log.error(ShErrorCode.Create_User_Failed_Error.getMessage(), e);
+        return new ShResultDTO(ShErrorCode.Create_User_Failed_Error.getCode(), e.getMessage());
     }
 
 //    @ExceptionHandler(Exception.class)//捕获所有异常

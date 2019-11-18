@@ -1,0 +1,241 @@
+<!--注册表单-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/myCss.css">
+<link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css">
+<script src="/js/myJs/jquery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/myJs/vue.js"></script>
+<script src="/js/myJs/element.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div th:fragment="signUpForm" id="vue_signUpForm">
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <span class="el-icon-coffee-cup"></span>
+            <span style="color: #727780">加入社区</span>
+            <el-link href="/login" style="float: right;" icon="el-icon-user-solid" type="primary">登录</el-link>
+        </div>
+        <div class="text item">
+            <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="80px"
+                     class="demo-ruleForm" label-position="top" hide-required-asterisk>
+                <el-form-item prop="userName">
+                    <span slot="label"><span class="el-icon-user"></span> Name</span>
+                    <el-input type="text" v-model="ruleForm.userName" autocomplete="off" minlength="2" maxlength="10"
+                              show-word-limit placeholder="用于登录的账号名..."></el-input>
+                </el-form-item>
+                <el-form-item prop="nickName">
+                    <span slot="label"><span class="el-icon-edit"></span> Nickname</span>
+                    <el-input type="text" v-model="ruleForm.nickName" autocomplete="off" minlength="2" maxlength="10"
+                              show-word-limit placeholder="自定义的昵称..."></el-input>
+                </el-form-item>
+                <el-form-item prop="email">
+                    <span slot="label"><span class="el-icon-message"></span> Email</span>
+                    <el-autocomplete type="text" v-model="ruleForm.email" placeholder="邮箱地址..."
+                                     :fetch-suggestions="loadSuggestions" @select="selectSuggest"
+                                     :trigger-on-focus="false" style="width: 100%"></el-autocomplete>
+                </el-form-item>
+                <el-form-item prop="passWord">
+                    <span slot="label"><span class="el-icon-postcard"></span> Password</span>
+                    <el-input type="password" v-model="ruleForm.passWord" autocomplete="off" show-password minlength="6"
+                              placeholder="输入您的密码..." maxlength="20" show-word-limit></el-input>
+                </el-form-item>
+                <el-form-item prop="checkPass">
+                    <span slot="label"><span class="el-icon-finished"></span> Check</span>
+                    <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off" show-password
+                              placeholder="确认密码..."></el-input>
+                </el-form-item>
+
+                <el-form-item >
+                    <el-tooltip content="清空全部输入" placement="top" effect="light">
+                        <el-button @click="resetForm('ruleForm')" type="danger" icon="el-icon-refresh-left"
+                                   plain circle></el-button>
+                    </el-tooltip>
+
+                    <el-tooltip content="提交" placement="top" effect="light" class="float_right">
+                        <el-button type="success" @click="submitForm('ruleForm')" icon="el-icon-s-promotion"
+                                   circle></el-button>
+                    </el-tooltip>
+                </el-form-item>
+            </el-form>
+        </div>
+    </el-card>
+
+</div>
+<script>
+    const vue_signUpForm = new Vue({
+        el: "#vue_signUpForm",
+        data() {
+            var validatePass = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else {
+                    if (this.ruleForm.checkPass !== '') {
+                        this.$refs.ruleForm.validateField('checkPass');
+                    }
+                    //调用用户信息校验接口 校验密码 校验类型代码为2
+                    axios.get("/shApi/checkUserInfo?passWord=" + this.ruleForm.passWord + "&typeCode=2").then(res => {
+                        if (Number(res.data.code) !== 200) {
+                            callback(new Error(res.data.message));
+                        } else {
+                            callback();
+                        }
+                    });
+                }
+            };
+            var validatePass2 = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'));
+                } else if (value !== this.ruleForm.passWord) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
+            var checkUserName = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入用户名'));
+                    return;
+                }
+                //调用用户信息校验接口 校验用户名 校验代码为1
+                //设置延时，用来展示loading的效果 是不是有种仪式感
+                setTimeout(() => {
+                    axios.get("/shApi/checkUserInfo?userName=" + this.ruleForm.userName + "&typeCode=1").then(res => {
+                        if (Number(res.data.code) !== 200) {
+                            callback(new Error(res.data.message));
+                        } else {
+                            callback();
+                        }
+                    })
+                }, 600);
+            };
+            var checkNickName = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入昵称'));
+                    return;
+                } else {
+                    callback();
+                }
+            };
+            var checkEmail = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入邮箱'));
+                    return;
+                }
+                //调用用户信息校验接口 校验邮箱 校验代码为3
+                console.log("当前的邮箱值", this.ruleForm.email);
+                //在失去焦点时会触发校验，但是，用户在鼠标点击输入建议时，就会失去焦点
+                // ，鼠标松开时 this.ruleForm.email的值才会被输入建议覆盖，所以此时发送的email是未赋值的email
+                //所以我设置了延时，来确保email的值被覆盖后才校验
+                setTimeout(() => {
+                    axios.get("/shApi/checkUserInfo?email=" + this.ruleForm.email + "&typeCode=3").then(res => {
+                        if (Number(res.data.code) !== 200) {
+                            callback(new Error(res.data.message))
+                        } else {
+                            callback()
+                        }
+                    });
+                }, 300);
+            };
+            return {
+                ruleForm: {
+                    passWord: '',
+                    checkPass: '',
+                    userName: "",
+                    nickName: "",
+                    email: "",
+                },
+                rules: {
+                    //blur 在 Input 失去焦点时触发
+                    passWord: [
+                        {validator: validatePass, trigger: 'blur'}
+                    ],
+                    checkPass: [
+                        {validator: validatePass2, trigger: 'blur'}
+                    ],
+                    userName: [
+                        {validator: checkUserName, trigger: 'blur'}
+                    ],
+                    nickName: [
+                        {validator: checkNickName, trigger: 'blur'}
+                    ],
+                    email: [
+                        {validator: checkEmail, trigger: 'blur'}
+                    ]
+                },
+                emailSuffixes: [
+                    {"value": "@qq.com"},
+                    {"value": "@163.com"},
+                    {"value": "@outlook.com"},
+                    {"value": "@yahoo.com"},
+                    {"value": "@gmail.com"},
+                ],
+            };
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        axios.post('/shApi/signUp', this.ruleForm).then(res => {
+                            if (Number(res.data.code) === 200) {
+                                //清空表单数据
+                                this.resetForm("ruleForm");
+                                this.$notify({
+                                    title: '成功',
+                                    message: res.data.message + "，一切已就绪，即将跳转...",
+                                    type: 'success'
+                                });
+                                setTimeout(() => {
+                                    window.location.href = "/loginPage"
+                                }, 800)
+                            } else {
+                                this.$notify({
+                                    title: '提示',
+                                    message: res.data.message,
+                                    type: 'info'
+                                });
+                            }
+                        })
+                    } else {
+                        this.$message('请检查和改正输入');
+                        return false;
+                    }
+                });
+            },
+            //清空表单数据
+            resetForm(formName) {
+                console.log(formName);
+                this.$refs[formName].resetFields();
+            },
+            //输入建议
+            loadSuggestions(inputString, callback) {
+                let split = inputString.split('@');
+                //把@前的字符去掉空格，覆盖原输入字符串
+                inputString = split[0].trim();
+                //要返回的数组
+                let suggestEmailList = [];
+                for (let data of this.emailSuffixes) {
+                    //要封装成有value的对象
+                    const newData = {"value": inputString + data.value};
+                    suggestEmailList.push(newData);
+                }
+                //返回结果
+                callback(suggestEmailList);
+            },
+            //选中输入建议
+            selectSuggest(item) {
+                console.log("选中", item.value);
+            }
+        }
+    })
+</script>
+<style>
+    /*注册界面label和输入框的间隔 选择divclass为el-form-item的所有子元素的label标签*/
+    div.el-form-item:nth-child(n) > label {
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+</style>
+</html>

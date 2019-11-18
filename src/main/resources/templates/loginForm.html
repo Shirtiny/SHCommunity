@@ -1,0 +1,197 @@
+<!--注册表单-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/myCss.css">
+<link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css">
+<script src="/js/myJs/jquery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/myJs/vue.js"></script>
+<script src="/js/myJs/element.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div th:fragment="loginForm" id="vue_loginForm" element-loading-text="努力与服务器交互中"
+     v-loading="dLoading"
+     element-loading-background="rgba(255, 255, 255, 0.7)">
+
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <span class="el-icon-coffee-cup"></span>
+            <span style="color: #727780">登录</span>
+            <el-link href="/signup" style="float: right;" icon="el-icon-user-solid" type="primary">注册</el-link>
+        </div>
+        <div class="text item">
+            <el-form :model="loginForm" status-icon :rules="rules" ref="loginForm" label-width="80px"
+                     class="demo-ruleForm" label-position="top" hide-required-asterisk>
+                <el-form-item prop="userName">
+                    <span slot="label"><span class="el-icon-user"></span> 账户名</span>
+                    <el-input type="text" v-model="loginForm.userName" autocomplete="on"
+                              placeholder="用户名/邮箱" minlength="2"></el-input>
+                </el-form-item>
+                <el-form-item prop="passWord">
+                    <span slot="label"><span class="el-icon-postcard"></span> 密码</span>
+                    <el-input type="password" v-model="loginForm.passWord" autocomplete="on"
+                              placeholder="登录密码"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-tooltip content="清空全部输入" placement="top" effect="light">
+                        <el-button @click="resetForm('loginForm')" type="danger" icon="el-icon-refresh-left"
+                                   plain circle></el-button>
+                    </el-tooltip>
+
+                    <el-tooltip content="登录" placement="top" effect="light" class="float_right">
+                        <el-button type="success" @click="submitForm('loginForm')" icon="el-icon-user-solid"
+                                   circle></el-button>
+                    </el-tooltip>
+                </el-form-item>
+            </el-form>
+            <el-divider>
+                <el-tooltip content="使用第三方登录" placement="top" effect="light">
+                    <el-button type="text" size="small" round @click="showOtherLogin = !showOtherLogin" ><span class="el-icon-mouse" style="font-size: 20px;"></span></el-button>
+                </el-tooltip>
+            </el-divider>
+            <el-collapse-transition>
+                <div v-show="showOtherLogin">
+                    <el-row>
+                        <el-col :span="0.5">
+                            <span>&nbsp;</span>
+                        </el-col>
+                        <el-col :span="23.5">
+                            <el-tooltip content="使用Github登录" placement="top" effect="light">
+                                <!--使用github登录/github/loginWithGithub        -->
+                                <a href="/github/loginWithGithub" @click="opendLoading(20000)">
+                                    <el-avatar size="small" src="/image/github.png"></el-avatar>
+                                </a>
+                            </el-tooltip>
+                        </el-col>
+                    </el-row>
+                </div>
+            </el-collapse-transition>
+
+
+        </div>
+    </el-card>
+
+</div>
+
+<script>
+    const vue_login = new Vue({
+        el: "#vue_loginForm",
+        data() {
+            var checkUserName = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入账户名'));
+                } else {
+                    //调用用户信息校验接口 校验用户名 校验代码为1
+                    //设置延时，用来展示loading的效果 是不是有种仪式感
+                    setTimeout(() => {
+                        axios.get("/shApi/checkUserInfo?userName=" + this.loginForm.userName + "&typeCode=1").then(res => {
+                            if (Number(res.data.code) === 200) {
+                                callback(new Error("该用户不存在"));
+                            } else {
+                                callback();
+                            }
+                        })
+                    }, 600);
+                }
+            };
+            var checkPassWord = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else {
+                    //调用用户信息校验接口 校验密码 校验类型代码为2
+                    axios.get("/shApi/checkUserInfo?passWord=" + this.loginForm.passWord + "&typeCode=2").then(res => {
+                        if (Number(res.data.code) !== 200) {
+                            callback(new Error(res.data.message));
+                        } else {
+                            callback();
+                        }
+                    });
+                }
+            };
+
+            return {
+                //控制页面的loading效果的值，与v-loading.fullscreen.lock="fullscreenLoading"配合
+                dLoading: false,
+                //登录表单
+                loginForm: {
+                    userName: '',
+                    passWord: ''
+                },
+                //校验规则
+                rules: {
+                    //blur 在 Input 失去焦点时触发
+                    userName: [
+                        {validator: checkUserName, trigger: 'blur'}
+                    ],
+                    passWord: [
+                        {validator: checkPassWord, trigger: 'blur'}
+                    ],
+                },
+                //显示其他登录方式
+                showOtherLogin: true
+            };
+        },
+        methods: {
+            opendLoading(timeout) {
+                //改变fullscreenLoading的值
+                this.dLoading = true;
+                //设置转10000ms时间
+                setTimeout(() => {
+                    this.dLoading = false;
+                }, timeout);
+                //如果20秒还没登录成功，通知异常，通知比loading晚1秒
+                setTimeout(function () {
+                    this.$message({
+                        showClose: true,
+                        message: '交互时间较长，请检查网络，与github的网络连接是否通畅',
+                        type: 'info'
+                    });
+                }, 21000);
+
+            },
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        axios.post('/shApi/login', this.loginForm).then(res => {
+                            if (Number(res.data.code) === 200) {
+                                this.$notify({
+                                    title: '成功',
+                                    message: res.data.message + "，即将跳转...",
+                                    type: 'success'
+                                });
+                                setTimeout(() => {
+                                    window.location.href = "/";
+                                }, 600)
+                            } else {
+                                this.$message(res.data.message + "，请检查用户名密码");
+                                //清空密码
+                                this.loginForm.passWord = "";
+                            }
+                        });
+                        return true;
+                    } else {
+                        this.$message('输入值无效，请检查和改正输入');
+                        return false;
+                    }
+                });
+            },
+            //清空表单数据
+            resetForm(formName) {
+                console.log(formName);
+                this.$refs[formName].resetFields();
+            }
+        }
+    })
+</script>
+<style>
+    /*登录界面label和输入框的间隔 选择divclass为el-form-item的所有子元素的label标签*/
+    div.el-form-item:nth-child(n) > label {
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+
+</style>
+</html>

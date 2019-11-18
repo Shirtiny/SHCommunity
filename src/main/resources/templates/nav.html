@@ -24,7 +24,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">社区 <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/loginPage">注册</a></li>
+                        <li><a href="/signup">注册</a></li>
                         <li><a href="/shPub/sectionDetail">版块详情</a></li>
                         <li><a href="#">Something else here</a></li>
                         <li role="separator" class="divider"></li>
@@ -50,7 +50,7 @@
             <!--            右下拉框-->
             <ul class="nav navbar-nav navbar-right ">
                 <!--                if判断 标签内有效-->
-                <li><a href="/loginPage" th:if="${session.user==null}">登录</a></li>
+                <li><a href="/login" th:if="${session.user==null}">登录</a></li>
                 <!--                用户头像-->
                 <li th:if="${session.user!=null}"><a class="navbar-brand" href="#">
                     <img alt="avatar" class="nav_avatar img-thumbnail img-circle"
