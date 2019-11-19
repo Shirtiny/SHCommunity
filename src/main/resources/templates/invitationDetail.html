@@ -417,9 +417,6 @@
                     let shJwt;
                     try {
                         shJwt = Cookies.get('shJwt');
-                        if (shJwt == "undeined") {
-
-                        }
                     } catch (e) {
                         console.log(e);
                         shJwt = '';
@@ -588,7 +585,7 @@
                     //发送数据
                     console.log("开始发送抽屉的回复");
                     let shJwt = this.getShJwt();
-                    axios.post('/shApi/sendComment', {
+                    axios.post('/shPri/sendComment', {
                         targetId: targetId,
                         commentContent: commentContent,
                         citedCommentId: citedCommentId
@@ -623,7 +620,7 @@
                     var commentContent = this.commentContent;
                     //发送评论
                     let shJwt = this.getShJwt();
-                    axios.post('/shApi/sendComment', {
+                    axios.post('/shPri/sendComment', {
                         targetId: targetId,
                         commentContent: commentContent
                     }, {

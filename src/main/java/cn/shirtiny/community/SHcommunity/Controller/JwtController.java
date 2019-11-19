@@ -1,6 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
-import cn.shirtiny.community.SHcommunity.JWT.JwtRsaHelper;
+import cn.shirtiny.community.SHcommunity.Utils.JWT.JwtRsaHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;

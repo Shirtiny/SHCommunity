@@ -71,8 +71,6 @@
                     </el-row>
                 </div>
             </el-collapse-transition>
-
-
         </div>
     </el-card>
 
@@ -158,6 +156,8 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        //loading效果
+                        this.dLoading = true;
                         axios.post('/shApi/login', this.loginForm).then(res => {
                             if (Number(res.data.code) === 200) {
                                 this.$notify({
@@ -176,6 +176,8 @@
                                 this.$message(res.data.message + "，请检查用户名密码");
                                 //清空密码
                                 this.loginForm.passWord = "";
+                                //取消loading
+                                this.dLoading = false;
                             }
                         });
                         return true;

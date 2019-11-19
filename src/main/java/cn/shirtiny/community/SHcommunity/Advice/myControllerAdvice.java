@@ -40,6 +40,15 @@ public class myControllerAdvice {
         return new ShResultDTO(ShErrorCode.NoLogin_Error.getCode(), "未登录，请先登录再进行此操作");
     }
 
+    @ExceptionHandler(LoginFailedException.class)
+    @ResponseBody
+    public ShResultDTO loginFailedError(@NotNull LoginFailedException e){
+        e.printStackTrace();
+        //登录失败
+        log.error(ShErrorCode.Login_Failed_Error.getMessage()+",{}",ShErrorCode.Login_Failed_Error.getCode(),e);
+        return new ShResultDTO(ShErrorCode.Login_Failed_Error.getCode(),e.getMessage());
+    }
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseBody
     public ShResultDTO NotFoundHandler(@NotNull NotFoundException e) {

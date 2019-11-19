@@ -1,9 +1,8 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
-import cn.shirtiny.community.SHcommunity.Encryption.ShaEncryptor;
+import cn.shirtiny.community.SHcommunity.Utils.Encryption.ShaEncryptor;
 import cn.shirtiny.community.SHcommunity.Enum.ShUserInfoCheckType;
 import cn.shirtiny.community.SHcommunity.Exception.CreateUserFailedException;
-import cn.shirtiny.community.SHcommunity.Exception.ShException;
 import cn.shirtiny.community.SHcommunity.Exception.UserInfoNotAllowException;
 import cn.shirtiny.community.SHcommunity.Exception.UserAlreadyExsitException;
 import cn.shirtiny.community.SHcommunity.Mapper.UserMapper;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service

@@ -12,6 +12,7 @@
 
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
     <script src="/js/myJs/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/myJs/vue.js"></script>
     <!--    <script src="/js/myJs/axios.js"></script>-->
@@ -108,10 +109,11 @@
             data: {
                 sectionId: 1,
                 md_title: "",
-                fileUploadErr: false
+                fileUploadErr: false,
+                user:{}
             },
-            created:function(){
-               this.readSectionId()
+            created: function () {
+                this.readSectionId()
             },
             methods: {
                 //读取sessionStorage中的sectionId（当前版块的id）
@@ -124,14 +126,31 @@
                     }
 
                 },
+                //取jwt
+                getShJwt() {
+                    let shJwt;
+                    try {
+                        shJwt = Cookies.get('shJwt');
+                    } catch (e) {
+                        console.log(e);
+                        shJwt = '';
+                    }
+                    return shJwt;
+                },
                 //登录状态检查
                 loginCheck: function () {
-                    axios.get('/shApi/loginCheck').then(res => {
+                    let shJwt = this.getShJwt();
+                    axios.get('/shApi/loginCheck', {
+                        headers: {'Authorization': shJwt}
+                    }).then(res => {
                         var shCode = res.data.code;
                         var message = res.data.message;
-                        if (shCode == 200) {
-                            console.log("用户已登录")
-                        } else if (shCode == 4001) {
+                        if (Number(shCode) === 200) {
+                            console.log("用户已登录");
+                            //标识user已经登录
+                            vue_Editor.user={isLogin:true}
+                        } else if (Number(shCode) === 4001) {
+                            vue_Editor.user={};
                             this.$confirm(message, '未登录提示', {
                                 confirmButtonText: '确定',
                                 cancelButtonText: '取消',
@@ -141,7 +160,7 @@
                                 var redirect = window.location.pathname;
                                 //1s后调转到登录页面，带上回调地址
                                 setTimeout(function () {
-                                    window.location.href = "/loginPage?shRedirect=" + redirect;
+                                    window.location.href = "/login?shRedirect=" + redirect;
                                 }, 1000);
 
                             }).catch(() => {
@@ -156,20 +175,26 @@
                 //提交Md数据
                 submitMd: function () {
                     //登录状态检查
-                    this.loginCheck();
+                    vue_Editor.loginCheck();
+                    if (vue_Editor.user.isLogin==null){
+                        return;
+                    }
                     var md_content = editor.getMarkdown();
                     console.log('输出title：\n' + vue_Editor.md_title);
                     console.log('输出content：\n' + md_content);
                     console.log('版块id：\n' + this.sectionId);
                     //提交数据给后台
-                    axios.post('/createInvitation', {
+                    let shJwt = this.getShJwt();
+                    axios.post('/shPri/createInvitation', {
                         title: vue_Editor.md_title,
                         content: md_content,
                         sectionId: this.sectionId,
                         isAxios: true
+                    }, {
+                        headers: {'Authorization': shJwt}
                     }).then(function (response) {
                         //成功提交的情况
-                        if (response.data.code == 200) {
+                        if (Number(response.data.code) === 200) {
                             //通知
                             vue_Editor.$notify({
                                 title: 'OK~',
@@ -180,15 +205,15 @@
                             setTimeout(function () {
                                 window.location.href = "/shPub/sectionDetail"
                             }, 1500);
-                        } else if (response.data.code == 400) {
+                        } else {
                             vue_Editor.$notify.error({
                                 title: 'No~',
                                 message: response.data.message,
-                                duration:1500
+                                duration: 1500
                             });
                         }
                     }).catch(function (error) {
-                        this.$alert(error, '服务器出错', {
+                        vue_Editor.$alert(error, '请确认身份令牌是否有效或其他错误', {
                             confirmButtonText: '确定'
                         });
                         console.log(error)

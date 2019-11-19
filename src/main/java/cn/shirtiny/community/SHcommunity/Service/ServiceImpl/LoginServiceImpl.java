@@ -1,7 +1,9 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
-import cn.shirtiny.community.SHcommunity.JWT.JwtRsaHelper;
+import cn.shirtiny.community.SHcommunity.Exception.LoginFailedException;
+import cn.shirtiny.community.SHcommunity.Exception.UserInfoNotAllowException;
+import cn.shirtiny.community.SHcommunity.Utils.JWT.JwtRsaHelper;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IloginService;
 import org.apache.shiro.SecurityUtils;
@@ -42,7 +44,7 @@ public class LoginServiceImpl implements IloginService {
     @Override
     public ShResultDTO<String, Object> userLoginByPWD(User user) {
         if (user==null || user.getUserName()==null || user.getUserName().trim().length()==0 || user.getPassWord()==null || user.getPassWord().trim().length()==0){
-            return new ShResultDTO<>(400,"登录失败，用户信息无效");
+            throw  new UserInfoNotAllowException("待登录用户信息不正常");
         }
         //shiro登录认证
         Subject subject = SecurityUtils.getSubject();
@@ -63,7 +65,7 @@ public class LoginServiceImpl implements IloginService {
             return new ShResultDTO<>(200,"登录成功",data,null);
         }catch (AuthenticationException e){
             e.printStackTrace();
-            return new ShResultDTO<>(403,"登录失败，用户名或密码不正确");
+            throw new LoginFailedException("登录失败，用户名或密码不正确",e);
         }
     }
 }

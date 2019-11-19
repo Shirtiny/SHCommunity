@@ -40,12 +40,13 @@ public class InvitationController {
     @Autowired
     private IjwtService jwtService;
 
-    @PostMapping(value = "/createInvitation")
+    @PostMapping(value = "/shPri/createInvitation")
     @ResponseBody
     public ShResultDTO createInvitation(@RequestBody Invitation invitation, HttpServletRequest request){
-
-        Long userId=((UserDTO)request.getSession().getAttribute("user")).getUserId();
-        invitation.setAuthorId(userId);
+        //从传递的token取得用户map，然后取得用户id
+        Map<String, Object> calims = jwtService.parseJwtByRequest(request);
+        Map userMap=(Map)calims.get("user");
+        invitation.setAuthorId((Long) userMap.get("userId"));
         boolean flag = invitationService.addInvitation(invitation);
         if(flag){
             //前往帖子的最后一页zaaz

@@ -1,9 +1,8 @@
-package cn.shirtiny.community.SHcommunity.Encryption;
+package cn.shirtiny.community.SHcommunity.Utils.Encryption;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component("shaEncryptor")
 public class ShaEncryptor {

@@ -1,6 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Config;
 
-import cn.shirtiny.community.SHcommunity.JWT.JwtRsaHelper;
+import cn.shirtiny.community.SHcommunity.Utils.JWT.JwtRsaHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

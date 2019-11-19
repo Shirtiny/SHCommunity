@@ -1,4 +1,4 @@
-package cn.shirtiny.community.SHcommunity.Encryption;
+package cn.shirtiny.community.SHcommunity.Utils.Encryption;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;

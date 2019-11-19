@@ -1,10 +1,9 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
-import cn.shirtiny.community.SHcommunity.JWT.JwtRsaHelper;
+import cn.shirtiny.community.SHcommunity.Utils.JWT.JwtRsaHelper;
 import cn.shirtiny.community.SHcommunity.Service.IjwtService;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ public class JwtServiceImpl implements IjwtService {
     private JwtRsaHelper jwtRsaHelper;
 
     @Override
-    public Map<String, Object> parseJwtByRequest(HttpServletRequest request) {
+    public Map<String, Object> parseJwtByRequest(@NotNull HttpServletRequest request) {
         Claims claims=null;
         String jwt = request.getHeader("Authorization");
         if (jwt==null){
@@ -26,7 +25,7 @@ public class JwtServiceImpl implements IjwtService {
         }
         try {
             claims = jwtRsaHelper.parseJwt(jwt);
-        }catch (MalformedJwtException e){
+        }catch (Exception e){
             e.printStackTrace();
         }
         return claims;

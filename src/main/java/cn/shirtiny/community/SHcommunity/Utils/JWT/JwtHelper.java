@@ -1,4 +1,4 @@
-package cn.shirtiny.community.SHcommunity.JWT;
+package cn.shirtiny.community.SHcommunity.Utils.JWT;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;

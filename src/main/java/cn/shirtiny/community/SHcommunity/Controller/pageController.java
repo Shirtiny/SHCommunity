@@ -142,7 +142,7 @@ public class pageController {
         return "page";
     }
 
-    @GetMapping("/ShPri/newInvitation")//前往创建帖子的页面
+    @GetMapping("/shPub/newInvitation")//前往创建帖子的页面
     public String toNewInvitation() {
 
         return "newInvitationMd";

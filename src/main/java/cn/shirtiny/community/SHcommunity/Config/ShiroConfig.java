@@ -93,7 +93,7 @@ public class ShiroConfig {
         role：该资源必须得到角色权限才可以访问
         */
         filterChainMap.put("/login", "anon");
-        filterChainMap.put("/index", "shFilter");
+        filterChainMap.put("/shPri/**", "shFilter");
         //设置拦截规则
         factoryBean.setFilterChainDefinitionMap(filterChainMap);
         return factoryBean;

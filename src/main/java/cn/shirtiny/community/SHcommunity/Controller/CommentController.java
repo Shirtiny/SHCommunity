@@ -26,7 +26,7 @@ public class CommentController {
     @Autowired
     private IjwtService jwtService;
 
-    @RequestMapping(value = "/shApi/sendComment", method = RequestMethod.POST)
+    @RequestMapping(value = "/shPri/sendComment", method = RequestMethod.POST)
     @ResponseBody
     public ShResultDTO sendComment(
             @RequestBody Comment comment
@@ -35,7 +35,6 @@ public class CommentController {
         LinkedHashMap userMap=null;
         if (calims!=null){
            userMap=(LinkedHashMap)calims.get("user");
-            System.out.println(userMap.get("userId"));
         }
         if (userMap!=null){
             comment.setReviewerId((Long) userMap.get("userId"));

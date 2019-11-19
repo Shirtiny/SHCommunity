@@ -1,6 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Shiro;
 
-import cn.shirtiny.community.SHcommunity.Encryption.ShaEncryptor;
+import cn.shirtiny.community.SHcommunity.Utils.Encryption.ShaEncryptor;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
