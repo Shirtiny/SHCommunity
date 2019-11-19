@@ -38,7 +38,7 @@ public class BannerController {
 //        bannerShape=lg/md/sm/cr
 
         if (bannerShapes.get(bannerShape)==null){
-            return new ShResultDTO<>(ShErrorCode.BannerShape_Args_Error.getCode(),"bannerShape参数有误",null, ShErrorCode.BannerShape_Args_Error.getMessage());
+            return new ShResultDTO<>(ShErrorCode.BannerShape_Args_Error.getCode(),ShErrorCode.BannerShape_Args_Error.getMessage(),null, null);
         }
         Map<String, Object> map = new HashMap<>();
         List<Banner> banners = bannerService.selectBannersByShape(bannerShape);

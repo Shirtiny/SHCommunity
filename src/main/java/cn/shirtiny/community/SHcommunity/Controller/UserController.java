@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
 
 
-
     @GetMapping("/Test6")
     public String Test6(HttpServletRequest request){
         return "Test6";

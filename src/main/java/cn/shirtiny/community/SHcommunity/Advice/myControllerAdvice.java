@@ -6,14 +6,12 @@ import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
 import cn.shirtiny.community.SHcommunity.Exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.logging.SocketHandler;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice//结合@ExceptionHandler用于全局异常的处理
 //注入日志
@@ -49,6 +47,18 @@ public class myControllerAdvice {
         return new ShResultDTO(ShErrorCode.Login_Failed_Error.getCode(),e.getMessage());
     }
 
+    @ExceptionHandler(JwtInvalidException.class)
+    @ResponseBody
+    public ShResultDTO loginFailedError(@NotNull JwtInvalidException e){
+        e.printStackTrace();
+        //Jwt格式无效
+        log.error(ShErrorCode.Jwt_Invalid_Error.getMessage()+",{}",ShErrorCode.Jwt_Invalid_Error.getCode(),e);
+        //data里放一个空的user
+        Map<String,Object> data = new HashMap<>();
+        data.put("user",null);
+        return new ShResultDTO<>(ShErrorCode.Jwt_Invalid_Error.getCode(),e.getMessage(),data,e);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseBody
     public ShResultDTO NotFoundHandler(@NotNull NotFoundException e) {
@@ -63,7 +73,7 @@ public class myControllerAdvice {
     public ShResultDTO createInvitationErr(@NotNull CreateInvitationErrException e) {
         e.printStackTrace();
         //帖子创建失败
-        log.error(ShErrorCode.Create_Invitation_Failed_Error.getMessage(), e);
+        log.error(ShErrorCode.Create_Invitation_Failed_Error.getMessage(),e);
         return new ShResultDTO(ShErrorCode.Create_Invitation_Failed_Error.getCode(), e.getMessage());
     }
 

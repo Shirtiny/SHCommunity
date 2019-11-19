@@ -1,6 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
+import cn.shirtiny.community.SHcommunity.Exception.JwtInvalidException;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IcookieService;
 import cn.shirtiny.community.SHcommunity.Service.IjwtService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -79,4 +81,20 @@ public class LoginController {
             return new ShResultDTO(4001, "未登录，请先登录再进行此操作");
         }
     }
+
+    //解析header中的jwt，返回用户信息
+    @GetMapping("/shApi/getLoginedUser")
+    @ResponseBody
+    public ShResultDTO<String, Object> backLoginedUserInfo(HttpServletRequest request){
+        Map<String, Object> claims = jwtService.parseJwtByRequest(request);
+        Map<String,Object> data = new HashMap<>();
+        if (claims!=null){
+            data.put("user",claims.get("user"));
+            return new ShResultDTO<>(200,"已返回jwt用户信息",data,null);
+        }else {
+            throw new JwtInvalidException("Jwt格式无效或解析失败");
+        }
+
+    }
+
 }

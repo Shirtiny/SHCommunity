@@ -1,10 +1,13 @@
 package cn.shirtiny.community.SHcommunity.Enum;
 
+import cn.shirtiny.community.SHcommunity.Exception.ShException;
+
 public enum ShErrorCode {
 
     Github_Connect_Error(4503,"github连接失败"),
     NoLogin_Error(4001,"未登录，请先登录再进行此操作"),
     Login_Failed_Error(4002,"登陆失败"),
+    Jwt_Invalid_Error(4003,"格式无效的Jwt或解析失败"),
     User_Already_Exsit_Error(5004,"用户名已存在"),
     User_Info_NotAllowed_Error(5005,"用户信息不符合规范"),
     Create_User_Failed_Error(5006,"用户数据入库失败"),
