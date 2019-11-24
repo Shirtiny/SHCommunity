@@ -1,14 +1,17 @@
 package cn.shirtiny.community.SHcommunity.DTO;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 @Data
 public class UserDTO {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
     //账户创建时间
-    long gmtCreate;
+    private long gmtCreate;
     //昵称
     private String nickName;
     //用户名

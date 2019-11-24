@@ -14,7 +14,7 @@ public class ShResultDTO<K,V> {
     //数据
     private Map<K,V> data;
     //错误
-    ShException error;
+    private ShException error;
 
     public ShResultDTO() {
     }

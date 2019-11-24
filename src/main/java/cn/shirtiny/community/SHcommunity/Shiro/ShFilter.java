@@ -24,7 +24,6 @@ import java.util.Map;
 @Component
 public class ShFilter extends BasicHttpAuthenticationFilter {
 
-    private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private IjwtService jwtService;
 

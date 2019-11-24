@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/myCss.css">
+<link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css">
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script src="/js/myJs/jquery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/myJs/vue.js"></script>
+<script src="/js/myJs/element.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div id="vue_user_chat" th:fragment="user_chat">
+    <el-row style="height: 300px">
+        <el-col :span="24">
+            <el-table
+                    :data="historyMessages"
+                    style="width: 100%"
+                    max-height="500"
+            >
+                <!--暂时只支持游客-->
+                <el-table-column
+                        label="消息记录 "
+                        min-width="280"
+                        show-overflow-tooltip>
+
+                    <div slot-scope="scope">
+                        <el-row id="message_header">
+                                    <span v-if="scope.row.sender!=null"
+                                          style="font-style: italic;color: #a185f7">scope.row.sender.nickName</span>
+                            <span v-else-if="scope.row.sender==null"
+                                  style="font-style: italic;color: #a185f7">游客scope.row.senderId</span>
+                            <span class="float_right">fomateDate(scope.row.gmtCreated)</span>
+                        </el-row>
+
+                        <el-row id="message_content">
+                            <el-col :span="4">
+                                <el-avatar icon="el-icon-user-solid"></el-avatar>
+                            </el-col>
+
+                            <el-col :span="20">
+                                <div style="display: block;">scope.row.chatMessageContent</div>
+                            </el-col>
+                        </el-row>
+                    </div>
+                </el-table-column>
+            </el-table>
+        </el-col>
+    </el-row>
+    <el-row>
+        <el-col :span="24">
+            <el-input
+                    placeholder="请输入要发送的消息..."
+                    v-model="unSendChatMessage"
+                    clearable>
+            </el-input>
+            <p></p>
+        </el-col>
+    </el-row>
+    <el-row>
+        <el-col :span="24">
+            <el-tooltip content="发送" placement="bottom" effect="light">
+                <el-button icon="el-icon-s-promotion" @click="sendMessage" circle></el-button>
+            </el-tooltip>
+        </el-col>
+    </el-row>
+</div>
+<script>
+    const vue_user_chat = new Vue({
+        el: "#vue_user_chat",
+        data: {
+            historyMessages: [],
+            unSendChatMessage: '',
+            user: {},
+            //接收者Id
+            recipientId:'1176036819306635277'
+        },
+        methods: {
+            //获取用户信息
+            getUser() {
+                axios.get('/shApi/getLoginedUserByCookie').then(res => {
+                    if (Number(res.data.code) === 200) {
+                        this.user = res.data.data.user;
+                    } else {
+                        this.user = null;
+                    }
+                })
+            },
+            connectSocket() {
+                let socket = new SockJS('/websocket');
+                stompClient = Stomp.over(socket);
+                //关闭控制台输出
+                // stompClient.debug=null;
+                //连接socket
+                stompClient.connect({'head': '这是head'},
+                    (frame) => {
+                        console.log("连接socket: /websocket");
+                        console.log(frame);
+                        //订阅
+                        this.subscribe();
+                    }, (err) => {
+                        console.log("socket连接失败", err);
+                        console.log("可是用户过期，请重新登录")
+                    });
+            },
+            subscribe() {
+                axios.get('/shApi/ReSubscribeChannel?senderId='+this.user.userId+'&recipientId='+this.recipientId).then(res => {
+                    let subscribeChannel="";
+                    if (Number(res.data.code) === 200 ){
+                        subscribeChannel = res.data.data.subscribeChannel;
+                        console.log(res);
+                        stompClient.subscribe('/user/'+subscribeChannel+'/121chat', message => {
+                            //存储订阅频道发过来的数据
+                            // let res = JSON.parse(retData.body);
+                            console.log("你订阅的频道更新啦！！！！！~");
+                            console.log(message);
+                        });
+                    } else {
+                        console.log(res.data.message);
+                        return;
+                    }
+                });
+            },
+            sendMessage: function () {
+                console.log("发送消息：");
+                stompClient.send("/app/sendToUser", {}, JSON.stringify({
+                        'chatMessageContent': this.unSendChatMessage,
+                        'recipientId': this.recipientId,
+                    })
+                );
+            },
+        },
+        created() {
+            this.connectSocket();
+            this.getUser();
+        }
+    })
+
+</script>
+</html>

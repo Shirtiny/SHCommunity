@@ -41,8 +41,8 @@ public class RSAKey {
     }
 
     //从已有的Base64字符串中回复密钥
-    public RSAKey(String publicKeyBase64Str,String privateKeyBase64Str) throws GeneralSecurityException {
-        this(Base64.getDecoder().decode(publicKeyBase64Str),Base64.getDecoder().decode(privateKeyBase64Str));
+    public RSAKey(String publicKeyBase64Str, String privateKeyBase64Str) throws GeneralSecurityException {
+        this(Base64.getDecoder().decode(publicKeyBase64Str), Base64.getDecoder().decode(privateKeyBase64Str));
     }
 
 
@@ -67,18 +67,18 @@ public class RSAKey {
     }
 
     //得到公钥Base64编码的字符串
-    public String getPublicKeyBase64Str(){
+    public String getPublicKeyBase64Str() {
         return Base64.getEncoder().encodeToString(getPublicKeyBytes());
     }
 
     //得到私钥Base64编码的字符串
-    public String getPrivateKeyBase64Str(){
+    public String getPrivateKeyBase64Str() {
         return Base64.getEncoder().encodeToString(getPrivateKeyBytes());
     }
 
 
     //加密
-    public byte[] encrypt(byte[] str, Key key) throws GeneralSecurityException{
+    public byte[] encrypt(byte[] str, Key key) throws GeneralSecurityException {
         Cipher rsaCipher = Cipher.getInstance("RSA");
         //初始化 加密模式
         rsaCipher.init(Cipher.ENCRYPT_MODE, key);
@@ -86,7 +86,7 @@ public class RSAKey {
     }
 
     //解密
-    public byte[] decrypt(byte[] str, Key key) throws GeneralSecurityException{
+    public byte[] decrypt(byte[] str, Key key) throws GeneralSecurityException {
         Cipher rsaCipher = Cipher.getInstance("RSA");
         //初始化 解密模式
         rsaCipher.init(Cipher.DECRYPT_MODE, key);
@@ -108,10 +108,10 @@ public class RSAKey {
         //私钥加密公钥解
         message = "私钥加密的消息";
         //私钥加密
-        encryptedMessage = rsaKey.encrypt(message.getBytes(),rsaKey.getPrivateKey());
+        encryptedMessage = rsaKey.encrypt(message.getBytes(), rsaKey.getPrivateKey());
         System.out.println(new String(encryptedMessage, StandardCharsets.UTF_8));
         //公钥解密
-        decryptedMessage = rsaKey.decrypt(encryptedMessage,rsaKey.getPublicKey());
+        decryptedMessage = rsaKey.decrypt(encryptedMessage, rsaKey.getPublicKey());
         System.out.println(new String(decryptedMessage, StandardCharsets.UTF_8));
     }
 }

@@ -1,6 +1,8 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.Utils.JWT.JwtRsaHelper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +28,9 @@ public class JwtController {
         return jwtRsaHelper.createJwt(calims);
     }
 
-    //传入jwt 返回jwt解析结果
+    //传入jwt 返回jwt全部解析结果
     @GetMapping("/shApi/jwtParse")
-    public Map<String,Object> jwtParser(String jwt){
+    public Jws<Claims> jwtParser(String jwt){
         if (StringUtils.isEmpty(jwt)){
             return null;
         }

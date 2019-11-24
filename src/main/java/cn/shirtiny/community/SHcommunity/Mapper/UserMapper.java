@@ -19,6 +19,9 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("select * from user where user_id=#{userId} ")
     User selectUserByid(@Param("userId") long userId);
 
+    @Select("select * from user where user_id=#{userId} ")
+    UserDTO selectUserDtoByid(@Param("userId") long userId);
+
     @Select("select * from user where user_name=#{userName}")
     User selectUserByUserName(@Param("userName") String userName);
 

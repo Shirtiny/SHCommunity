@@ -1,24 +1,33 @@
 package cn.shirtiny.community.SHcommunity.DTO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
-
 @Data
-public class ChatMessageDTO {
+public class ChatMessageDTO{
+
     //主键
-    Long chatMessageId;
+    private Long chatMessageId;
     //记录此消息的 聊天记录的id
-    Long chatHistoryId;
+    private String chatHistoryId;
     //消息内容
-    String chatMessageContent;
+    private String chatMessageContent;
     //创建时间
-    Long gmtCreated;
+    private Long gmtCreated;
     //发送者id
-    Long senderId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long senderId;
     //接收者id
-    Long recipientId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long recipientId;
 
     //发送者
-    UserDTO sender;
+    private UserDTO sender;
     //接收者
-    UserDTO recipient;
+    private UserDTO recipient;
+
+    public ChatMessageDTO() {
+    }
+
+
 }

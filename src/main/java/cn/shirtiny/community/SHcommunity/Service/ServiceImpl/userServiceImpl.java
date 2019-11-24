@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
+import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Utils.Encryption.ShaEncryptor;
 import cn.shirtiny.community.SHcommunity.Enum.ShUserInfoCheckType;
 import cn.shirtiny.community.SHcommunity.Exception.CreateUserFailedException;
@@ -70,6 +71,11 @@ public class userServiceImpl implements IuserService {
     @Override
     public User selectOneUserByUid(Long uid) {
         return userMapper.selectUserByid(uid);
+    }
+
+    @Override
+    public UserDTO selectOneUserDtoByUid(Long uid) {
+        return userMapper.selectUserDtoByid(uid);
     }
 
     @Override

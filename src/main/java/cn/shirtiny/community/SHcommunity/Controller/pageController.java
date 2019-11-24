@@ -168,6 +168,12 @@ public class pageController {
         return "invitationDetail_Old";
     }
 
+    //前往消息中心
+    @RequestMapping(value = "/messageCenter")
+    public String toMessageCenterPage() {
+        return "messageCenter";
+    }
+
     @RequestMapping(value = "/test")
     public String toTestPage() {
         return "test";

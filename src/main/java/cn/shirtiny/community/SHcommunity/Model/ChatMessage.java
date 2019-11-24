@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Model;
 
+import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
@@ -9,20 +10,27 @@ import lombok.Data;
 public class ChatMessage {
     //主键
     @TableId(value = "chat_message_id",type = IdType.AUTO)
-    Long chatMessageId;
+    private Long chatMessageId;
     //记录此消息的 聊天记录的id
     @TableField(value = "chat_history_id",insertStrategy = FieldStrategy.NOT_NULL)
-    Long chatHistoryId;
+    private String chatHistoryId;
     //消息内容
     @TableField(value = "chat_message_content",insertStrategy = FieldStrategy.NOT_EMPTY)
-    String chatMessageContent;
+    private String chatMessageContent;
     //创建时间
     @TableField(value = "gmt_created",insertStrategy = FieldStrategy.NOT_NULL)
-    Long gmtCreated;
+    private Long gmtCreated;
     //发送者id，可以为空
     @TableField(value = "sender_id")
-    Long senderId;
+    private Long senderId;
     //接收者id，可以为空
     @TableField(value = "recipient_id")
-    Long recipientId;
+    private Long recipientId;
+
+    //发送者
+    @TableField(exist = false)
+    private UserDTO sender;
+    //接收者
+    @TableField(exist = false)
+    private UserDTO recipient;
 }

@@ -55,11 +55,9 @@ public class LoginServiceImpl implements IloginService {
             subject.login(token);
             //获得登录后的用户实体
             user = (User)subject.getPrincipal();
-            Map<String,Object> jwtCalims=new HashMap<>();
             user.setPassWord(null);
-            jwtCalims.put("user",user);
-            //颁发jwt
-            String jwt = jwtRsaHelper.createJwt(jwtCalims);
+            //为用户颁发jwt
+            String jwt = jwtRsaHelper.createJwt(user);
             Map<String,Object> data = new HashMap<>();
             data.put("jwt",jwt);
             return new ShResultDTO<>(200,"登录成功",data,null);

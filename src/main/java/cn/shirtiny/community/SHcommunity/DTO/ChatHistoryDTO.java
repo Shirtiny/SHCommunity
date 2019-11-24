@@ -7,15 +7,15 @@ import java.util.List;
 @Data
 public class ChatHistoryDTO {
     //主键
-    Long chatHistoryId;
+    private String chatHistoryId;
     //聊天记录的名称
-    String chatHistoryName;
+    private String chatHistoryName;
     //聊天创建时间
-    Long gmtCreated;
+    private Long gmtCreated;
     //更新时间
-    Long gmtModified;
+    private Long gmtModified;
     //消息条数
-    Long messageNum;
+    private Long messageNum;
     //记录的消息列表,不在数据库中
-    List<ChatMessage> chatMessages;
+    private List<ChatMessage> chatMessages;
 }

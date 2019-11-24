@@ -5,19 +5,19 @@ import lombok.Data;
 @Data
 public class CommentDTO {
     //评论的主键id
-    Long commentId;
+    private Long commentId;
     //评论者id
-    Long reviewerId;
+    private Long reviewerId;
     //被评论的帖子对象id
-    Long targetId;
+    private Long targetId;
     //评论内容
-    String commentContent;
+    private String commentContent;
     //创建时间
-    Long createdTime;
+    private Long createdTime;
     //被此评论引用的评论id
-    Long citedCommentId;
+    private Long citedCommentId;
     //评论者DTO信息
-    UserDTO reviewer;
+    private UserDTO reviewer;
     //被此评论引用的评论
-    CommentDTO citedComment;
+    private CommentDTO citedComment;
 }

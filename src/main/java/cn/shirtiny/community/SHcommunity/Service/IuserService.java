@@ -11,6 +11,7 @@ public interface IuserService {
     void addUser(User user);
     List<User> selectOneUserByGithubId(Long githubId);
     User selectOneUserByUid(Long uid);
+    UserDTO selectOneUserDtoByUid(Long uid);
     User selectOneUserByUserName(String userName);
     //检查数据库中是否已经存在用户名
     boolean userNameIsExsit(String userName);

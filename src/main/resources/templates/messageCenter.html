@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>登录</title>
+    <title>消息中心</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <!--若有属性冲突，加 !important -->
     <link rel="stylesheet" href="/css/myCss.css">
@@ -16,10 +16,12 @@
     <script src="/js/myJs/element.js"></script>
     <script src="/js/myJs/sh.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 </head>
 <body class="shbody">
 <div class="myLoginForm img-rounded">
-    <div th:replace="loginForm"></div>
+    <div th:replace="user_chat"></div>
 </div>
 </body>
 </html>

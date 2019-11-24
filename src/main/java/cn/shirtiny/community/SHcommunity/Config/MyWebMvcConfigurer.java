@@ -4,9 +4,12 @@ import cn.shirtiny.community.SHcommunity.MyHandlerInterceptors.LoginHandlerInter
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.unit.DataSize;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
 import javax.servlet.MultipartConfigElement;
 import java.util.ArrayList;
@@ -53,11 +56,21 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        //单个文件最大
-        factory.setMaxFileSize("10000MB");
-        //设置总请求数据大小
-        factory.setMaxRequestSize("50000MB");
+        //单个文件最大  10000MB
+        factory.setMaxFileSize(DataSize.parse("10000MB"));
+        //设置总请求数据大小 50000MB
+        factory.setMaxRequestSize(DataSize.parse("50000MB"));
         return factory.createMultipartConfig();
     }
 
+
+    //跨域处理 全局设置，这样就不用在每个Controller上加 @CrossOrigin(origins = "http://localhost:3000")了
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").allowedOrigins("http://localhost:3000")
+                .allowedHeaders("*")
+                .allowedMethods("*")
+                .maxAge(30_000);
+
+    }
 }

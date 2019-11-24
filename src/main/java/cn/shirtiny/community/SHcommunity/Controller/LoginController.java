@@ -1,6 +1,7 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
+import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Exception.JwtInvalidException;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IcookieService;
@@ -9,10 +10,7 @@ import cn.shirtiny.community.SHcommunity.Service.IloginService;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -94,7 +92,20 @@ public class LoginController {
         }else {
             throw new JwtInvalidException("Jwt格式无效或解析失败");
         }
+    }
 
+    //解析cookie中的jwt，返回用户信息
+    @GetMapping("/shApi/getLoginedUserByCookie")
+    @ResponseBody
+    public ShResultDTO<String, Object> backLoginedUserInfoByCookie(@CookieValue("shJwt") String jwt){
+        UserDTO userDTO = jwtService.parseJwtToUser(jwt);
+        Map<String,Object> data = new HashMap<>();
+        if (userDTO!=null){
+            data.put("user",userDTO);
+            return new ShResultDTO<>(200,"已返回jwt用户信息",data,null);
+        }else {
+            throw new JwtInvalidException("Jwt格式无效或解析失败");
+        }
     }
 
 }
