@@ -1,6 +1,6 @@
 alter table chat_history
-    add sender_id bigint null comment '发送者id';
+    add sender_id bigint ;
 
 alter table chat_history
-    add recipient_id bigint null comment '接收人id';
+    add recipient_id bigint ;
 

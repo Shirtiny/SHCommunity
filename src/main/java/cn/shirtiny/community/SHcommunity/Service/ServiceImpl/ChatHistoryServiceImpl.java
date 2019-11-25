@@ -21,14 +21,8 @@ public class ChatHistoryServiceImpl implements IchatHistoryService {
     @Override
     public boolean addOneChatHistory(ChatHistory chatHistory) {
         try {
-            ChatHistoryDTO chatHistory1 = chatHistoryMapper.selectOneHistory(chatHistory.getChatHistoryName());
-            ChatHistory chatHistory2 = chatHistoryMapper.selectById(chatHistory.getChatHistoryId());
-            if (chatHistory1 == null && chatHistory2 == null) {
-                chatHistoryMapper.insert(chatHistory);
-                return true;
-            } else {
-                return false;
-            }
+            chatHistoryMapper.insert(chatHistory);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

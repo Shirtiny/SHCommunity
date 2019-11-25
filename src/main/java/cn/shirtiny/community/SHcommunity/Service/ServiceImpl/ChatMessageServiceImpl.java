@@ -61,7 +61,7 @@ public class ChatMessageServiceImpl implements IchatMessageService {
 
     //查询某个聊天记录的消息 ,比如查询聊天室的消息（chatHistoryId为0的消息）
     @Override
-    public List<ChatMessageDTO> selectMessagesByHistoryId(Long historyId) {
+    public List<ChatMessageDTO> selectMessagesByHistoryId(String historyId) {
         return chatMessageMapper.selectAllDTOByhistoryId(historyId);
     }
 

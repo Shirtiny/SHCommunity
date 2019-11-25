@@ -20,7 +20,14 @@
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 </head>
 <body class="shbody">
-<div class="myLoginForm img-rounded">
+<!--引用导航条-->
+<div th:replace="nav"></div>
+<!--面包屑导航-->
+<div class="col-md-12 mybody " style="min-width: 1050px;">
+    <div th:replace="el_breadcrumb"></div>
+</div>
+<div class="container-fluid myMessageCenterBody" style="min-width: 1050px;">
+    <!--消息-->
     <div th:replace="user_chat"></div>
 </div>
 </body>

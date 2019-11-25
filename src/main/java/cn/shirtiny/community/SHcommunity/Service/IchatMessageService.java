@@ -12,7 +12,7 @@ public interface IchatMessageService {
     boolean addChatMessage(String messageContent ,String chatHistoryId,Long senderId,Long recipientId);
 
     //查询某个聊天记录的消息 ,比如查询聊天室的消息（chatHistoryId为0的消息）
-    List<ChatMessageDTO> selectMessagesByHistoryId(Long historyId);
+    List<ChatMessageDTO> selectMessagesByHistoryId(String historyId);
 
     //根据id清空一个聊天记录的所有数据
     void deleteMessagesByhistoryId(Long chatHistoryId);

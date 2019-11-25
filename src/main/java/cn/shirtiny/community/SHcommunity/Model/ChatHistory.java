@@ -22,4 +22,13 @@ public class ChatHistory {
     //消息条数
     @TableField(value = "message_num",insertStrategy = FieldStrategy.DEFAULT)
     private Long messageNum;
+    //发送者id
+    @TableField(value = "sender_id")
+    private Long senderId;
+    //接收者id
+    @TableField(value = "recipient_id")
+    private Long recipientId;
+    //频道
+    @TableField(value = "channel")
+    private String channel;
 }

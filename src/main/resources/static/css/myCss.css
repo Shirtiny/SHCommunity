@@ -1,11 +1,19 @@
+/*阴影边框*/
+.shbox_shadow1 {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04) !important;
+}
+
+.shbox_shadow2 {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1) !important;
+}
 
 /*文本识别\n和多个空格并且正常换行*/
-.shText_pre_wrap{
+.shText_pre_wrap {
     white-space: pre-wrap;
 }
 
 /*强制在一行显示数据，溢出的元素显示点点点*/
-.shText_title{
+.shText_title {
     display: block; /* 当前元素本身是inline的，因此需要设置成block模式 */
     white-space: nowrap; /* 因为设置了block，所以需要设置nowrap来确保不换行 */
     overflow: hidden; /* 超出隐藏结合width使用截取采用效果*/
@@ -14,13 +22,13 @@
 }
 
 /*a标签 连接*/
-.sh_a{
+.sh_a {
     text-decoration: none;
     color: #9effff;
-    }
+}
 
 /*备引用评论的右引号*/
-.quote_right{
+.quote_right {
     font-size: 50px;
     line-height: 0;
     position: relative;
@@ -94,17 +102,36 @@
     float: right !important;
 }
 
+/*头像 可以套在a标签上用 要给a标签加个style 写上背景图片 可以与头像尺寸配合使用*/
+.shAvatar {
+    display: block;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
 /*头像尺寸*/
+.avatar_image-mini {
+    width: 30px !important;
+    height: 30px !important;
+}
+
 .avatar_image-sm {
     width: 50px !important;
+    height: 50px !important;
 }
 
 .avatar_image-df {
     width: 75px !important;
+    height: 75px !important;
 }
 
 .avatar_image-lg {
     width: 120px !important;
+    height: 120px !important;
 }
 
 /*帖子详情界面的头像div半透明背景色*/
@@ -368,6 +395,11 @@
     padding-right: 50px !important;
 }
 
+.myMessageCenterBody {
+    padding-left: 100px !important;
+    padding-right: 100px !important;
+}
+
 /*编辑页面流式布局*/
 div.container-fluid:nth-child(11) {
     background-color: #dee2e3a3 !important;
@@ -403,8 +435,6 @@ div.container-fluid:nth-child(11) {
     right: 0;
     /*background: rgba(255, 252, 251, 0.82);*/
 }
-
-
 
 
 /*登录界面表单div*/

@@ -84,6 +84,7 @@ public class WebSocketController {
         chatHistory.setChatHistoryName("shChatRoom");
         chatHistory.setGmtCreated(System.currentTimeMillis());
         chatHistory.setGmtModified(chatHistory.getGmtCreated());
+        chatHistory.setChannel("/room/chat");
         boolean flag = chatHistoryService.addOneChatHistory(chatHistory);
 
         return flag ? new ShResultDTO<>(200, "聊天室创建成功") : new ShResultDTO<>(501, "聊天室创建失败，该聊天室已存在");
@@ -94,7 +95,7 @@ public class WebSocketController {
     @ResponseBody
     public ShResultDTO<String, Object> tolistChatRoomMessages() {
 
-        List<ChatMessageDTO> chatMessageDTOs = chatMessageService.selectMessagesByHistoryId(0L);
+        List<ChatMessageDTO> chatMessageDTOs = chatMessageService.selectMessagesByHistoryId("0");
         Map<String, Object> map = new HashMap<>();
         map.put("historyMessages", chatMessageDTOs);
 

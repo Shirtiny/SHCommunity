@@ -11,72 +11,134 @@
 <script src="/js/myJs/element.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<div id="vue_user_chat" th:fragment="user_chat">
-    <el-row style="height: 300px">
-        <el-col :span="24">
-            <el-table
-                    :data="historyMessages"
-                    style="width: 100%"
-                    max-height="500"
-            >
-                <!--暂时只支持游客-->
-                <el-table-column
-                        label="消息记录 "
-                        min-width="280"
-                        show-overflow-tooltip>
+<div id="vue_user_chat" th:fragment="user_chat" style="height: 600px;" class="img-rounded">
+    <!-- 外层tab -->
+    <el-tabs class="img-rounded shELOutTab" tab-position="left" v-model="activeName" type="border-card"
+             style="height: 100%;padding: 10px 10px 10px 10px;">
+        <el-tab-pane disabled>
+            <span slot="label" style="font-style: italic;font-weight: 700;"><i
+                        class="el-icon-s-promotion"></i>消息中心</span>
+        </el-tab-pane>
+        <el-tab-pane name="userMessage">
+            <span slot="label"><i class="el-icon-chat-dot-round"></i> 私信</span>
+            <!-- 标题 background-color: #e4ffff;-->
+            <el-row class="shbox_shadow1"
+                    style="margin-bottom: 20px;height: 40px;padding: 10px 0;background-color: #e4ffff;" type="flex"
+                    justify="space-around">
+                <div><span style="color: #666">我的消息</span></div>
+            </el-row>
+            <!-- 内部tab background-color: #f5f7fa;-->
+            <el-row class="shbox_shadow2 img-rounded" style="margin-bottom: 20px;padding: 10px 10px ;height: 100%;">
+                <el-tabs class="shELInnerTab" v-model="activeName2" tab-position="left" stretch
+                         style="height: 450px;">
+                    <el-tab-pane label="item.title" v-for="item in editableTabs" :name="item.name">
+                        <!-- 自定标签 -->
+                        <div slot="label" class="shELInnerTabDiv">
+                            <span class="el-icon-close  float_right" @click="removeTab"></span>
+                            <el-avatar class="float_left" alt="avatar" fit="cover" shape="circle"
+                                       style="width: 50px;height: 50px"
+                                       src="s.com/data/attachment/common/a5/common_37_icon.png">
+                            </el-avatar>
+                            <span class="float_left" style="margin-left: 10px;">用户名</span>
+                        </div>
+                        <!-- 聊天面板-->
+                        <div class="img-rounded">
+                            <!-- 消息历史 -->
+                            <el-row class="shMessageHistoryBox">
+                                <div class="shMessageHistoryBox_notMe">
+                                    <a href="#" class="shAvatar avatar_image-sm float_left" title="shirtiny"
+                                       target="_blank"
+                                       style='background-image: url("http://bbs.vcb-s.com/data/attachment/common/a5/common_37_icon.png");'></a>
+                                    <div class="shMessage">
+                                        <div id="shMessageContent" class="shMessageContent" >
+                                            五胞胎的小姐姐，五等分的爱~《五等分的新娘》应援活动#五姐妹的应援邀请#
+                                            上线！一花二乃三玖四叶五月，谁是你心中的“新娘”？谁是你的“天”？喜欢就要晒出来，勇敢地和她同框向她表白吧！→
+                                            更有小五胞胎的小姐姐，五等分的爱~《五等分的新娘》应援活动#五姐妹的应援邀请#
+                                            上线！一花二乃三玖四叶五月，谁是你心中的“新娘”？谁是你的“天”？喜欢就要晒出来，勇敢地和她同框向她表白吧！→
+                                            更有小五胞胎的小姐姐，五等分的爱~《五等分的新娘》应援活动#五姐妹的应援邀请#
+                                            上线！一花二乃三玖四叶五月，谁是你心中的“新娘”？谁是你的“天”？喜欢就要晒出来，勇敢地和她同框向她表白吧！→
+                                            更有小姐姐们的周边大奖等你收获哟，五等分的小姐姐期待您的应援，快来参加吧！
+                                        </div>
+                                        <canvas id="canvasMessageBorder" class="canvasMessageBg"
+                                                style="width: 480px; height: 122px;" width="600" height="152">
+                                            当此文本显示时，表示浏览器不支持canvas——Sh社区
+                                        </canvas>
+                                    </div>
+                                </div>
+                            </el-row>
+                            <!-- 输入框-->
+                            <el-row>
+                                <el-col :span="24">
+                                    <el-input
+                                            placeholder="请输入要发送的消息..."
+                                            v-model="unSendChatMessage"
+                                            clearable>
+                                    </el-input>
+                                    <p></p>
+                                </el-col>
+                            </el-row>
+                            <!-- 发送按钮-->
+                            <el-row>
+                                <el-col :span="24">
+                                    <el-tooltip content="发送" placement="bottom" effect="light">
+                                        <el-button icon="el-icon-s-promotion" @click="sendMessage" circle></el-button>
+                                    </el-tooltip>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-row>
 
-                    <div slot-scope="scope">
-                        <el-row id="message_header">
-                                    <span v-if="scope.row.sender!=null"
-                                          style="font-style: italic;color: #a185f7">scope.row.sender.nickName</span>
-                            <span v-else-if="scope.row.sender==null"
-                                  style="font-style: italic;color: #a185f7">游客scope.row.senderId</span>
-                            <span class="float_right">fomateDate(scope.row.gmtCreated)</span>
-                        </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="系统消息" name="sysMessage">
+            系统
+        </el-tab-pane>
+    </el-tabs>
 
-                        <el-row id="message_content">
-                            <el-col :span="4">
-                                <el-avatar icon="el-icon-user-solid"></el-avatar>
-                            </el-col>
-
-                            <el-col :span="20">
-                                <div style="display: block;">scope.row.chatMessageContent</div>
-                            </el-col>
-                        </el-row>
-                    </div>
-                </el-table-column>
-            </el-table>
-        </el-col>
-    </el-row>
-    <el-row>
-        <el-col :span="24">
-            <el-input
-                    placeholder="请输入要发送的消息..."
-                    v-model="unSendChatMessage"
-                    clearable>
-            </el-input>
-            <p></p>
-        </el-col>
-    </el-row>
-    <el-row>
-        <el-col :span="24">
-            <el-tooltip content="发送" placement="bottom" effect="light">
-                <el-button icon="el-icon-s-promotion" @click="sendMessage" circle></el-button>
-            </el-tooltip>
-        </el-col>
-    </el-row>
 </div>
 <script>
     const vue_user_chat = new Vue({
         el: "#vue_user_chat",
         data: {
+            activeName: 'userMessage',
+            activeName2: "1",
+            editableTabs: [{
+                title: 'Tab 1',
+                name: '1',
+                content: 'Tab 1 content'
+            }, {
+                title: 'Tab 2',
+                name: '2',
+                content: 'Tab 2 content'
+            }],
             historyMessages: [],
             unSendChatMessage: '',
             user: {},
             //接收者Id
-            recipientId:'1176036819306635277'
+            recipientId: '1176036819306635277',
+
         },
         methods: {
+            //拿到信息的高度
+            getMessageHeight(){
+                let messageContent =document.getElementById("shMessageContent");
+                let height = messageContent.clientHeight;
+                console.log(height);
+            },
+            //绘制聊天气泡
+            canvasStart() {
+                console.log("开始绘制 最小高度48px");
+                let canvas =document.getElementById("canvasMessageBorder");
+                //拿到2d画笔
+                let canvas2d = canvas.getContext("2d");
+                // canvas2d.fillStyle="#FF0000";
+                // canvas2d.fillRect(0,0,150,70)
+                canvas2d.moveTo(0,0);
+                canvas2d.lineTo(30,30);
+                //下笔
+                canvas2d.stroke();
+            },
             //获取用户信息
             getUser() {
                 axios.get('/shApi/getLoginedUserByCookie').then(res => {
@@ -105,12 +167,12 @@
                     });
             },
             subscribe() {
-                axios.get('/shApi/ReSubscribeChannel?senderId='+this.user.userId+'&recipientId='+this.recipientId).then(res => {
-                    let subscribeChannel="";
-                    if (Number(res.data.code) === 200 ){
+                axios.get('/shApi/ReSubscribeChannel?senderId=' + this.user.userId + '&recipientId=' + this.recipientId).then(res => {
+                    let subscribeChannel = "";
+                    if (Number(res.data.code) === 200) {
                         subscribeChannel = res.data.data.subscribeChannel;
                         console.log(res);
-                        stompClient.subscribe('/user/'+subscribeChannel+'/121chat', message => {
+                        stompClient.subscribe('/user/' + subscribeChannel + '/121chat', message => {
                             //存储订阅频道发过来的数据
                             // let res = JSON.parse(retData.body);
                             console.log("你订阅的频道更新啦！！！！！~");
@@ -130,12 +192,75 @@
                     })
                 );
             },
+            removeTab(targetName) {
+                console.log(targetName)
+            }
         },
         created() {
             this.connectSocket();
             this.getUser();
+        },
+        mounted(){
+            // this.getMessageHeight();
+            this.canvasStart();
+        },
+        //监视
+        watch:{
         }
-    })
-
+    });
 </script>
+<style>
+    /* 改变tab自定标签的高度 3个height要一致*/
+    .shELInnerTab .el-tabs__item {
+        height: 60px !important;
+    }
+
+    .shELInnerTab .el-tabs__active-bar {
+        height: 60px !important;
+    }
+
+    .shELInnerTab .shELInnerTabDiv {
+        height: 60px !important;
+        width: 150px !important;
+        padding: 5px 5px 5px 5px;
+    }
+
+
+    .shMessageHistoryBox {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        height: 350px;
+        background-color: #66666608;
+        padding: 15px 10px;
+        margin: 5px 5px
+    }
+
+    .shMessageHistoryBox_notMe {
+        min-height: 48px;
+        padding: 0 16px 16px;
+    }
+
+    .shMessage {
+        overflow: hidden;
+        margin: 0 10px;
+        max-width: 480px;
+        position: relative;
+        display: block;
+    }
+
+    .shMessageContent {
+        padding: 8px 16px 8px 20px;
+        word-wrap: break-word;
+        word-break: break-word;
+        box-sizing: border-box;
+        z-index: 1;
+    }
+
+    .canvasMessageBg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        border: solid 1px;
+    }
+</style>
 </html>
