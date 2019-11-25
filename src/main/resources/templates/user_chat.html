@@ -59,8 +59,7 @@
                                             上线！一花二乃三玖四叶五月，谁是你心中的“新娘”？谁是你的“天”？喜欢就要晒出来，勇敢地和她同框向她表白吧！→
                                             更有小姐姐们的周边大奖等你收获哟，五等分的小姐姐期待您的应援，快来参加吧！
                                         </div>
-                                        <canvas id="canvasMessageBorder" class="canvasMessageBg"
-                                                style="width: 480px; height: 122px;" width="600" height="152">
+                                        <canvas id="canvasMessageBorder" class="canvasMessageBg">
                                             当此文本显示时，表示浏览器不支持canvas——Sh社区
                                         </canvas>
                                     </div>
@@ -120,24 +119,22 @@
 
         },
         methods: {
-            //拿到信息的高度
-            getMessageHeight(){
-                let messageContent =document.getElementById("shMessageContent");
-                let height = messageContent.clientHeight;
-                console.log(height);
-            },
             //绘制聊天气泡
             canvasStart() {
-                console.log("开始绘制 最小高度48px");
-                let canvas =document.getElementById("canvasMessageBorder");
-                //拿到2d画笔
-                let canvas2d = canvas.getContext("2d");
-                // canvas2d.fillStyle="#FF0000";
-                // canvas2d.fillRect(0,0,150,70)
-                canvas2d.moveTo(0,0);
-                canvas2d.lineTo(30,30);
-                //下笔
-                canvas2d.stroke();
+                //延时1ms执行
+                setTimeout(()=>{
+                    //拿到信息的高度
+                    let messageContent =document.getElementById("shMessageContent");
+                    let height = messageContent.offsetHeight;
+                    let width = messageContent.offsetWidth;
+                    console.log("div的高度",height);
+                    console.log("div的宽度",width);
+                    let canvas =document.getElementById("canvasMessageBorder");
+                    canvas.height=height;
+                    canvas.width=width;
+                    //拿到2d画笔
+                    let canvas2d = canvas.getContext("2d");
+                },1);
             },
             //获取用户信息
             getUser() {
@@ -201,7 +198,6 @@
             this.getUser();
         },
         mounted(){
-            // this.getMessageHeight();
             this.canvasStart();
         },
         //监视
