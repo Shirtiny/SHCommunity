@@ -13,7 +13,7 @@
 
 <div id="vue_user_chat" th:fragment="user_chat" style="height: 600px;" class="img-rounded">
     <!-- 外层tab -->
-    <el-tabs class="img-rounded shELOutTab" tab-position="left" v-model="activeName" type="border-card"
+    <el-tabs class="img-rounded shELOutTab" tab-position="left" v-model="outTabsDefActive" type="border-card"
              style="height: 100%;padding: 10px 10px 10px 10px;">
         <el-tab-pane disabled>
             <span slot="label" style="font-style: italic;font-weight: 700;"><i
@@ -29,39 +29,51 @@
             </el-row>
             <!-- 内部tab background-color: #f5f7fa;-->
             <el-row class="shbox_shadow2 img-rounded" style="margin-bottom: 20px;padding: 10px 10px ;height: 100%;">
-                <el-tabs class="shELInnerTab" v-model="activeName2" tab-position="left" stretch
+                <el-tabs class="shELInnerTab" v-model="innerTabsDefActive" tab-position="left" stretch
+                         @tab-click="handleInnerTabClick"
                          style="height: 450px;">
-                    <el-tab-pane label="item.title" v-for="item in editableTabs" :name="item.name">
+                    <el-tab-pane v-for="chatHistory in innerTabs" :name="chatHistory.targetUser.userId"
+                                 :key="chatHistory.targetUser.userId">
                         <!-- 自定标签 -->
                         <div slot="label" class="shELInnerTabDiv">
+                            <!--删除按钮-->
                             <span class="el-icon-close  float_right" @click="removeTab"></span>
+                            <!-- 头像 -->
                             <el-avatar class="float_left" alt="avatar" fit="cover" shape="circle"
                                        style="width: 50px;height: 50px"
-                                       src="s.com/data/attachment/common/a5/common_37_icon.png">
+                                       :src="chatHistory.targetUser.avatarImage">
                             </el-avatar>
-                            <span class="float_left" style="margin-left: 10px;">用户名</span>
+                            <!-- 用户昵称 -->
+                            <span class="float_left"
+                                  style="margin-left: 10px;">{{chatHistory.targetUser.nickName}}</span>
                         </div>
                         <!-- 聊天面板-->
                         <div class="img-rounded">
                             <!-- 消息历史 -->
                             <el-row class="shMessageHistoryBox">
-                                <div class="shMessageHistoryBox_notMe">
-                                    <a href="#" class="shAvatar avatar_image-sm float_left" title="shirtiny"
-                                       target="_blank"
-                                       style='background-image: url("http://bbs.vcb-s.com/data/attachment/common/a5/common_37_icon.png");'></a>
-                                    <div class="shMessage">
-                                        <div id="shMessageContent" class="shMessageContent" >
-                                            五胞胎的小姐姐，五等分的爱~《五等分的新娘》应援活动#五姐妹的应援邀请#
-                                            上线！一花二乃三玖四叶五月，谁是你心中的“新娘”？谁是你的“天”？喜欢就要晒出来，勇敢地和她同框向她表白吧！→
-                                            更有小五胞胎的小姐姐，五等分的爱~《五等分的新娘》应援活动#五姐妹的应援邀请#
-                                            上线！一花二乃三玖四叶五月，谁是你心中的“新娘”？谁是你的“天”？喜欢就要晒出来，勇敢地和她同框向她表白吧！→
-                                            更有小五胞胎的小姐姐，五等分的爱~《五等分的新娘》应援活动#五姐妹的应援邀请#
-                                            上线！一花二乃三玖四叶五月，谁是你心中的“新娘”？谁是你的“天”？喜欢就要晒出来，勇敢地和她同框向她表白吧！→
-                                            更有小姐姐们的周边大奖等你收获哟，五等分的小姐姐期待您的应援，快来参加吧！
+                                <div v-for="message in chatHistory.chatMessages" :key="message.chatMessageId">
+                                    <div class="shMessageBox" v-if="message.senderId==chatHistory.targetUser.userId">
+                                        <a href="#" class="shAvatar avatar_image-sm float_left"
+                                           :title="chatHistory.targetUser.nickName"
+                                           target="_blank"
+                                           :style="{'background-image' : 'url(' + chatHistory.targetUser.avatarImage + ')'}"></a>
+                                        <div class="shMessage">
+                                            <div id="shMessageContent" class="shMessageContent">
+                                                {{message.chatMessageContent}}
+                                            </div>
+                                            <!-- <canvas id="canvasMessageBorder" class="canvasMessageBg"> 当此文本显示时，表示浏览器不支持canvas——Sh社区 </canvas> -->
                                         </div>
-                                        <canvas id="canvasMessageBorder" class="canvasMessageBg">
-                                            当此文本显示时，表示浏览器不支持canvas——Sh社区
-                                        </canvas>
+                                    </div>
+                                    <div class="shMessageBox" v-else>
+                                        <a href="#" class="shAvatar avatar_image-sm float_right" :title="user.nickName"
+                                           target="_blank"
+                                           :style="{'background-image' : 'url(' + user.avatarImage + ')'}"></a>
+                                        <div class="shMessage float_right">
+                                            <div id="shMessageContent" class="shMessageContent shMessageContentIsMe">
+                                                {{message.chatMessageContent}}
+                                            </div>
+                                            <!-- <canvas id="canvasMessageBorder" class="canvasMessageBg"> 当此文本显示时，表示浏览器不支持canvas——Sh社区 </canvas> -->
+                                        </div>
                                     </div>
                                 </div>
                             </el-row>
@@ -80,7 +92,9 @@
                             <el-row>
                                 <el-col :span="24">
                                     <el-tooltip content="发送" placement="bottom" effect="light">
-                                        <el-button icon="el-icon-s-promotion" @click="sendMessage" circle></el-button>
+                                        <el-button icon="el-icon-s-promotion"
+                                                   @click="sendMessage"
+                                                   circle></el-button>
                                     </el-tooltip>
                                 </el-col>
                             </el-row>
@@ -100,43 +114,54 @@
     const vue_user_chat = new Vue({
         el: "#vue_user_chat",
         data: {
-            activeName: 'userMessage',
-            activeName2: "1",
-            editableTabs: [{
-                title: 'Tab 1',
-                name: '1',
-                content: 'Tab 1 content'
-            }, {
-                title: 'Tab 2',
-                name: '2',
-                content: 'Tab 2 content'
-            }],
+            outTabsDefActive: 'userMessage',
+            innerTabsDefActive: '',
+            //内层tabs 历史消息数组
+            innerTabs: [],
             historyMessages: [],
             unSendChatMessage: '',
             user: {},
-            //接收者Id
-            recipientId: '1176036819306635277',
-
+            //客户端对象
+            subscribedObj: null,
+            //当前客户端的id 需要指定，否则会新建客户端，重复订阅
+            subId: "subClientId"
+        },
+        computed: {
+            //接收者Id 即为当前激活的tab的name
+            recipientId: function () {
+                return this.innerTabsDefActive;
+            },
         },
         methods: {
-            //绘制聊天气泡
+            //绘制聊天气泡 暂不用
             canvasStart() {
                 //延时1ms执行
-                setTimeout(()=>{
+                setTimeout(() => {
                     //拿到信息的高度
-                    let messageContent =document.getElementById("shMessageContent");
+                    let messageContent = document.getElementById("shMessageContent");
                     let height = messageContent.offsetHeight;
                     let width = messageContent.offsetWidth;
-                    console.log("div的高度",height);
-                    console.log("div的宽度",width);
-                    let canvas =document.getElementById("canvasMessageBorder");
-                    canvas.height=height;
-                    canvas.width=width;
+                    console.log("div的高度", height);
+                    console.log("div的宽度", width);
+                    let canvas = document.getElementById("canvasMessageBorder");
+                    canvas.height = height;
+                    canvas.width = width;
                     //拿到2d画笔
                     let canvas2d = canvas.getContext("2d");
-                },1);
+                }, 1);
             },
-            //获取用户信息
+            //从url获取用户id 然后返回url里的用户id
+            getUidFormUrl() {
+                let url = window.location.href;
+                console.log(url);
+                //用正则表达式比较好
+                let array = url.match(`uid=([0-9]+)`);
+                console.log("正则表达匹配结果");
+                console.log(array[1]);
+                //取得要查询的id
+                return array[1];
+            },
+            //根据cookie里的jwt获取当前用户信息
             getUser() {
                 axios.get('/shApi/getLoginedUserByCookie').then(res => {
                     if (Number(res.data.code) === 200) {
@@ -146,6 +171,7 @@
                     }
                 })
             },
+            //以jwt为认证标准,连接服务器
             connectSocket() {
                 let socket = new SockJS('/websocket');
                 stompClient = Stomp.over(socket);
@@ -156,24 +182,36 @@
                     (frame) => {
                         console.log("连接socket: /websocket");
                         console.log(frame);
-                        //订阅
-                        this.subscribe();
+                        //订阅新加入的频道 延时一会儿，等待本地user的载入
+                        setTimeout(this.subscribe(), 500);
                     }, (err) => {
                         console.log("socket连接失败", err);
                         console.log("可是用户过期，请重新登录")
                     });
             },
+            //订阅消息的回调函数
+            onGetMessage(message) {
+                //存储订阅频道发过来的数据
+                // let res = JSON.parse(retData.body);
+                console.log("你订阅的频道更新啦！！！！！~");
+                console.log(message);
+            },
+            //以当前js登录的用户，与当前激活的tabName为准，订阅频道
             subscribe() {
+                //获取频道
                 axios.get('/shApi/ReSubscribeChannel?senderId=' + this.user.userId + '&recipientId=' + this.recipientId).then(res => {
                     let subscribeChannel = "";
                     if (Number(res.data.code) === 200) {
                         subscribeChannel = res.data.data.subscribeChannel;
-                        console.log(res);
-                        stompClient.subscribe('/user/' + subscribeChannel + '/121chat', message => {
-                            //存储订阅频道发过来的数据
-                            // let res = JSON.parse(retData.body);
-                            console.log("你订阅的频道更新啦！！！！！~");
-                            console.log(message);
+                        console.log("订阅对象：", this.subscribedObj);
+                        //订阅
+                        this.subscribedObj = stompClient.subscribe('/user/' + subscribeChannel + '/121chat', this.onGetMessage, {
+                            id: this.subId,
+                        });
+                        console.log("订阅对象：", this.subscribedObj);
+                        //多频道订阅测试
+                        this.subscribedObj = stompClient.subscribe('/user/' + '123' + '/121chat', this.onGetMessage, {
+                            id: this.subId,
                         });
                     } else {
                         console.log(res.data.message);
@@ -189,20 +227,91 @@
                     })
                 );
             },
+            //移除tab
             removeTab(targetName) {
+                console.log("移除");
                 console.log(targetName)
+            },
+            //把新tab加入tabs中
+            addTab(tab) {
+                if (tab != null) {
+                    this.innerTabs.push(tab);
+                    //改变默认激活的tab
+                    this.innerTabsDefActive = tab.targetUser.userId;
+                }
+            },
+            //初始化内部tab
+            initializeInnerTabs() {
+                //查询消息历史tab 初始化tabs 改变innerTabsDefActive的值 延时一会儿，等待本地user的载入
+                setTimeout(() => {
+                    axios.get('/shApi/allHistoryMessage?userId=' + this.user.userId).then(res => {
+                        this.innerTabs = res.data.data.chatHistories;
+                        console.log("初始化内部tabs");
+                        //把url里的新建立连接的用户加入到tabs
+                        let uid = this.getUidFormUrl();
+                        //激活对应tab
+                        this.innerTabsDefActive=uid;
+                        //标识当前对象与历史是否有重复
+                        let isExist = false;
+                        //从已有的消息列表中寻找与当前uid重复的tab
+                        for (let i = 0; i < this.innerTabs.length; i++) {
+                            //如果在数组找到重复的id
+                            if (this.innerTabs[i].targetUser.userId === uid) {
+                                //改变标识
+                                isExist = true;
+                                //从数组中移除该元素
+                                // this.innerTabs.splice(i, 1);
+                            }
+                        }
+                        //如果不存在
+                        if (!isExist) {
+                            //根据uid获取用户信息 然后把用户加入tabs
+                            let user;
+                            axios.get('/shApi/getUserByUserId?userId=' + uid).then(res => {
+                                if (Number(res.data.code) === 200) {
+                                    user = res.data.data.user;
+                                } else {
+                                    user = null;
+                                }
+                                if (user!=null){
+                                //构建一个临时的消息历史记录 存放targetUser
+                                let chatHistory = {targetUser: user};
+                                //加入tab
+                                this.addTab(chatHistory);
+                                //订阅
+                                this.subscribe();
+                                }else {
+                                    console.log("找不到要私信的对象")
+                                }
+                            });
+                        }
+                    })
+                }, 400);
+
+            },
+            //监控内部tabs的点击事件
+            handleInnerTabClick(tab) {
+                console.log("点击内部tabs，被点击的tab的name为：");
+                console.log(tab._props.name);
+                console.log("当前激活的tabname为:", this.innerTabsDefActive);
+                //订阅频道
+                this.subscribe();
             }
         },
         created() {
-            this.connectSocket();
+            //获取当前登录的用户信息
             this.getUser();
         },
-        mounted(){
-            this.canvasStart();
+        mounted() {
+            //绘制canvas
+            // this.canvasStart();
+            //连接socket 订阅需要本地用户信息
+            this.connectSocket();
+            //初始化内部tab 也需要本地用户信息
+            this.initializeInnerTabs();
         },
         //监视
-        watch:{
-        }
+        watch: {}
     });
 </script>
 <style>
@@ -226,30 +335,41 @@
         overflow-x: hidden;
         overflow-y: scroll;
         height: 350px;
-        background-color: #66666608;
+        background-color: #f4f5f7;;
         padding: 15px 10px;
         margin: 5px 5px
     }
 
-    .shMessageHistoryBox_notMe {
+    .shMessageBox {
         min-height: 48px;
         padding: 0 16px 16px;
     }
 
     .shMessage {
         overflow: hidden;
-        margin: 0 10px;
+        padding: 0 10px;
         max-width: 480px;
         position: relative;
         display: block;
     }
 
     .shMessageContent {
-        padding: 8px 16px 8px 20px;
+        /*padding: 8px 16px 8px 20px;*/
+        line-height: 1.5;
+        font-size: 14px;
+        padding: 8px 16px;
         word-wrap: break-word;
         word-break: break-word;
         box-sizing: border-box;
         z-index: 1;
+        border-radius: 0 16px 16px 16px;
+        background: #fff;
+        overflow: hidden;
+    }
+
+    .shMessageContentIsMe {
+        background: #80b9f2;
+        border-radius: 16px 0 16px 16px;
     }
 
     .canvasMessageBg {

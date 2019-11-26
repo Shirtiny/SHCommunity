@@ -19,5 +19,4 @@ public interface ChatMessageMapper extends BaseMapper<ChatMessage> {
     @Delete("delete from chat_message where chat_history_id=#{chatHistoryId}")
     void deleteMessagesByhistoryId(@Param("chatHistoryId") Long chatHistoryId);
 
-
 }

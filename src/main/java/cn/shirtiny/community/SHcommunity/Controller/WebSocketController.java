@@ -1,5 +1,6 @@
 package cn.shirtiny.community.SHcommunity.Controller;
 
+import cn.shirtiny.community.SHcommunity.DTO.ChatHistoryDTO;
 import cn.shirtiny.community.SHcommunity.DTO.ChatMessageDTO;
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
 import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
@@ -69,7 +70,7 @@ public class WebSocketController {
         //接收者id
         //无
         //将消息存入数据库
-        chatMessageService.addChatMessage(message.getChatMessageContent(), historyId, senderId, null);
+        chatMessageService.addChatMessage(message.getChatMessageContent(), senderId, null);
 
         //从数据库中查询此聊天室的消息，广播给该频道
         return tolistChatRoomMessages();
@@ -82,8 +83,6 @@ public class WebSocketController {
         ChatHistory chatHistory = new ChatHistory();
         chatHistory.setChatHistoryId("0");
         chatHistory.setChatHistoryName("shChatRoom");
-        chatHistory.setGmtCreated(System.currentTimeMillis());
-        chatHistory.setGmtModified(chatHistory.getGmtCreated());
         chatHistory.setChannel("/room/chat");
         boolean flag = chatHistoryService.addOneChatHistory(chatHistory);
 
@@ -144,8 +143,15 @@ public class WebSocketController {
         //从websocketSession取出发送者
         UserDTO sender = (UserDTO)sessionAttributes.get("user");
         chatMessage.setSender(sender);
+        chatMessage.setSenderId(sender.getUserId());
         //根据双方id得出历史记录id
         String historyId = chatHistoryService.createHistoryId(sender.getUserId(), chatMessage.getRecipientId());
+        //将消息存入数据库
+        chatMessageService.addChatMessage(chatMessage);
+        //创建历史记录 已存在则不会创建
+        chatHistoryService.addOneChatHistoryBy2Id(sender.getUserId(), chatMessage.getRecipientId());
+        //消息数自增
+        chatHistoryService.incrMessageNum(historyId);
         //会自动在频道路径前加上/user/'historyId' 比如此频道会被拼接为/user/historyId/121chat
         messagingTemplate.convertAndSendToUser(historyId, "/121chat", message);
     }
@@ -161,6 +167,19 @@ public class WebSocketController {
         Map<String,Object> data =new HashMap<>();
         data.put("subscribeChannel",historyId);
         return new ShResultDTO<>(200,"已返回应该订阅的频道",data,null);
+    }
+
+    //查询某个用户的全部消息记录及其内容
+    @GetMapping("/shApi/allHistoryMessage")
+    @ResponseBody
+    public ShResultDTO<String, Object> retAllHistoryMessage(Long userId){
+        List<ChatHistoryDTO> chatHistoryDTOS = chatHistoryService.selectAllHistoryMessageByUid(userId);
+        if (userId==null){
+            return new ShResultDTO<>(400,"参数不合法");
+        }
+        Map<String,Object> data =new HashMap<>();
+        data.put("chatHistories",chatHistoryDTOS);
+        return new ShResultDTO<>(200,"已返回该用户所有的历史记录及其内容",data,null);
     }
 }
 

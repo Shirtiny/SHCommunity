@@ -25,6 +25,10 @@ public class ChatHistoryDTO {
     private Long recipientId;
     //频道
     private String channel;
+
+    //对方 值为sender或者recipient ,不在数据库中
+    private UserDTO targetUser;
     //记录的消息列表,不在数据库中
-    private List<ChatMessage> chatMessages;
+    private List<ChatMessageDTO> chatMessages;
+
 }

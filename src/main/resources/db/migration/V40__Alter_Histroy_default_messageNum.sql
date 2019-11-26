@@ -1,0 +1,1 @@
+alter table chat_history alter column message_num set default 0;
