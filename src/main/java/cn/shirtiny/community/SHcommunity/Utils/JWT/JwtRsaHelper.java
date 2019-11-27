@@ -5,6 +5,7 @@ import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Utils.Encryption.RSAKey;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -20,8 +21,9 @@ public class JwtRsaHelper {
     private PrivateKey privateKey;
 
 
-    //30分钟后过期 毫秒
-    private static final long expirationTime=1800_000;
+    //60分钟后过期 毫秒
+    @Value("${Jwt_RSA_ExpirationTime}")
+    private long expirationTime;
 
     public JwtRsaHelper(String publicKeyBase64Str,String privateKeyBase64Str){
         RSAKey rsaKey = null;

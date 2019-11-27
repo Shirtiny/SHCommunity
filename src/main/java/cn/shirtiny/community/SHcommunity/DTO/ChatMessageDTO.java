@@ -25,6 +25,8 @@ public class ChatMessageDTO{
     private UserDTO sender;
     //接收者
     private UserDTO recipient;
+    //标识为系统通知
+    private boolean system;
 
     public ChatMessageDTO() {
     }

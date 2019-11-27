@@ -43,7 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         //允许客户端订阅主题/room
-        registry.enableSimpleBroker("/room","/user");
+        registry.enableSimpleBroker("/room","/user","/uid");
         //注册 app的前缀/app
         registry.setApplicationDestinationPrefixes("/app");
         //推送用户前缀 不过默认就是/user
@@ -64,6 +64,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
                 Object user = session.getAttributes().get("user");
                 System.out.println(user+"\n正在发送一条消息："+message.getPayload());
+                //把经过的带有system标记信息存入数据库
+                //检查客户端传来的ack，根据ack来删除数据库中的消息
+                //当用户上线时，把对应的消息发给用户，同样携带系统标记，传来ack则删除对应信息
                 if (user==null){
                     //不是有效的用户登录，就关闭session
                     System.out.println("用户无效 ，关闭session");

@@ -130,7 +130,7 @@ public class WebSocketController {
 
     //一对一聊天 message需要携带消息内容、接收者的id
     @MessageMapping("/sendToUser")
-    public void sendToOneUser(Message message) {
+    public void sendToUser(Message message) {
         //mysql UNION
         //接收发送来的消息 然后转为消息对象
         String payload = new String((byte[]) message.getPayload());
@@ -146,14 +146,17 @@ public class WebSocketController {
         chatMessage.setSenderId(sender.getUserId());
         //根据双方id得出历史记录id
         String historyId = chatHistoryService.createHistoryId(sender.getUserId(), chatMessage.getRecipientId());
+        chatMessage.setChatHistoryId(historyId);
         //将消息存入数据库
-        chatMessageService.addChatMessage(chatMessage);
+        boolean isMessageAdded = chatMessageService.addChatMessage(chatMessage);
         //创建历史记录 已存在则不会创建
         chatHistoryService.addOneChatHistoryBy2Id(sender.getUserId(), chatMessage.getRecipientId());
-        //消息数自增
-        chatHistoryService.incrMessageNum(historyId);
-        //会自动在频道路径前加上/user/'historyId' 比如此频道会被拼接为/user/historyId/121chat
-        messagingTemplate.convertAndSendToUser(historyId, "/121chat", message);
+        //消息数自增 发送消息 只有消息入库成功才会发送
+        if (isMessageAdded){
+            chatHistoryService.incrMessageNum(historyId);
+            //会自动在频道路径前加上/user/'historyId' 比如此频道会被拼接为/user/historyId/121chat
+            messagingTemplate.convertAndSendToUser(historyId, "/121chat", chatMessage);
+        }
     }
 
     //为客户端返回应该订阅的1对1频道
@@ -180,6 +183,30 @@ public class WebSocketController {
         Map<String,Object> data =new HashMap<>();
         data.put("chatHistories",chatHistoryDTOS);
         return new ShResultDTO<>(200,"已返回该用户所有的历史记录及其内容",data,null);
+    }
+
+    //用于通知某个用户 message需要携带消息内容、接收者的id
+    @MessageMapping("/sendToOneUser")
+    public void sendToOneUser(Message message) {
+        String payload = new String((byte[]) message.getPayload());
+        ChatMessage chatMessage = JSONObject.parseObject(payload, ChatMessage.class);
+        //取出消息头中session里的当前用户
+        MessageHeaders headers = message.getHeaders();
+        Map sessionAttributes = (Map) headers.get("simpSessionAttributes");
+        //断言
+        assert sessionAttributes != null;
+        //从websocketSession取出发送者
+        UserDTO sender = (UserDTO)sessionAttributes.get("user");
+        chatMessage.setSender(sender);
+        chatMessage.setSenderId(sender.getUserId());
+        //根据双方id得出历史记录id
+        String historyId = chatHistoryService.createHistoryId(sender.getUserId(), chatMessage.getRecipientId());
+        chatMessage.setChatHistoryId(historyId);
+        //收信人
+        Long recipientId = chatMessage.getRecipientId();
+        //标识为系统通知
+        chatMessage.setSystem(true);
+        messagingTemplate.convertAndSend("/uid/"+recipientId,chatMessage);
     }
 }
 
