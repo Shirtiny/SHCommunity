@@ -107,12 +107,15 @@
     const vue_user_chat = new Vue({
         el: "#vue_user_chat",
         data: {
+            //外层激活的tab的name
             outTabsDefActive: 'userMessage',
             //激活的tab的name
             innerTabsDefActive: '',
             //内层tabs 历史消息数组 每个tab的name是targetUser.userId
             innerTabs: [],
+            //待发送的消息
             unSendChatMessage: '',
+            //本地简单用户 发送消息不依赖它
             user: {},
             //客户端对象
             subscribedObj: null,
@@ -128,7 +131,7 @@
             },
             //当前客户端的id 需要指定，否则会新建客户端，重复订阅
             subId: function () {
-                return  this.user.userId;
+                return this.user.userId;
             },
         },
         methods: {
@@ -199,7 +202,7 @@
                 let chatMessage = JSON.parse(message.body);
                 console.log("", chatMessage.system);
                 //如果是系统通知
-                if (chatMessage.system){
+                if (chatMessage.system) {
                     console.log("系统通知", chatMessage);
                     //存储订阅频道发过来的数据
                     let sender = chatMessage.sender;
@@ -222,15 +225,15 @@
                             chatMessages: []
                         };
                         //加入tab 不改变激活的tab
-                        this.addTab(chatHistory,false);
+                        this.addTab(chatHistory, false);
                         //加入对应的消息列表
                         this.putNewMessage(chatMessage);
                     }
                     //最后通知服务器 我已经接收了消息
                     message.ack();
-                }else {
+                } else {
                     //直接加入对应的消息列表
-                   this.putNewMessage(chatMessage);
+                    this.putNewMessage(chatMessage);
                 }
             },
             //以当前js登录的用户，与当前激活的tabName为准，订阅频道
@@ -240,7 +243,7 @@
                     id: this.subId,
                     ack: this.user.userId
                 });
-                console.log("订阅系统通知",subscribedObj);
+                console.log("订阅系统通知", subscribedObj);
                 //获取频道
                 axios.get('/shApi/ReSubscribeChannel?senderId=' + this.user.userId + '&recipientId=' + this.recipientId).then(res => {
                     let subscribeChannel = "";
@@ -257,7 +260,6 @@
                 });
             },
             sendMessage: function () {
-                console.log("发送消息：");
                 stompClient.send("/app/sendToUser", {}, JSON.stringify({
                         'chatMessageContent': this.unSendChatMessage,
                         'recipientId': this.recipientId,
@@ -269,6 +271,8 @@
                         'recipientId': this.recipientId,
                     })
                 );
+                //清空输入框
+                this.unSendChatMessage = '';
             },
             //移除tab
             removeTab(userId) {
@@ -289,14 +293,14 @@
                                 this.innerTabsDefActive = this.innerTabs[i - 1].targetUser.userId;
                             }, 20);
                         }
-                        //换背景图 依照数组的情况换背景
+                        //换背景图 依照数组的情况换背景 由watch来监控，这里不需要了
                         // this.changeBackImg();
                         break;
                     }
                 }
             },
             //把新消息加入到列表
-            putNewMessage(chatMessage){
+            putNewMessage(chatMessage) {
                 let historyId = chatMessage.chatHistoryId;
                 //把消息push到列表
                 for (let i = 0; i < this.innerTabs.length; i++) {
@@ -311,11 +315,11 @@
                 this.receiveNewMessage = this.receiveNewMessage + 1;
             },
             //把新tab加入tabs中
-            addTab(tab,isChangeTab) {
+            addTab(tab, isChangeTab) {
                 if (tab != null) {
                     this.innerTabs.push(tab);
                     //如果要求激活该tab 或者数组中只有一个tab
-                    if (isChangeTab || this.innerTabs.length ===1){
+                    if (isChangeTab || this.innerTabs.length === 1) {
                         //改变默认激活的tab
                         this.innerTabsDefActive = tab.targetUser.userId;
                     }
@@ -368,7 +372,7 @@
                                         chatMessages: []
                                     };
                                     //加入tab 并改变激活的tab
-                                    this.addTab(chatHistory,true);
+                                    this.addTab(chatHistory, true);
                                     //订阅
                                     this.subscribe();
                                 } else {

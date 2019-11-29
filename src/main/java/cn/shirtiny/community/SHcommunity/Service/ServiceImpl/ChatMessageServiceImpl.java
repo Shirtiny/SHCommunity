@@ -1,18 +1,23 @@
 package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
 import cn.shirtiny.community.SHcommunity.DTO.ChatMessageDTO;
+import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Mapper.ChatMessageMapper;
 import cn.shirtiny.community.SHcommunity.Model.ChatHistory;
 import cn.shirtiny.community.SHcommunity.Model.ChatMessage;
 import cn.shirtiny.community.SHcommunity.Service.IchatHistoryService;
 import cn.shirtiny.community.SHcommunity.Service.IchatMessageService;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sun.nio.cs.ext.MacArabic;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -29,10 +34,10 @@ public class ChatMessageServiceImpl implements IchatMessageService {
     //增加一条消息
     @Override
     public boolean addChatMessage(ChatMessage chatMessage) {
-        if (chatMessage==null){
+        if (chatMessage == null) {
             return false;
         }
-        return addChatMessage(chatMessage.getChatMessageContent(),chatMessage.getSenderId(),chatMessage.getRecipientId());
+        return addChatMessage(chatMessage.getChatMessageContent(), chatMessage.getSenderId(), chatMessage.getRecipientId());
     }
 
     //增加一条消息
@@ -83,4 +88,24 @@ public class ChatMessageServiceImpl implements IchatMessageService {
         chatMessageMapper.deleteMessagesByhistoryId(chatHistoryId);
     }
 
+
+    //将Message对象转为ChatMessage，当然Message的载荷要为ChatMessage chatMessage只含有sender，没有recipient
+    @Override
+    public ChatMessage parseMessageToChatMessage(Message message) {
+        String payload = new String((byte[]) message.getPayload());
+        ChatMessage chatMessage = JSONObject.parseObject(payload, ChatMessage.class);
+        //取出消息头中session里的当前用户
+        MessageHeaders headers = message.getHeaders();
+        Map sessionAttributes = (Map) headers.get("simpSessionAttributes");
+        //断言
+        assert sessionAttributes != null;
+        //从websocketSession取出发送者
+        UserDTO sender = (UserDTO) sessionAttributes.get("user");
+        chatMessage.setSender(sender);
+        chatMessage.setSenderId(sender.getUserId());
+        //根据双方id得出历史记录id
+        String historyId = chatHistoryService.createHistoryId(sender.getUserId(), chatMessage.getRecipientId());
+        chatMessage.setChatHistoryId(historyId);
+        return chatMessage;
+    }
 }

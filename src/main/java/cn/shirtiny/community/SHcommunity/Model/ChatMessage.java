@@ -11,17 +11,17 @@ import lombok.Data;
 @TableName("chat_message")
 public class ChatMessage {
     //主键
-    @TableId(value = "chat_message_id",type = IdType.AUTO)
+    @TableId(value = "chat_message_id", type = IdType.AUTO)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long chatMessageId;
     //记录此消息的 聊天记录的id
-    @TableField(value = "chat_history_id",insertStrategy = FieldStrategy.NOT_NULL)
+    @TableField(value = "chat_history_id", insertStrategy = FieldStrategy.NOT_NULL)
     private String chatHistoryId;
     //消息内容
-    @TableField(value = "chat_message_content",insertStrategy = FieldStrategy.NOT_EMPTY)
+    @TableField(value = "chat_message_content", insertStrategy = FieldStrategy.NOT_EMPTY)
     private String chatMessageContent;
     //创建时间
-    @TableField(value = "gmt_created",insertStrategy = FieldStrategy.NOT_NULL)
+    @TableField(value = "gmt_created", insertStrategy = FieldStrategy.NOT_NULL)
     private Long gmtCreated;
     //发送者id，可以为空
     @TableField(value = "sender_id")
