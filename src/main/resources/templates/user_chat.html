@@ -11,7 +11,7 @@
 <script src="/js/myJs/element.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<div id="vue_user_chat" th:fragment="user_chat" style="height: 600px;" class="img-rounded">
+<div id="vue_user_chat" th:fragment="user_chat" style="height: 630px;" class="img-rounded">
     <!-- 外层tab -->
     <el-tabs class="img-rounded shELOutTab" tab-position="left" v-model="outTabsDefActive" type="border-card"
              style="height: 100%;padding: 10px 10px 10px 10px;">
@@ -31,7 +31,7 @@
             <el-row class="shbox_shadow2 img-rounded" style="margin-bottom: 20px;padding: 10px 10px ;height: 100%;">
                 <el-tabs id="shELInnerTab" class="shELInnerTab" v-model="innerTabsDefActive" tab-position="left" stretch
                          @tab-click="handleInnerTabClick"
-                         style="height: 450px;">
+                         style="height: 500px;">
                     <el-tab-pane v-for="chatHistory in innerTabs" :name="chatHistory.targetUser.userId"
                                  :key="chatHistory.targetUser.userId">
                         <!-- 自定标签 -->
@@ -49,7 +49,7 @@
                                   style="margin-left: 10px;">{{chatHistory.targetUser.nickName}}</span>
                         </div>
                         <!-- 聊天面板-->
-                        <div class="img-rounded">
+                        <div class="img-rounded" style="background-color: #f4f5f7;">
                             <!-- 消息历史 -->
                             <el-row class="shMessageHistoryBox">
                                 <div class="shMessageBox" v-for="message in chatHistory.chatMessages"
@@ -70,27 +70,40 @@
                                     </div>
                                 </div>
                             </el-row>
-                            <!-- 输入框-->
-                            <el-row>
-                                <el-col :span="24">
-                                    <el-input
-                                            placeholder="请输入要发送的消息..."
-                                            v-model="unSendChatMessage"
-                                            clearable>
-                                    </el-input>
-                                    <p></p>
-                                </el-col>
-                            </el-row>
-                            <!-- 发送按钮-->
-                            <el-row>
-                                <el-col :span="24">
-                                    <el-tooltip content="发送" placement="bottom" effect="light">
-                                        <el-button icon="el-icon-s-promotion"
-                                                   @click="sendMessage"
-                                                   circle></el-button>
-                                    </el-tooltip>
-                                </el-col>
-                            </el-row>
+                            <!-- 输入组件盒子-->
+                            <div class="ShInputBox img-rounded" >
+                                <!-- 输入框-->
+                                <el-row>
+                                    <el-col :span="24" >
+                                        <el-input
+                                                type="textarea"
+                                                maxlength="250"
+                                                :rows="3"
+                                                autofocus="true"
+                                                resize="none"
+                                                show-word-limit
+                                                placeholder="请输入要发送的消息..."
+                                                v-model="unSendChatMessage">
+                                        </el-input>
+                                    </el-col>
+                                </el-row>
+                                <!-- 发送按钮-->
+                                <el-row>
+                                    <el-col :span="2">
+                                        <span @click="sendImg" class="el-icon-picture-outline" style="font-size: 25px;color: #d8d8d8;line-height: 1.8;cursor: pointer;"></span>
+                                    </el-col>
+                                    <el-col :span="18">
+                                        &nbsp;
+                                    </el-col>
+                                    <el-col :span="4">
+                                        <el-tooltip content="发送" placement="bottom" effect="light">
+                                            <el-button icon="el-icon-s-promotion" class="float_right"
+                                                       @click="sendMessage"
+                                                       circle></el-button>
+                                        </el-tooltip>
+                                    </el-col>
+                                </el-row>
+                            </div>
                         </div>
                     </el-tab-pane>
                 </el-tabs>
@@ -404,6 +417,10 @@
                 } else {
                     innerTab.style.background = "url('')" + " no-repeat";
                 }
+            },
+            //发送图片 未完成
+            sendImg(){
+                this.$message('暂不能发送图片');
             }
         },
         created() {
@@ -531,5 +548,25 @@
         left: 0;
         border: solid 1px;
     }
+
+    .ShInputBox{
+        padding: 5px 5px;
+        margin: 5px 5px;
+        background-color: #f4f5f7;
+        border-top: 1px solid #d8d8d8;
+    }
+
+    textarea{
+        border:0 !important;
+        background-color:transparent !important;
+    }
+
+    .el-textarea .el-input__count {
+        background: #f4f5f7;
+        position: absolute;
+        bottom: -30px;
+        right: 50px;
+    }
+
 </style>
 </html>

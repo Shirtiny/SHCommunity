@@ -169,7 +169,7 @@ public class pageController {
     }
 
     //前往消息中心
-    @RequestMapping(value = "/messageCenter")
+    @RequestMapping(value = "/shPub/messageCenter")
     public String toMessageCenterPage() {
         return "messageCenter";
     }

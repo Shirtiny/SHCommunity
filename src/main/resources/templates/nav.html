@@ -66,8 +66,12 @@
                              :src="user.avatarImage">
                     </a></li>
                 <!--                消息-->
-                <li v-if="user!=null"><a><abbr title="您收到的消息"><span
-                                    class="glyphicon glyphicon-envelope"></span><span class="badge nav_message">4</span></abbr></a>
+                <li v-if="user!=null">
+                    <a href="/shPub/messageCenter">
+                        <abbr title="您收到的消息" >
+                            <span class="glyphicon glyphicon-envelope"></span><span class="badge nav_message">4</span>
+                        </abbr>
+                    </a>
                 </li>
                 <li class="dropdown" v-if="user!=null">
                     <a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true"
