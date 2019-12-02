@@ -22,6 +22,7 @@ public interface ChatHistoryMapper extends BaseMapper<ChatHistory> {
     @Select("select count(1) from chat_history where chat_history_id = #{chatHistoryId}")
     int isExist(@Param("chatHistoryId") String chatHistoryId);
 
+    //使消息数自增
     @Update("update chat_history set message_num=message_num+1 where chat_history_id=#{chatHistoryId}")
     void incrMessageNum(@Param("chatHistoryId") String chatHistoryId);
 

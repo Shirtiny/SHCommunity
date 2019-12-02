@@ -31,6 +31,12 @@ public class ChatMessage {
     @TableField(value = "recipient_id")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long recipientId;
+    //标识是否已读，不为空 默认false
+    @TableField(value = "readed")
+    private boolean readed;
+    //标识为系统通知
+    @TableField(value = "systems")
+    private boolean systems;
 
     //发送者
     @TableField(exist = false)
@@ -38,8 +44,6 @@ public class ChatMessage {
     //接收者
     @TableField(exist = false)
     private UserDTO recipient;
-    //标识为系统通知
-    @TableField(exist = false)
-    private boolean system;
+
 
 }

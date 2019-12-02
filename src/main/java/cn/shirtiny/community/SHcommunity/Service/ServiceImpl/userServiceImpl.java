@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
@@ -178,4 +179,5 @@ public class userServiceImpl implements IuserService {
         }
         //给邮箱发邮件 或实际的去验证邮箱是否真实
     }
+
 }

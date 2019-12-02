@@ -141,6 +141,9 @@ public class WebSocketController {
         //消息数自增 发送消息 只有消息入库成功才会发送
         if (isMessageAdded){
             chatHistoryService.incrMessageNum(chatMessage.getChatHistoryId());
+            //查出这条消息的自增id
+            Long chatMessageId = chatMessageService.selectMessageId(chatMessage.getChatHistoryId(), chatMessage.getChatMessageContent());
+            chatMessage.setChatMessageId(chatMessageId);
             //会自动在频道路径前加上/user/'historyId' 比如此频道会被拼接为/user/historyId/121chat
             messagingTemplate.convertAndSendToUser(chatMessage.getChatHistoryId(), "/121chat", chatMessage);
         }
@@ -179,8 +182,16 @@ public class WebSocketController {
         //收信人
         Long recipientId = chatMessage.getRecipientId();
         //标识为系统通知
-        chatMessage.setSystem(true);
+        chatMessage.setSystems(true);
         messagingTemplate.convertAndSend("/uid/"+recipientId,chatMessage);
+    }
+
+    //把某个消息记录的所有消息更新为已读
+    @GetMapping("/shApi/updateChatHistoryRead")
+    @ResponseBody
+    public ShResultDTO<String, Object> updateChatHistoryRead(String chatHistoryId){
+        chatMessageService.updateMessageReadByHistoryId(chatHistoryId,true);
+        return new ShResultDTO<>(200,"已更新");
     }
 }
 

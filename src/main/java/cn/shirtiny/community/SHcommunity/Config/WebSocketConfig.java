@@ -2,7 +2,10 @@ package cn.shirtiny.community.SHcommunity.Config;
 
 import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Exception.NoLoginException;
+import cn.shirtiny.community.SHcommunity.Model.ChatMessage;
+import cn.shirtiny.community.SHcommunity.Service.IchatMessageService;
 import cn.shirtiny.community.SHcommunity.Service.IjwtService;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +24,9 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import javax.servlet.http.Cookie;
 import java.security.Principal;
 import java.util.Map;
+import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -28,6 +34,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Autowired
     private IjwtService jwtService;
+    @Autowired
+    private IchatMessageService chatMessageService;
 
     //注册STOMP协议节点并映射url
     @Override
@@ -60,13 +68,26 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 super.afterConnectionEstablished(session);
             }
 
+            private Pattern chatMessageIdReg = Pattern.compile("chatMessageId:([^\n]*)");
             @Override
             public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-                Object user = session.getAttributes().get("user");
+                UserDTO user = (UserDTO)session.getAttributes().get("user");
                 System.out.println(user+"\n正在发送一条消息："+message.getPayload());
-                //把经过的带有system标记信息存入数据库
-                //检查客户端传来的ack，根据ack来删除数据库中的消息
-                //当用户上线时，把对应的消息发给用户，同样携带系统标记，传来ack则删除对应信息
+                String payload = (String)message.getPayload();
+                //如果stomp帧是ACK,载荷字符串以ACK开头
+                boolean isACK = payload.startsWith("ACK");
+                if (isACK){
+                    System.out.println("这是ack");
+                    Matcher matcher = chatMessageIdReg.matcher(payload);
+                    while (matcher.find()){
+                        String chatMessageId = matcher.group(1);
+                        System.out.println("消息id匹配结果："+chatMessageId);
+                        //更新消息为已读状态
+                        chatMessageService.updateMessageRead(chatMessageId,true);
+                    }
+                }
+                //检查客户端传来的ack，根据ack来改变数据库中的已读标识
+                //当用户上线时，把对应的消息发给用户，同样携带系统标记，传来ack则修改对应信息
                 if (user==null){
                     //不是有效的用户登录，就关闭session
                     System.out.println("用户无效 ，关闭session");

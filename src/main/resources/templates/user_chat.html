@@ -71,10 +71,10 @@
                                 </div>
                             </el-row>
                             <!-- 输入组件盒子-->
-                            <div class="ShInputBox img-rounded" >
+                            <div class="ShInputBox img-rounded">
                                 <!-- 输入框-->
                                 <el-row>
-                                    <el-col :span="24" >
+                                    <el-col :span="24">
                                         <el-input
                                                 type="textarea"
                                                 maxlength="250"
@@ -90,7 +90,8 @@
                                 <!-- 发送按钮-->
                                 <el-row>
                                     <el-col :span="2">
-                                        <span @click="sendImg" class="el-icon-picture-outline" style="font-size: 25px;color: #d8d8d8;line-height: 1.8;cursor: pointer;"></span>
+                                        <span @click="sendImg" class="el-icon-picture-outline"
+                                              style="font-size: 25px;color: #d8d8d8;line-height: 1.8;cursor: pointer;"></span>
                                     </el-col>
                                     <el-col :span="18">
                                         &nbsp;
@@ -124,7 +125,7 @@
             outTabsDefActive: 'userMessage',
             //激活的tab的name
             innerTabsDefActive: '',
-            //内层tabs 历史消息数组 每个tab的name是targetUser.userId
+            //内层tabs 历史消息数组chatHistories 每个tab的name是targetUser.userId
             innerTabs: [],
             //待发送的消息
             unSendChatMessage: '',
@@ -213,7 +214,7 @@
             //订阅消息的回调函数
             onGetMessage(message) {
                 let chatMessage = JSON.parse(message.body);
-                console.log("", chatMessage.system);
+                console.log("是否为系统通知", chatMessage.system);
                 //如果是系统通知
                 if (chatMessage.system) {
                     console.log("系统通知", chatMessage);
@@ -241,12 +242,13 @@
                         this.addTab(chatHistory, false);
                         //加入对应的消息列表
                         this.putNewMessage(chatMessage);
+                        //接收者会收到这条消息 通知服务器 我已经接收了消息 让服务器把消息改成已读
+                        message.ack({chatMessageId: chatMessage.chatMessageId});
                     }
-                    //最后通知服务器 我已经接收了消息
-                    message.ack();
                 } else {
                     //直接加入对应的消息列表
                     this.putNewMessage(chatMessage);
+                    //不能ack 因为发送者会执行到这里
                 }
             },
             //以当前js登录的用户，与当前激活的tabName为准，订阅频道
@@ -254,7 +256,7 @@
                 //订阅单用户系统通知频道
                 let subscribedObj = stompClient.subscribe('/uid/' + this.user.userId, this.onGetMessage, {
                     id: this.subId,
-                    ack: this.user.userId
+                    // ack: this.user.userId
                 });
                 console.log("订阅系统通知", subscribedObj);
                 //获取频道
@@ -279,7 +281,7 @@
                     })
                 );
                 //系统通知
-                stompClient.send("/app/sendToOneUser", {}, JSON.stringify({
+                stompClient.send("/app/sendToOneUser", {sysHeader: true}, JSON.stringify({
                         'chatMessageContent': this.unSendChatMessage,
                         'recipientId': this.recipientId,
                     })
@@ -419,7 +421,7 @@
                 }
             },
             //发送图片 未完成
-            sendImg(){
+            sendImg() {
                 this.$message('暂不能发送图片');
             }
         },
@@ -452,6 +454,16 @@
                     if (this.recipientId != null && this.user != null && this.isConnected) {
                         this.subscribe();
                     }
+                    //更新对应消息历史记录的消息为已读状态
+                    if (this.innerTabs.length!==0 && this.recipientId != null && Number(this.recipientId) !== 0 && this.user != null && this.isConnected) {
+                        for (let i = 0; i < this.innerTabs.length; i++) {
+                            if (this.innerTabs[i].targetUser.userId === this.recipientId){
+                                axios.get('/shApi/updateChatHistoryRead?chatHistoryId='+this.innerTabs[i].chatHistoryId).then(res => {
+                                    console.log(this.innerTabs[i].chatHistoryId,"更新为已读");
+                                })
+                            }
+                        }
+                    }
                 }
             },
             receiveNewMessage: {
@@ -472,7 +484,9 @@
                     });
                     console.log("receiveNewMessage改变了", oldName, newName);
                 }
-            }
+            },
+
+
         }
     });
 </script>
@@ -549,16 +563,16 @@
         border: solid 1px;
     }
 
-    .ShInputBox{
+    .ShInputBox {
         padding: 5px 5px;
         margin: 5px 5px;
         background-color: #f4f5f7;
         border-top: 1px solid #d8d8d8;
     }
 
-    textarea{
-        border:0 !important;
-        background-color:transparent !important;
+    textarea {
+        border: 0 !important;
+        background-color: transparent !important;
     }
 
     .el-textarea .el-input__count {
