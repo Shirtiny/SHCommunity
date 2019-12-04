@@ -214,9 +214,9 @@
             //订阅消息的回调函数
             onGetMessage(message) {
                 let chatMessage = JSON.parse(message.body);
-                console.log("是否为系统通知", chatMessage.system);
+                console.log("是否为系统通知", chatMessage.systems);
                 //如果是系统通知
-                if (chatMessage.system) {
+                if (chatMessage.systems) {
                     console.log("系统通知", chatMessage);
                     //存储订阅频道发过来的数据
                     let sender = chatMessage.sender;
@@ -242,6 +242,8 @@
                         this.addTab(chatHistory, false);
                         //加入对应的消息列表
                         this.putNewMessage(chatMessage);
+                    }
+                    if (sender.userId !== this.user.userId) {
                         //接收者会收到这条消息 通知服务器 我已经接收了消息 让服务器把消息改成已读
                         message.ack({chatMessageId: chatMessage.chatMessageId});
                     }
@@ -395,7 +397,8 @@
                                 }
                             });
                         }
-                    })
+                    });
+
                 }, 400);
             },
             //监控内部tabs的点击事件
@@ -405,6 +408,22 @@
                 console.log("当前激活的tabname为:", this.innerTabsDefActive);
                 //订阅频道
                 this.subscribe();
+            },
+            //更新对应tab的消息记录的消息为已读状态
+            updateHistoryRead() {
+                if (this.innerTabs.length !== 0 && this.recipientId != null && Number(this.recipientId) !== 0 && this.user != null && this.isConnected) {
+                    for (let i = 0; i < this.innerTabs.length; i++) {
+                        if (this.innerTabs[i].targetUser.userId === this.recipientId) {
+                            //如果消息记录的最后一条消息的收信人是本地用户 更新该消息记录的已读状态
+                            let lastIndex = this.innerTabs[i].chatMessages.length - 1;
+                            if (lastIndex >= 0 && this.user.userId === this.innerTabs[i].chatMessages[lastIndex].recipientId) {
+                                axios.get('/shApi/updateChatHistoryRead?chatHistoryId=' + this.innerTabs[i].chatHistoryId).then(res => {
+                                    console.log(this.innerTabs[i].chatHistoryId, "更新为已读");
+                                });
+                            }
+                        }
+                    }
+                }
             },
             //换背景图
             changeBackImg() {
@@ -423,6 +442,19 @@
             //发送图片 未完成
             sendImg() {
                 this.$message('暂不能发送图片');
+            },
+            //滚轮到底部
+            moveScrollToBottom() {
+                //移动滚条到底部 把class为shMessageHistoryBox的dom节点都做一次滚动条移动 因为切换tab会切换dom节点
+                let historyBoxArray = document.getElementsByClassName("shMessageHistoryBox");
+                for (let historyBox of historyBoxArray) {
+                    let scrollTop = historyBox.scrollTop;
+                    let scrollHeight = historyBox.scrollHeight;
+                    let clientHeight = historyBox.clientHeight;
+                    console.log("scrollHeight:", scrollHeight, ";scrollTop:", scrollTop, ";clientHeight:", clientHeight, ";scrollHeight - scrollTop - clientHeight:", scrollHeight - scrollTop - clientHeight);
+                    //开始移动
+                    historyBox.scrollTop = historyBox.scrollTop + (scrollHeight - scrollTop - clientHeight);
+                }
             }
         },
         created() {
@@ -432,6 +464,12 @@
         mounted() {
             //绘制canvas
             // this.canvasStart();
+            //dom更新之后执行
+            console.log("dom更新了 , 移动滚条到底部");
+            setTimeout(() => {
+                //移动滚轮到底部
+                this.moveScrollToBottom();
+            }, 1000);
         },
         updated() {
             //换背景图
@@ -455,38 +493,20 @@
                         this.subscribe();
                     }
                     //更新对应消息历史记录的消息为已读状态
-                    if (this.innerTabs.length!==0 && this.recipientId != null && Number(this.recipientId) !== 0 && this.user != null && this.isConnected) {
-                        for (let i = 0; i < this.innerTabs.length; i++) {
-                            if (this.innerTabs[i].targetUser.userId === this.recipientId){
-                                axios.get('/shApi/updateChatHistoryRead?chatHistoryId='+this.innerTabs[i].chatHistoryId).then(res => {
-                                    console.log(this.innerTabs[i].chatHistoryId,"更新为已读");
-                                })
-                            }
-                        }
-                    }
+                    this.updateHistoryRead();
                 }
             },
             receiveNewMessage: {
                 handler(newName, oldName) {
                     //dom更新之后执行
+                    console.log("dom更新了 , 移动滚条到底部");
                     this.$nextTick(() => {
-                        console.log("dom更新了 , 移动滚条到底部");
-                        //移动滚条到底部 把class为shMessageHistoryBox的dom节点都做一次滚动条移动 因为切换tab会切换dom节点
-                        let historyBoxArray = document.getElementsByClassName("shMessageHistoryBox");
-                        for (let historyBox of historyBoxArray) {
-                            let scrollTop = historyBox.scrollTop;
-                            let scrollHeight = historyBox.scrollHeight;
-                            let clientHeight = historyBox.clientHeight;
-                            console.log("scrollHeight:", scrollHeight, ";scrollTop:", scrollTop, ";clientHeight:", clientHeight, ";scrollHeight - scrollTop - clientHeight:", scrollHeight - scrollTop - clientHeight);
-                            //开始移动
-                            historyBox.scrollTop = historyBox.scrollTop + (scrollHeight - scrollTop - clientHeight);
-                        }
+                        //移动滚轮到底部
+                        this.moveScrollToBottom();
                     });
                     console.log("receiveNewMessage改变了", oldName, newName);
                 }
             },
-
-
         }
     });
 </script>

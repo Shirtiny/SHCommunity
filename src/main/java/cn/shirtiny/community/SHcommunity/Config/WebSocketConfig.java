@@ -83,7 +83,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         String chatMessageId = matcher.group(1);
                         System.out.println("消息id匹配结果："+chatMessageId);
                         //更新消息为已读状态
-                        chatMessageService.updateMessageRead(chatMessageId,true);
+//                        chatMessageService.updateMessageRead(chatMessageId,true);
                     }
                 }
                 //检查客户端传来的ack，根据ack来改变数据库中的已读标识
