@@ -40,7 +40,8 @@ public interface ChatHistoryMapper extends BaseMapper<ChatHistory> {
     List<ChatHistoryDTO> selectAllChatHistoryByUid(@Param("userId") Long userId);
 
     //查询出单个用户的所有聊天记录 的所有已读/未读消息数
-    @Select("SELECT count(1)  FROM chat_history h JOIN chat_message m on h.chat_history_id=m.chat_history_id " +
-            "WHERE h.sender_id = #{userId} or h.recipient_id = #{userId} AND m.readed=#{readed}")
+    @Select("SELECT count(1) FROM " +
+            "(SELECT m.readed,m.recipient_id FROM chat_history h JOIN chat_message m on h.chat_history_id=m.chat_history_id " +
+            "WHERE  h.sender_id = #{userId} or h.recipient_id = #{userId}) r WHERE r.readed = #{readed} AND r.recipient_id=#{userId}")
     int selectReadCountByUid(@Param("userId") Long userId,@Param("readed") boolean readed);
 }

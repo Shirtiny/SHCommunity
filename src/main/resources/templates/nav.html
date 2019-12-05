@@ -69,7 +69,7 @@
                 <li v-if="user!=null">
                     <a href="/shPub/messageCenter">
                         <abbr title="您收到的消息">
-                            <span class="glyphicon glyphicon-envelope"></span><span
+                            <span v-if="unReadCount > 0" class="glyphicon glyphicon-envelope"></span><span
                                     class="badge nav_message">{{unReadCount}}</span>
                         </abbr>
                     </a>
