@@ -122,4 +122,10 @@ public class ChatHistoryServiceImpl implements IchatHistoryService {
         }
         return tempList;
     }
+
+    //查询出单个用户的所有聊天记录 的所有未读消息数
+    @Override
+    public int selectUnReadMessagesCountByUid(Long userId) {
+        return chatHistoryMapper.selectReadCountByUid(userId,false);
+    }
 }

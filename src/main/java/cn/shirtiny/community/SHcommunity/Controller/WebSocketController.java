@@ -196,5 +196,18 @@ public class WebSocketController {
         chatMessageService.updateMessageReadByHistoryId(chatHistoryId,true);
         return new ShResultDTO<>(200,"已更新");
     }
+
+    //返回某个用户的未读消息数
+    @GetMapping("/shApi/userUnReadMessagesCount")
+    @ResponseBody
+    public ShResultDTO<String,Object> retUnReadMessagesCount(Long userId){
+        if (userId==null){
+            return new ShResultDTO<>(400,"参数不合法");
+        }
+        int unReadCount = chatHistoryService.selectUnReadMessagesCountByUid(userId);
+        Map<String,Object> data =new HashMap<>();
+        data.put("unReadCount",unReadCount);
+        return new ShResultDTO<>(200,"已经返回该用户的未读消息数",data,null);
+    }
 }
 

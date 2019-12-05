@@ -38,4 +38,9 @@ public interface ChatHistoryMapper extends BaseMapper<ChatHistory> {
             @Result(column = "chat_history_id", property = "chatMessages",javaType = List.class ,many = @Many(select = "cn.shirtiny.community.SHcommunity.Mapper.ChatMessageMapper.selectAllDTOByhistoryId"))
     })
     List<ChatHistoryDTO> selectAllChatHistoryByUid(@Param("userId") Long userId);
+
+    //查询出单个用户的所有聊天记录 的所有已读/未读消息数
+    @Select("SELECT count(1)  FROM chat_history h JOIN chat_message m on h.chat_history_id=m.chat_history_id " +
+            "WHERE h.sender_id = #{userId} or h.recipient_id = #{userId} AND m.readed=#{readed}")
+    int selectReadCountByUid(@Param("userId") Long userId,@Param("readed") boolean readed);
 }

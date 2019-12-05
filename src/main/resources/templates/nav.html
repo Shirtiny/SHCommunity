@@ -68,8 +68,9 @@
                 <!--                消息-->
                 <li v-if="user!=null">
                     <a href="/shPub/messageCenter">
-                        <abbr title="您收到的消息" >
-                            <span class="glyphicon glyphicon-envelope"></span><span class="badge nav_message">4</span>
+                        <abbr title="您收到的消息">
+                            <span class="glyphicon glyphicon-envelope"></span><span
+                                    class="badge nav_message">{{unReadCount}}</span>
                         </abbr>
                     </a>
                 </li>
@@ -97,41 +98,40 @@
         data: {
             //当前登录的用户
             user: null,
-            inputSearchContent: ''
+            //未读消息数
+            unReadCount: 0,
+            inputSearchContent: '',
         },
         methods: {
             search: function () {
                 console.log("执行搜索")
             },
-            //取jwt
-            getShJwt() {
-                let shJwt;
-                try {
-                    shJwt = Cookies.get('shJwt');
-                } catch (e) {
-                    console.log(e);
-                    shJwt = '';
-                }
-                return shJwt;
-            },
             //注销 删除jwt
-            logOut(){
+            logOut() {
                 Cookies.remove('shJwt');
-                this.user=null;
+                this.user = null;
                 //刷新页面
                 window.location.reload();
             }
         },
         created: function () {
             //获取当前登录的用户信息
-            let shJwt = this.getShJwt();
-            axios.get('/shApi/getLoginedUser', {
-                headers: {'Authorization': shJwt}
-            }).then(res => {
-                if (res.data.data!=null){
-                    this.user = res.data.data.user
+            axios.get('/shApi/getLoginedUserByCookie').then(res => {
+                if (Number(res.data.code) === 200) {
+                    this.user = res.data.data.user;
+                    //获取该用户的未读消息数
+                    axios.get('/shApi/userUnReadMessagesCount?userId=' + this.user.userId)
+                        .then(res => {
+                            if (Number(res.data.code) === 200) {
+                                console.log("用户id为：", this.user.userId, "用户未读消息数为：", res.data.data.unReadCount);
+                                this.unReadCount = res.data.data.unReadCount;
+                            }
+                        })
+
+                } else {
+                    this.user = null;
                 }
-            })
+            });
         }
     });
 

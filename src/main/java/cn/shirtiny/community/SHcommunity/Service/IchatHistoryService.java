@@ -24,4 +24,7 @@ public interface IchatHistoryService {
 
     //查询某个用户的全部消息记录及其内容 并设置targetUser的值
     List<ChatHistoryDTO> selectAllHistoryMessageByUid(Long userId);
+
+    //查询出单个用户的所有聊天记录 的所有未读消息数
+    int selectUnReadMessagesCountByUid(Long userId);
 }
