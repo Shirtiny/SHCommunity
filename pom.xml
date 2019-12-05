@@ -67,7 +67,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-<!--            <version>5.1.40</version>-->
+            <!--            <version>5.1.40</version>-->
         </dependency>
         <!--连接池-->
         <dependency>
@@ -110,6 +110,23 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.2.0</version>
+        </dependency>
+        <!--唯一id生成器-->
+        <dependency>
+            <groupId>com.github.Shirtiny</groupId>
+            <artifactId>baiduUidGenerator</artifactId>
+            <version>d5c0c81b95</version>
+        </dependency>
+        <!-- id生成器依赖的工具包 Apache Commons-->
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
         <!--数据库支持-->
         <dependency>
