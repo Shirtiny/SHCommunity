@@ -12,6 +12,7 @@ import cn.shirtiny.community.SHcommunity.Service.IchatMessageService;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
 import cn.shirtiny.community.SHcommunity.Utils.Encryption.ShaEncryptor;
 import com.alibaba.fastjson.JSONObject;
+import com.baidu.fsg.uid.service.UidGenService;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
@@ -46,6 +47,8 @@ public class WebSocketController {
     private ShaEncryptor shaEncryptor;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private UidGenService uidGenService;
 
 
     //接收消息的接口路径，聊天室频道
@@ -70,7 +73,7 @@ public class WebSocketController {
         //接收者id
         //无
         //将消息存入数据库
-        chatMessageService.addChatMessage(message.getChatMessageContent(), senderId, null);
+        chatMessageService.addChatMessage(null,message.getChatMessageContent(), senderId, null);
 
         //从数据库中查询此聊天室的消息，广播给该频道
         return tolistChatRoomMessages();
@@ -134,16 +137,16 @@ public class WebSocketController {
         //mysql UNION
         //接收发送来的消息 然后转为消息对象
         ChatMessage chatMessage = chatMessageService.parseMessageToChatMessage(message);
+        //设置消息id
+        long uid = uidGenService.getUid();
+        chatMessage.setChatMessageId(uid);
         //将消息存入数据库
         boolean isMessageAdded = chatMessageService.addChatMessage(chatMessage);
         //创建历史记录 已存在则不会创建
         chatHistoryService.addOneChatHistoryBy2Id(chatMessage.getSender().getUserId(), chatMessage.getRecipientId());
-        //消息数自增 发送消息 只有消息入库成功才会发送
+        //消息数自增,更新消息记录的修改时间 发送消息 只有消息入库成功才会发送
         if (isMessageAdded){
-            chatHistoryService.incrMessageNum(chatMessage.getChatHistoryId());
-            //查出这条消息的自增id
-            Long chatMessageId = chatMessageService.selectMessageId(chatMessage.getChatHistoryId(), chatMessage.getChatMessageContent());
-            chatMessage.setChatMessageId(chatMessageId);
+            chatHistoryService.incrMessageNumAndgmtModified(chatMessage.getChatHistoryId());
             //会自动在频道路径前加上/user/'historyId' 比如此频道会被拼接为/user/historyId/121chat
             messagingTemplate.convertAndSendToUser(chatMessage.getChatHistoryId(), "/121chat", chatMessage);
         }

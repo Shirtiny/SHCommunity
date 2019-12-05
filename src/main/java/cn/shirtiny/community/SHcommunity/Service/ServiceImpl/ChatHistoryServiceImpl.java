@@ -79,12 +79,15 @@ public class ChatHistoryServiceImpl implements IchatHistoryService {
         return addOneChatHistory(chatHistory);
     }
 
-    //消息数自增
+    //消息数自增，更新聊天记录的修改时间
     @Override
-    public void incrMessageNum(String historyId) {
+    public void incrMessageNumAndgmtModified(String historyId) {
         boolean isExist = selectIsExist(historyId);
         if (isExist){
+            //消息数自增
             chatHistoryMapper.incrMessageNum(historyId);
+            //修改时间更新
+            chatHistoryMapper.updateGmtModified(historyId,System.currentTimeMillis());
         }
     }
 

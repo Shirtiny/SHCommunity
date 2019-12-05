@@ -11,7 +11,7 @@ import lombok.Data;
 @TableName("chat_message")
 public class ChatMessage {
     //主键
-    @TableId(value = "chat_message_id", type = IdType.AUTO)
+    @TableId(value = "chat_message_id")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long chatMessageId;
     //记录此消息的 聊天记录的id

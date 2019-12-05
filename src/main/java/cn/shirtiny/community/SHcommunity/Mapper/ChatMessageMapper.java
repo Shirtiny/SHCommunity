@@ -12,8 +12,8 @@ import java.util.List;
 
 public interface ChatMessageMapper extends BaseMapper<ChatMessage> {
 
-    //查询某个聊天记录的消息 ,比如查询聊天室的消息（chatHistoryId为0的消息）
-    @Select("select * from chat_message where chat_history_id=#{chatHistoryId}")
+    //查询某个聊天记录的消息 ,比如查询聊天室的消息（chatHistoryId为0的消息） 创建时间顺序
+    @Select("select * from chat_message where chat_history_id=#{chatHistoryId} ORDER BY gmt_created ASC")
     List<ChatMessageDTO> selectAllDTOByhistoryId(@Param("chatHistoryId") String chatHistoryId );
 
     //查询某个聊天记录的消息Id ,比如查询聊天室的消息（所有chatHistoryId为0的消息的id）

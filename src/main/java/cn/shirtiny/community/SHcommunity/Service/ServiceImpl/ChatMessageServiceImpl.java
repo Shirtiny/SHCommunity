@@ -38,12 +38,12 @@ public class ChatMessageServiceImpl implements IchatMessageService {
         if (chatMessage == null) {
             return false;
         }
-        return addChatMessage(chatMessage.getChatMessageContent(), chatMessage.getSenderId(), chatMessage.getRecipientId());
+        return addChatMessage(chatMessage.getChatMessageId(), chatMessage.getChatMessageContent(), chatMessage.getSenderId(), chatMessage.getRecipientId());
     }
 
     //增加一条消息
     @Override
-    public boolean addChatMessage(String messageContent, Long senderId, Long recipientId) {
+    public boolean addChatMessage(Long chatMessageId, String messageContent, Long senderId, Long recipientId) {
         //检查消息内容是否为空
         if (messageContent == null || messageContent.trim().isEmpty()) {
             System.out.println("消息为空");
@@ -57,6 +57,10 @@ public class ChatMessageServiceImpl implements IchatMessageService {
         //数据库
         try {
             ChatMessage chatMessage = new ChatMessage();
+            //主键id
+            if (chatMessageId != null) {
+                chatMessage.setChatMessageId(chatMessageId);
+            }
             //保存此消息的记录id
             String historyId = chatHistoryService.createHistoryId(senderId, recipientId);
             chatMessage.setChatHistoryId(historyId);
@@ -110,24 +114,24 @@ public class ChatMessageServiceImpl implements IchatMessageService {
         return chatMessage;
     }
 
-    //根据chatHistoryId和chatMessageContent查询一个消息
-    @Override
-    public Long selectMessageId(String chatHistoryId,String chatMessageContent) {
-
-        return chatMessageMapper.selectByHidAndContent(chatHistoryId,chatMessageContent);
-    }
+    //根据chatHistoryId和chatMessageContent查询一个消息 待改 无法唯一确定一个消息
+//    @Override
+//    public Long selectMessageId(String chatHistoryId,String chatMessageContent) {
+//
+//        return chatMessageMapper.selectByHidAndContent(chatHistoryId,chatMessageContent);
+//    }
 
     //根据消息id 更新消息的已读状态，false未读 true已读
     @Override
-    public void updateMessageRead(String chatMessageId,boolean readed) {
-        chatMessageMapper.updateReadByid(chatMessageId,readed);
+    public void updateMessageRead(String chatMessageId, boolean readed) {
+        chatMessageMapper.updateReadByid(chatMessageId, readed);
     }
 
     //根据消息id集合 批量的更新消息的已读状态
     @Override
     public void updateMessageReadByList(List<String> chatMessageIds, boolean readed) {
-        for (String chatMessageId : chatMessageIds){
-            chatMessageMapper.updateReadByid(chatMessageId,readed);
+        for (String chatMessageId : chatMessageIds) {
+            chatMessageMapper.updateReadByid(chatMessageId, readed);
         }
     }
 
@@ -135,6 +139,6 @@ public class ChatMessageServiceImpl implements IchatMessageService {
     @Override
     public void updateMessageReadByHistoryId(String chatHistoryId, boolean readed) {
         List<String> chatMessageIds = chatMessageMapper.selectMessageIdsByHistoryId(chatHistoryId);
-        updateMessageReadByList(chatMessageIds,readed);
+        updateMessageReadByList(chatMessageIds, readed);
     }
 }

@@ -26,8 +26,13 @@ public interface ChatHistoryMapper extends BaseMapper<ChatHistory> {
     @Update("update chat_history set message_num=message_num+1 where chat_history_id=#{chatHistoryId}")
     void incrMessageNum(@Param("chatHistoryId") String chatHistoryId);
 
-    //查询出单个用户的所有聊天记录 及其全部消息
-    @Select("select * from chat_history where sender_id = #{userId} or recipient_id = #{userId}")
+    //更新聊天记录的修改时间
+    @Update("update chat_history set gmt_modified=#{gmtModified} where chat_history_id=#{chatHistoryId}")
+    void updateGmtModified(@Param("chatHistoryId") String chatHistoryId,@Param("gmtModified") Long gmtModified);
+
+
+    //查询出单个用户的所有聊天记录 更新时间倒序 及其全部消息
+    @Select("select * from chat_history where sender_id = #{userId} or recipient_id = #{userId}  ORDER BY gmt_modified DESC")
     @Results({
             @Result(column = "chat_history_id",property = "chatHistoryId",id = true),
             @Result(column = "chat_history_id", property = "chatMessages",javaType = List.class ,many = @Many(select = "cn.shirtiny.community.SHcommunity.Mapper.ChatMessageMapper.selectAllDTOByhistoryId"))

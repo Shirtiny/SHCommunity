@@ -243,14 +243,14 @@
                         //加入对应的消息列表
                         this.putNewMessage(chatMessage);
                     }
-                    if (sender.userId !== this.user.userId) {
-                        //接收者会收到这条消息 通知服务器 我已经接收了消息 让服务器把消息改成已读
-                        message.ack({chatMessageId: chatMessage.chatMessageId});
-                    }
                 } else {
                     //直接加入对应的消息列表
                     this.putNewMessage(chatMessage);
-                    //不能ack 因为发送者会执行到这里
+                    //如果消息的收信人是本地用户
+                    if (chatMessage.recipientId === this.user.userId) {
+                        //通知服务器 我已经接收了消息 让服务器把消息改成已读
+                        message.ack({chatMessageId: chatMessage.chatMessageId});
+                    }
                 }
             },
             //以当前js登录的用户，与当前激活的tabName为准，订阅频道
