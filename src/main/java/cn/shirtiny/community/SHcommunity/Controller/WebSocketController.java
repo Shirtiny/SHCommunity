@@ -12,7 +12,7 @@ import cn.shirtiny.community.SHcommunity.Service.IchatMessageService;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
 import cn.shirtiny.community.SHcommunity.Utils.Encryption.ShaEncryptor;
 import com.alibaba.fastjson.JSONObject;
-import com.baidu.fsg.uid.service.UidGenService;
+import com.baidu.fsg.uid.service.UidGenerateService;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
@@ -48,7 +48,7 @@ public class WebSocketController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
     @Autowired
-    private UidGenService uidGenService;
+    private UidGenerateService uidGenService;
 
 
     //接收消息的接口路径，聊天室频道
@@ -138,7 +138,7 @@ public class WebSocketController {
         //接收发送来的消息 然后转为消息对象
         ChatMessage chatMessage = chatMessageService.parseMessageToChatMessage(message);
         //设置消息id
-        long uid = uidGenService.getUid();
+        long uid = uidGenService.generateUid();
         chatMessage.setChatMessageId(uid);
         //将消息存入数据库
         boolean isMessageAdded = chatMessageService.addChatMessage(chatMessage);

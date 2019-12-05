@@ -115,7 +115,7 @@
         <dependency>
             <groupId>com.github.Shirtiny</groupId>
             <artifactId>baiduUidGenerator</artifactId>
-            <version>d5c0c81b95</version>
+            <version>e26810d2b2</version>
         </dependency>
         <!-- id生成器依赖的工具包 Apache Commons-->
         <dependency>
@@ -187,9 +187,15 @@
             <artifactId>jquery</artifactId>
             <version>3.1.0</version>
         </dependency>
-
-
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
 
     <build>
         <plugins>
