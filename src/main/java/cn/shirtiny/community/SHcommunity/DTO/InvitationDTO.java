@@ -35,5 +35,5 @@ public class InvitationDTO {
     @JsonSerialize(using = ToStringSerializer.class)
     private long gmtCreate;//作者的注册时间
     //评论集合
-    private List<Comment> comments;
+    private List<CommentDTO> comments;
 }

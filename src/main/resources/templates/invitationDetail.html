@@ -82,7 +82,7 @@
                         </div>
                         <!--头像-->
                         <div class="thumbnail avatar_image-df float_right my_Bgcolor invitationDetail_avatar_margin">
-                            <img class=" img-circle" :src="invitationDetail.avatarImage" alt="image">
+                            <a target="_blank" :href="'/shPub/messageCenter?uid='+invitationDetail.authorId"><img class=" img-circle" :src="invitationDetail.avatarImage" alt="image"></a>
                         </div>
                         <blockquote class="float_right blockquote-reverse user_quote img-rounded">
                             <p v-if="invitationDetail.description==null || invitationDetail.description==''">
@@ -115,7 +115,7 @@
                                                 style="font-style: italic;">C</sup></span>
                                 </div>
                                 <div class="media-left ">
-                                    <a href="#">
+                                    <a :href="'/shPub/messageCenter?uid='+comment.reviewerId" target="_blank">
                                         <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
                                              :src="comment.reviewer.avatarImage"
                                              alt="头像">
@@ -171,7 +171,7 @@
                                     </p>
                                 </div>
                                 <div class="media-right ">
-                                    <a href="#">
+                                    <a :href="'/shPub/messageCenter?uid='+comment.reviewerId" target="_blank">
                                         <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
                                              :src="comment.reviewer.avatarImage"
                                              alt="头像">
@@ -212,7 +212,7 @@
 
                                             <el-row type="flex" justify="center" :gutter="10">
                                                 <el-col :xs="6" :sm="4" :md="4" :lg="4" :xl="3">
-                                                    <a href="#">
+                                                    <a :href="'/shPub/messageCenter?uid='+drawer.comment.reviewer.userId" target="_blank">
                                                         <img class="media-object thumbnail avatar_image-sm  my_Bgcolor"
                                                              style="margin-bottom: 5px !important;"
                                                              :src="drawer.comment.reviewer.avatarImage"
@@ -412,17 +412,6 @@
                 this.refreshData();
             },
             methods: {
-                //取jwt
-                getShJwt() {
-                    let shJwt;
-                    try {
-                        shJwt = Cookies.get('shJwt');
-                    } catch (e) {
-                        console.log(e);
-                        shJwt = '';
-                    }
-                    return shJwt;
-                },
                 //读取url，拿到要获得的帖子id
                 getInvitationIdFromUrl: function () {
                     // /shPub/invitationDetail/11760373892580232222
@@ -437,10 +426,7 @@
                 //刷新数据
                 refreshData: function () {
                     //获取帖子数据
-                    let shJwt = this.getShJwt();
-                    axios.get('/shApi/invitationDetail/' + this.invitationId, {
-                        headers: {'Authorization': shJwt},
-                    }).then(res => {
+                    axios.get('/shApi/invitationDetail/' + this.invitationId).then(res => {
                         console.log("获取到的数据：");
                         console.log(res);
                         this.user = res.data.data.user;
@@ -509,11 +495,7 @@
                 },
                 //登录状态检查
                 loginCheck: function () {
-                    //从cookie中取出jwt
-                    let shJwt = this.getShJwt();
-                    axios.get('/shApi/loginCheck', {
-                        headers: {'Authorization': shJwt},
-                    }).then(res => {
+                    axios.get('/shApi/loginCheckByCookie').then(res => {
                         var shCode = res.data.code;
                         var message = res.data.message;
                         if (shCode == 200) {
@@ -584,13 +566,13 @@
                     let citedCommentId = this.drawer.comment.commentId;
                     //发送数据
                     console.log("开始发送抽屉的回复");
-                    let shJwt = this.getShJwt();
                     axios.post('/shPri/sendComment', {
                         targetId: targetId,
                         commentContent: commentContent,
                         citedCommentId: citedCommentId
                     }, {
-                        headers: {'Authorization': shJwt},
+                        //后台shiro过滤器改为从cookie中取jwt了 不需要header了 不过还是留着作为日后参考
+                        headers: {'Authorization': 'shJwt'},
                     }).then(res => {
                         console.log("回复的响应数据");
                         console.log(res);
@@ -619,12 +601,12 @@
                     var targetId = this.invitationId;
                     var commentContent = this.commentContent;
                     //发送评论
-                    let shJwt = this.getShJwt();
                     axios.post('/shPri/sendComment', {
                         targetId: targetId,
                         commentContent: commentContent
                     }, {
-                        headers: {'Authorization': shJwt},
+                        //后台shiro过滤器改为从cookie中取jwt了 不需要header了 不过还是留着作为日后参考
+                        headers: {'Authorization': 'shJwt'},
                     }).then(res => {
                         console.log("发送后的响应内容");
                         console.log(res);

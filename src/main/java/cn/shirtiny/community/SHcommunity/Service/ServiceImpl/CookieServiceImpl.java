@@ -11,13 +11,30 @@ import java.util.Objects;
 @Service
 public class CookieServiceImpl implements IcookieService {
     @Override
-    public void addOneCookie(HttpServletResponse response, String cookieName, String cookieValue, String path, Integer maxAge) {
-        Cookie cookie=new Cookie(cookieName,cookieValue);
-        //位于本站哪个目录下
-        cookie.setPath(path);
+    public void addOneCookie(HttpServletResponse response, String cookieName, String cookieValue, String path, Integer maxAge ) {
+        Cookie cookie = setCookieArgs(cookieName, cookieValue, path);
         //过期时间s
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
+    }
+
+    @Override
+    public void addOneCookie(HttpServletResponse response, String cookieName, String cookieValue, String path, Integer maxAge, boolean httpOnly) {
+        Cookie cookie = setCookieArgs(cookieName, cookieValue, path);
+        //过期时间s
+        cookie.setMaxAge(maxAge);
+        //禁止js读取
+        cookie.setHttpOnly(httpOnly);
+        response.addCookie(cookie);
+    }
+
+    //设置cookie
+    @Override
+    public Cookie setCookieArgs(String cookieName, String cookieValue, String path) {
+        Cookie cookie=new Cookie(cookieName,cookieValue);
+        //位于本站哪个目录下
+        cookie.setPath(path);
+        return cookie;
     }
 
     //指定cookieName 返回cookies数组中的对应值

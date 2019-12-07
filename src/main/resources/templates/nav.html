@@ -21,7 +21,7 @@
                 <span class="icon-bar"></span>
             </button>
             <!--            左上角logo首页-->
-            <a class="navbar-brand" href="/">Shirtiny</a>
+            <a class="navbar-brand" href="/">SH</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -69,7 +69,7 @@
                 <li v-if="user!=null">
                     <a href="/shPub/messageCenter">
                         <abbr title="您收到的消息">
-                            <span  class="glyphicon glyphicon-envelope"></span>
+                            <span class="glyphicon glyphicon-envelope"></span>
                             <span v-if="unReadCount > 0" class="badge nav_message">{{unReadCount}}</span>
                         </abbr>
                     </a>
@@ -106,15 +106,22 @@
             search: function () {
                 console.log("执行搜索")
             },
-            //注销 删除jwt
+            //注销 删除jwt 现在把jwt标为httpOnly了，js不能访问 由后端覆盖cookie，设置maxAge为0
             logOut() {
-                Cookies.remove('shJwt');
-                this.user = null;
-                //刷新页面
-                window.location.reload();
+                // Cookies.remove('shJwt');
+                axios.get('/shApi/logout').then(res => {
+                        if (Number(res.data.code) === 200) {
+                            //置空本地用户
+                            this.user = null;
+                            //刷新页面
+                            window.location.reload();
+                        }
+                    }
+                );
+
             },
             //获取该用户的未读消息数
-            getUnReadCount(){
+            getUnReadCount() {
                 axios.get('/shApi/userUnReadMessagesCount?userId=' + this.user.userId)
                     .then(res => {
                         if (Number(res.data.code) === 200) {
@@ -132,9 +139,9 @@
                     //获取该用户的未读消息数
                     this.getUnReadCount();
                     //然后每隔60秒再获取一次
-                    setInterval(()=>{
+                    setInterval(() => {
                         this.getUnReadCount();
-                    },1000*60);
+                    }, 1000 * 60);
                 } else {
                     this.user = null;
                 }

@@ -32,6 +32,7 @@ public class LoginController {
     private IcookieService cookieService;
 
 
+    //用户账号密码登录
     @PostMapping("/shApi/login")
     @ResponseBody
     public ShResultDTO<String, Object> userLogin(@RequestBody User user, HttpServletResponse response) {
@@ -39,11 +40,12 @@ public class LoginController {
         Map data = parseResult.getData();
         if (data != null) {
             String jwt = (String) data.get("jwt");
-            cookieService.addOneCookie(response, "shJwt", jwt, "/", -1);
+            cookieService.addOneCookie(response, "shJwt", jwt, "/", -1, true);
         }
         return parseResult;
     }
 
+    //用户注册
     @PostMapping("/shApi/signUp")
     @ResponseBody
     public ShResultDTO<String, Object> userSignUp(@RequestBody User user) {
@@ -62,11 +64,18 @@ public class LoginController {
         return new ShResultDTO<>(200, "用户信息符合规范");
     }
 
-    //注销
+    //注销 删除jwt maxAge=0表示删除
     @GetMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        cookieService.addOneCookie(response, "shJwt", "", "/", 0, true);
+        return "redirect:/";
+    }
+
+    //api方式注销 删除jwt maxAge=0表示删除
+    @GetMapping("/shApi/logout")
     @ResponseBody
-    public ShResultDTO logout(HttpServletRequest request) {
-        request.getSession().invalidate();
+    public ShResultDTO logoutByApi(HttpServletResponse response) {
+        cookieService.addOneCookie(response, "shJwt", "", "/", 0, true);
         return new ShResultDTO(200, "用户注销");
     }
 
@@ -97,13 +106,13 @@ public class LoginController {
     //解析header中的jwt，返回用户信息
     @GetMapping("/shApi/getLoginedUser")
     @ResponseBody
-    public ShResultDTO<String, Object> backLoginedUserInfo(HttpServletRequest request){
+    public ShResultDTO<String, Object> backLoginedUserInfo(HttpServletRequest request) {
         Map<String, Object> claims = jwtService.parseJwtByRequest(request);
-        Map<String,Object> data = new HashMap<>();
-        if (claims!=null){
-            data.put("user",claims.get("user"));
-            return new ShResultDTO<>(200,"已返回jwt用户信息",data,null);
-        }else {
+        Map<String, Object> data = new HashMap<>();
+        if (claims != null) {
+            data.put("user", claims.get("user"));
+            return new ShResultDTO<>(200, "已返回jwt用户信息", data, null);
+        } else {
             throw new JwtInvalidException("Jwt格式无效或解析失败");
         }
     }
@@ -111,13 +120,13 @@ public class LoginController {
     //解析cookie中的jwt，返回用户信息
     @GetMapping("/shApi/getLoginedUserByCookie")
     @ResponseBody
-    public ShResultDTO<String, Object> backLoginedUserInfoByCookie(@CookieValue("shJwt") String jwt){
+    public ShResultDTO<String, Object> backLoginedUserInfoByCookie(@CookieValue("shJwt") String jwt) {
         UserDTO userDTO = jwtService.parseJwtToUser(jwt);
-        Map<String,Object> data = new HashMap<>();
-        if (userDTO!=null){
-            data.put("user",userDTO);
-            return new ShResultDTO<>(200,"已返回jwt用户信息",data,null);
-        }else {
+        Map<String, Object> data = new HashMap<>();
+        if (userDTO != null) {
+            data.put("user", userDTO);
+            return new ShResultDTO<>(200, "已返回jwt用户信息", data, null);
+        } else {
             throw new JwtInvalidException("Jwt格式无效或解析失败");
         }
     }

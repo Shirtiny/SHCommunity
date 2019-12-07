@@ -94,7 +94,7 @@ public class InvitationController {
         return new ShResultDTO<>(200,"分页查询完成",dataMap,null);
     }
 
-    @GetMapping("/shApi/invitationDetail/{invitationId}")//获得帖子详情，传递一个帖子id
+    @GetMapping("/shApi/invitationDetail/{invitationId}")//获得帖子详情，解析cookie中登录用户的jwt，传递一个帖子id
     @ResponseBody
     public ShResultDTO<String,Object> getInvitationDetail(@PathVariable("invitationId") long invitationId,HttpServletRequest request) {
 
@@ -104,7 +104,7 @@ public class InvitationController {
         }
         Map<String,Object> map =new HashMap<>();
         map.put("invitationDetail",invitationDetail);
-        Map<String, Object> calims = jwtService.parseJwtByRequest(request);
+        Map<String, Object> calims = jwtService.parseJwtByCookie(request);
         if (calims!=null){
             map.put("user",calims.get("user"));
         }

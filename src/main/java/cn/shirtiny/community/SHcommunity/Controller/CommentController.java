@@ -31,7 +31,7 @@ public class CommentController {
     public ShResultDTO sendComment(
             @RequestBody Comment comment
             , HttpServletRequest request) {
-        Map<String, Object> calims = jwtService.parseJwtByRequest(request);
+        Map<String, Object> calims = jwtService.parseJwtByCookie(request);
         LinkedHashMap userMap=null;
         if (calims!=null){
            userMap=(LinkedHashMap)calims.get("user");
