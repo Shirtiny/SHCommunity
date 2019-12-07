@@ -34,19 +34,20 @@
                          style="height: 500px;">
                     <el-tab-pane v-for="chatHistory in innerTabs" :name="chatHistory.targetUser.userId"
                                  :key="chatHistory.targetUser.userId">
-                        <!-- 自定标签 -->
+                        <!-- 自定tab标签 -->
                         <div slot="label" class="shELInnerTabDiv">
                             <!--删除按钮-->
                             <span class="el-icon-close  float_right"
                                   @click="removeTab(chatHistory.targetUser.userId)"></span>
-                            <!-- 头像 -->
+                            <!--头像-->
                             <el-avatar class="float_left" alt="avatar" fit="cover" shape="circle"
                                        style="width: 50px;height: 50px"
                                        :src="chatHistory.targetUser.avatarImage">
                             </el-avatar>
-                            <!-- 用户昵称 -->
+                            <!--用户昵称-->
                             <span class="float_left"
                                   style="margin-left: 10px;">{{chatHistory.targetUser.nickName}}</span>
+                            <div class="" :class="chatHistory.unReadCount > 0 ? 'shDot':'shDot-noColor' "></div>
                         </div>
                         <!-- 聊天面板-->
                         <div class="img-rounded" style="background-color: #f4f5f7;">
@@ -208,7 +209,7 @@
                         console.log("socket连接失败", err);
                         console.log("可能是用户过期，请重新登录");
                         this.isConnected = false;
-                        this.$message('无效用户,请检查登录是否过期');
+                        this.$message('未登录用户,请检查登录是否过期');
                     });
             },
             //订阅消息的回调函数
@@ -246,9 +247,16 @@
                 } else {
                     //直接加入对应的消息列表
                     this.putNewMessage(chatMessage);
-                    //如果消息的收信人是本地用户
-                    if (chatMessage.recipientId === this.user.userId) {
-                        //通知服务器 我已经接收了消息 让服务器把消息改成已读
+                    //查找消息对应的tab
+                    let tab;
+                    for (let i=0;i<this.innerTabs.length;i++){
+                        if (this.innerTabs[i].chatHistoryId === chatMessage.chatHistoryId){
+                            tab=this.innerTabs[i];
+                        }
+                    }
+                    //如果消息的收信人是本地用户 并且当前激活的tab是消息的所有者
+                    if (chatMessage.recipientId === this.user.userId && this.innerTabsDefActive === tab.targetUser.userId) {
+                        //通知服务器 我已经接收并看到了消息 让服务器把消息改成已读
                         message.ack({chatMessageId: chatMessage.chatMessageId});
                     }
                 }
@@ -325,11 +333,28 @@
                     if (this.innerTabs[i].chatHistoryId === historyId) {
                         //把新消息加入这个消息记录的消息列表里
                         this.innerTabs[i].chatMessages.push(chatMessage);
+                        //标上红点
+                        this.changeDot(this.innerTabs[i],true,1);
                         break;
                     }
                 }
                 //改变receiveNewMessage的值 表示收到了新的消息
                 this.receiveNewMessage = this.receiveNewMessage + 1;
+            },
+            //改变红点显示 为接收到新消息的未读tab标上红点 第二个参数为增加多少未读数
+            changeDot(chatHistory,boolean,gap){
+                //boolean 为true时 显示红点 false则不显示
+                if (boolean) {
+                    //如果不是当前激活的tab 改变对应消息记录的未读消息数 (>0标记上红点)
+                    if (chatHistory.targetUser.userId !== this.innerTabsDefActive){
+                        chatHistory.unReadCount += gap;
+                    }
+                }else if (!boolean) {
+                    //如果是当前激活的tab 改变对应消息记录的未读消息数 (=0取消红点标记)
+                    if (chatHistory.targetUser.userId === this.innerTabsDefActive){
+                        chatHistory.unReadCount = 0;
+                    }
+                }
             },
             //把新tab加入tabs中
             addTab(tab, isChangeTab) {
@@ -351,6 +376,10 @@
                         console.log("初始化内部tabs");
                         //把url里的新建立连接的用户加入到tabs
                         let uid = this.getUidFormUrl();
+                        //防止自己与自己对话
+                        if (this.user.userId === uid){
+                            uid = null
+                        }
                         console.log(uid);
                         if (uid != null) {
                             //激活对应tab
@@ -417,9 +446,12 @@
                             //如果消息记录的最后一条消息的收信人是本地用户 更新该消息记录的已读状态
                             let lastIndex = this.innerTabs[i].chatMessages.length - 1;
                             if (lastIndex >= 0 && this.user.userId === this.innerTabs[i].chatMessages[lastIndex].recipientId) {
+                                //更新数据库
                                 axios.get('/shApi/updateChatHistoryRead?chatHistoryId=' + this.innerTabs[i].chatHistoryId).then(res => {
                                     console.log(this.innerTabs[i].chatHistoryId, "更新为已读");
                                 });
+                                //取消红点显示
+                                this.changeDot(this.innerTabs[i],false);
                             }
                         }
                     }
@@ -602,5 +634,25 @@
         right: 50px;
     }
 
+    .shDot{
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #fb7299;
+        text-align: center;
+        position: absolute;
+        top: 27px;
+        left: 2px;
+    }
+
+    .shDot-noColor{
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        text-align: center;
+        position: absolute;
+        top: 27px;
+        left: 2px;
+    }
 </style>
 </html>

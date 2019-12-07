@@ -12,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class LoginController {
@@ -68,11 +70,33 @@ public class LoginController {
         return new ShResultDTO(200, "用户注销");
     }
 
-    //登录状态检查
+    //登录状态检查 检查请求头中的jwt
     @GetMapping("/shApi/loginCheck")
     @ResponseBody
     public ShResultDTO loginChecker(HttpServletRequest request) {
         Map<String, Object> claims = jwtService.parseJwtByRequest(request);
+        if (claims != null) {
+            return new ShResultDTO(200, "已登录");
+        } else {
+            return new ShResultDTO(4001, "未登录，请先登录再进行此操作");
+        }
+    }
+
+    //登录状态检查 检查cookie中的jwt
+    @GetMapping("/shApi/loginCheckByCookie")
+    @ResponseBody
+    public ShResultDTO loginCheckByCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        Map<String, Object> claims = null;
+        boolean isExist = false ;
+        for (Cookie cookie : cookies){
+            if (Objects.equals("shJwt",cookie.getName())){
+                isExist = true;
+                claims = jwtService.parseJwtByCookie(cookie);
+                break;
+            }
+        }
+
         if (claims != null) {
             return new ShResultDTO(200, "已登录");
         } else {

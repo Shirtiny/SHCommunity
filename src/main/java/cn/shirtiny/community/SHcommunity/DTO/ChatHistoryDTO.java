@@ -26,6 +26,9 @@ public class ChatHistoryDTO {
     //频道
     private String channel;
 
+
+    //标识此消息记录含有的未读消息数，不在数据库中
+    private Integer unReadCount;
     //对方 值为sender或者recipient ,不在数据库中
     private UserDTO targetUser;
     //记录的消息列表,不在数据库中

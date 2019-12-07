@@ -84,7 +84,8 @@
                      :key="invitation.invitationId"
                      role="alert">
                     <div class="media-left ">
-                        <a href="#">
+                        <!--暂定直接私信 用户的profile页面还没写 -->
+                        <a :href=" '/shPub/messageCenter?uid='+invitation.authorId">
                             <img class="media-object img-thumbnail avatar_image-sm"
                                  :src="invitation.avatarImage"
                                  alt=image>
@@ -265,23 +266,9 @@
                 sessionStorage.setItem("shRedirect", JSON.stringify(url));
                 console.log('存入sessionStorage：' + url);
             },
-            //取jwt
-            getShJwt() {
-                let shJwt;
-                try {
-                    shJwt = Cookies.get('shJwt');
-                } catch (e) {
-                    console.log(e);
-                    shJwt = '';
-                }
-                return shJwt;
-            },
             //登录状态检查 通过则跳转到新建帖子页
             loginCheck: function () {
-                let shJwt = this.getShJwt();
-                axios.get('/shApi/loginCheck', {
-                    headers: {'Authorization': shJwt}
-                }).then(res => {
+                axios.get('/shApi/loginCheckByCookie').then(res => {
                     var shCode = res.data.code;
                     var message = res.data.message;
                     if (shCode == 200) {

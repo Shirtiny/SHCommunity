@@ -69,8 +69,8 @@
                 <li v-if="user!=null">
                     <a href="/shPub/messageCenter">
                         <abbr title="您收到的消息">
-                            <span v-if="unReadCount > 0" class="glyphicon glyphicon-envelope"></span><span
-                                    class="badge nav_message">{{unReadCount}}</span>
+                            <span  class="glyphicon glyphicon-envelope"></span>
+                            <span v-if="unReadCount > 0" class="badge nav_message">{{unReadCount}}</span>
                         </abbr>
                     </a>
                 </li>
@@ -112,6 +112,16 @@
                 this.user = null;
                 //刷新页面
                 window.location.reload();
+            },
+            //获取该用户的未读消息数
+            getUnReadCount(){
+                axios.get('/shApi/userUnReadMessagesCount?userId=' + this.user.userId)
+                    .then(res => {
+                        if (Number(res.data.code) === 200) {
+                            console.log("用户id为：", this.user.userId, "用户未读消息数为：", res.data.data.unReadCount);
+                            this.unReadCount = res.data.data.unReadCount;
+                        }
+                    })
             }
         },
         created: function () {
@@ -120,14 +130,11 @@
                 if (Number(res.data.code) === 200) {
                     this.user = res.data.data.user;
                     //获取该用户的未读消息数
-                    axios.get('/shApi/userUnReadMessagesCount?userId=' + this.user.userId)
-                        .then(res => {
-                            if (Number(res.data.code) === 200) {
-                                console.log("用户id为：", this.user.userId, "用户未读消息数为：", res.data.data.unReadCount);
-                                this.unReadCount = res.data.data.unReadCount;
-                            }
-                        })
-
+                    this.getUnReadCount();
+                    //然后每隔60秒再获取一次
+                    setInterval(()=>{
+                        this.getUnReadCount();
+                    },1000*60);
                 } else {
                     this.user = null;
                 }
