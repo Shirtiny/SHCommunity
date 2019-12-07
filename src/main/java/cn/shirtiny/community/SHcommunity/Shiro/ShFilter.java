@@ -2,6 +2,7 @@ package cn.shirtiny.community.SHcommunity.Shiro;
 
 import cn.shirtiny.community.SHcommunity.Enum.ShErrorCode;
 import cn.shirtiny.community.SHcommunity.Exception.LoginFailedException;
+import cn.shirtiny.community.SHcommunity.Service.IcookieService;
 import cn.shirtiny.community.SHcommunity.Service.IjwtService;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 //自定义的shiro拦截过滤器
 //执行流程 preHandle -> isAccessAllowed -> isLoginAttempt -> executeLogin
@@ -26,6 +29,8 @@ public class ShFilter extends BasicHttpAuthenticationFilter {
 
     @Autowired
     private IjwtService jwtService;
+    @Autowired
+    private IcookieService cookieService;
 
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
@@ -75,11 +80,13 @@ public class ShFilter extends BasicHttpAuthenticationFilter {
     //是否要尝试登录
     @Override
     protected boolean isLoginAttempt(ServletRequest request ,ServletResponse response) {
-        //请求头的Authorization有值时，表示想尝试登录
         HttpServletRequest httpRequest = WebUtils.toHttp(request);
-        String jwt = httpRequest.getHeader("Authorization");
-        return jwt != null && !"".equals(jwt.trim());
-//        return super.isLoginAttempt(request,response);
+        /*请求头的Authorization有值时，表示想尝试登录
+        String shJwt = httpRequest.getHeader("Authorization");
+        */
+        //cookie中含有shJwt表示想尝试登录
+        String shJwt = cookieService.getCookieValueByName(httpRequest, "shJwt");
+        return shJwt !=null && !"".equals(shJwt.trim());
     }
 
     //执行登录
@@ -87,13 +94,12 @@ public class ShFilter extends BasicHttpAuthenticationFilter {
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws LoginFailedException {
         HttpServletRequest httpRequest = WebUtils.toHttp(request);
         //解析携带token
-        Map<String, Object> calims = jwtService.parseJwtByRequest(httpRequest);
+        Map<String, Object> claims = jwtService.parseJwtByCookie(httpRequest);
         //暂时处理 能解析出来，就登录成功
-        if (calims!=null){
+        if (claims!=null){
             return true;
         }else {
             throw new LoginFailedException("登录失败，令牌无效");
         }
-
     }
 }

@@ -138,10 +138,7 @@
                 },
                 //登录状态检查
                 loginCheck: function () {
-                    let shJwt = this.getShJwt();
-                    axios.get('/shApi/loginCheck', {
-                        headers: {'Authorization': shJwt}
-                    }).then(res => {
+                    axios.get('/shApi/loginCheckByCookie').then(res => {
                         var shCode = res.data.code;
                         var message = res.data.message;
                         if (Number(shCode) === 200) {
@@ -183,14 +180,14 @@
                     console.log('输出content：\n' + md_content);
                     console.log('版块id：\n' + this.sectionId);
                     //提交数据给后台
-                    let shJwt = this.getShJwt();
                     axios.post('/shPri/createInvitation', {
                         title: vue_Editor.md_title,
                         content: md_content,
                         sectionId: this.sectionId,
                         isAxios: true
                     }, {
-                        headers: {'Authorization': shJwt}
+                        //后台shiro过滤器改为从cookie中取jwt了 不需要header了 不过还是留着作为日后参考
+                        headers: {'Authorization': 'shJwt'}
                     }).then(function (response) {
                         //成功提交的情况
                         if (Number(response.data.code) === 200) {

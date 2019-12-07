@@ -44,7 +44,7 @@ public class InvitationController {
     @ResponseBody
     public ShResultDTO createInvitation(@RequestBody Invitation invitation, HttpServletRequest request){
         //从传递的token取得用户map，然后取得用户id
-        Map<String, Object> calims = jwtService.parseJwtByRequest(request);
+        Map<String, Object> calims = jwtService.parseJwtByCookie(request);
         Map userMap=(Map)calims.get("user");
         invitation.setAuthorId((Long) userMap.get("userId"));
         boolean flag = invitationService.addInvitation(invitation);

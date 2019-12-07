@@ -86,17 +86,7 @@ public class LoginController {
     @GetMapping("/shApi/loginCheckByCookie")
     @ResponseBody
     public ShResultDTO loginCheckByCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        Map<String, Object> claims = null;
-        boolean isExist = false ;
-        for (Cookie cookie : cookies){
-            if (Objects.equals("shJwt",cookie.getName())){
-                isExist = true;
-                claims = jwtService.parseJwtByCookie(cookie);
-                break;
-            }
-        }
-
+        Map<String, Object> claims = jwtService.parseJwtByCookie(request);
         if (claims != null) {
             return new ShResultDTO(200, "已登录");
         } else {

@@ -12,7 +12,7 @@ public interface IjwtService {
     //从request请求头中解析token
     Map<String,Object> parseJwtByRequest(HttpServletRequest request);
     //从cookie中解析token
-    Map<String,Object> parseJwtByCookie(Cookie shJwt);
+    Map<String,Object> parseJwtByCookie(HttpServletRequest request);
     //解析传入的token字符串
     Map<String,Object> parseJwt(String jwt);
     //把token字符串解析后返回一个userDto对象
