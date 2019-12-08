@@ -44,6 +44,17 @@ public class ChatMessageServiceImpl implements IchatMessageService {
     //增加一条消息
     @Override
     public boolean addChatMessage(Long chatMessageId, String messageContent, Long senderId, Long recipientId) {
+        return insertChatMessage(chatMessageId,messageContent,senderId,recipientId,false);
+    }
+
+    @Override
+    public boolean addChatMessage(Long chatMessageId, String messageContent, Long senderId, Long recipientId, boolean systems) {
+        return insertChatMessage(chatMessageId,messageContent,senderId,recipientId,systems);
+    }
+
+    //消息入库
+    @Override
+    public boolean insertChatMessage(Long chatMessageId, String messageContent, Long senderId, Long recipientId, boolean systems) {
         //检查消息内容是否为空
         if (messageContent == null || messageContent.trim().isEmpty()) {
             System.out.println("消息为空");
@@ -72,6 +83,8 @@ public class ChatMessageServiceImpl implements IchatMessageService {
             chatMessage.setSenderId(senderId);
             //接收者id
             chatMessage.setRecipientId(recipientId);
+            //系统标识
+            chatMessage.setSystems(systems);
             //插入数据库
             chatMessageMapper.insert(chatMessage);
             return true;
@@ -80,7 +93,6 @@ public class ChatMessageServiceImpl implements IchatMessageService {
             return false;
         }
     }
-
 
     //查询某个聊天记录的消息 ,比如查询聊天室的消息（chatHistoryId为0的消息）
     @Override

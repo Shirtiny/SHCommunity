@@ -25,7 +25,8 @@ public class ChatHistoryDTO {
     private Long recipientId;
     //频道
     private String channel;
-
+    //标记为系统通信
+    private boolean systemSign;
 
     //标识此消息记录含有的未读消息数，不在数据库中
     private Integer unReadCount;

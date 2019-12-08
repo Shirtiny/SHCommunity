@@ -53,6 +53,7 @@ public class ChatHistoryServiceImpl implements IchatHistoryService {
         return false;
     }
 
+    //按双方id来创建聊天记录
     @Override
     public boolean addOneChatHistoryBy2Id(Long senderId, Long recipientId) {
         String historyId = createHistoryId(senderId, recipientId);
@@ -75,6 +76,34 @@ public class ChatHistoryServiceImpl implements IchatHistoryService {
             chatHistory.setChannel("/user/"+historyId+"/121chat");
             //消息数
             chatHistory.setMessageNum(1L);
+        }
+        return addOneChatHistory(chatHistory);
+    }
+
+    //按收信者id来创建系统消息记录
+    @Override
+    public boolean addOneSystemChatHistory(Long recipientId) {
+        String historyId = createHistoryId(0L, recipientId);
+        if (selectIsExist(historyId)){
+            return false;
+        }
+        ChatHistory chatHistory =new ChatHistory();
+        UserDTO recipient = userMapper.selectUserDtoByid(recipientId);
+        if (recipient!=null){
+            //记录名 sender.Name+"_"+recipient.Name
+            chatHistory.setChatHistoryName("看板娘_"+recipient.getUserName());
+            //发送人id
+            chatHistory.setSenderId(0L);
+            //收信人id
+            chatHistory.setRecipientId(recipientId);
+            //主键id
+            chatHistory.setChatHistoryId(historyId);
+            //频道
+            chatHistory.setChannel("/userId/"+recipientId);
+            //消息数
+            chatHistory.setMessageNum(1L);
+            //系统通信标识
+            chatHistory.setSystemSign(true);
         }
         return addOneChatHistory(chatHistory);
     }
@@ -103,10 +132,10 @@ public class ChatHistoryServiceImpl implements IchatHistoryService {
         return retStr;
     }
 
-    //查询某个用户的全部消息记录及其内容 并设置targetUser的值
+    //查询某个用户的全部的非系统消息记录及其内容 并设置targetUser的值
     @Override
-    public List<ChatHistoryDTO> selectAllHistoryMessageByUid(Long userId) {
-        List<ChatHistoryDTO> chatHistories = chatHistoryMapper.selectAllChatHistoryByUid(userId);
+    public List<ChatHistoryDTO> selectAllchatHistoryMessageByUid(Long userId) {
+        List<ChatHistoryDTO> chatHistories = chatHistoryMapper.selectAllChatHistoryByUid(userId,false);
         List<ChatHistoryDTO> tempList = new ArrayList<>();
         for (ChatHistoryDTO chatHistory : chatHistories){
             long senderId = chatHistory.getSenderId();
@@ -121,6 +150,12 @@ public class ChatHistoryServiceImpl implements IchatHistoryService {
             tempList.add(chatHistory);
         }
         return tempList;
+    }
+
+    //查询某个用户的全部系统消息记录及其内容
+    @Override
+    public List<ChatHistoryDTO> selectAllsystemHistoryMessageByUid(Long userId) {
+        return chatHistoryMapper.selectAllChatHistoryByUid(userId,true);
     }
 
     //查询出单个用户的所有聊天记录 的所有未读消息数

@@ -122,4 +122,13 @@ public class InvitationService implements IinvitationService {
 
         return iList;
     }
+
+    //根据帖子id查询出作者id
+    @Override
+    public Long selectAuthorIdByInvitationId(Long invitationId) {
+        if (invitationId == null){
+            return null;
+        }
+        return invitationMapper.selectAuthorIdById(invitationId);
+    }
 }

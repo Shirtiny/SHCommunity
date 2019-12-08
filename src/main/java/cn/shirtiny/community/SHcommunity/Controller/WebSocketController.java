@@ -73,7 +73,7 @@ public class WebSocketController {
         //接收者id
         //无
         //将消息存入数据库
-        chatMessageService.addChatMessage(null,message.getChatMessageContent(), senderId, null);
+        chatMessageService.addChatMessage(null, message.getChatMessageContent(), senderId, null);
 
         //从数据库中查询此聊天室的消息，广播给该频道
         return tolistChatRoomMessages();
@@ -87,6 +87,7 @@ public class WebSocketController {
         chatHistory.setChatHistoryId("0");
         chatHistory.setChatHistoryName("shChatRoom");
         chatHistory.setChannel("/room/chat");
+        chatHistory.setSystemSign(true);
         boolean flag = chatHistoryService.addOneChatHistory(chatHistory);
 
         return flag ? new ShResultDTO<>(200, "聊天室创建成功") : new ShResultDTO<>(501, "聊天室创建失败，该聊天室已存在");
@@ -145,7 +146,7 @@ public class WebSocketController {
         //创建历史记录 已存在则不会创建
         chatHistoryService.addOneChatHistoryBy2Id(chatMessage.getSender().getUserId(), chatMessage.getRecipientId());
         //消息数自增,更新消息记录的修改时间 发送消息 只有消息入库成功才会发送
-        if (isMessageAdded){
+        if (isMessageAdded) {
             chatHistoryService.incrMessageNumAndgmtModified(chatMessage.getChatHistoryId());
             //会自动在频道路径前加上/user/'historyId' 比如此频道会被拼接为/user/historyId/121chat
             messagingTemplate.convertAndSendToUser(chatMessage.getChatHistoryId(), "/121chat", chatMessage);
@@ -155,27 +156,33 @@ public class WebSocketController {
     //为客户端返回应该订阅的1对1频道
     @GetMapping(value = "/shApi/ReSubscribeChannel")
     @ResponseBody
-    public ShResultDTO<String, Object> ReSubscribeChannel(Long senderId,Long recipientId){
-        String historyId = chatHistoryService.createHistoryId(senderId,recipientId);
-        if (historyId==null){
-            return new ShResultDTO<>(400,"参数不合法");
+    public ShResultDTO<String, Object> ReSubscribeChannel(Long senderId, Long recipientId) {
+        String historyId = chatHistoryService.createHistoryId(senderId, recipientId);
+        if (historyId == null) {
+            return new ShResultDTO<>(400, "参数不合法");
         }
-        Map<String,Object> data =new HashMap<>();
-        data.put("subscribeChannel",historyId);
-        return new ShResultDTO<>(200,"已返回应该订阅的频道",data,null);
+        Map<String, Object> data = new HashMap<>();
+        data.put("subscribeChannel", historyId);
+        return new ShResultDTO<>(200, "已返回应该订阅的频道", data, null);
     }
 
-    //查询某个用户的全部消息记录及其内容
+    //查询某个用户的全部 系统/非系统 消息记录及其内容
     @GetMapping("/shApi/allHistoryMessage")
     @ResponseBody
-    public ShResultDTO<String, Object> retAllHistoryMessage(Long userId){
-        List<ChatHistoryDTO> chatHistoryDTOS = chatHistoryService.selectAllHistoryMessageByUid(userId);
-        if (userId==null){
-            return new ShResultDTO<>(400,"参数不合法");
+    public ShResultDTO<String, Object> retAllHistoryMessage(@RequestParam(value = "userId", required = true) Long userId,
+                                                            @RequestParam(value = "isSystem", required = false) Boolean isSystem) {
+        if (userId == null) {
+            return new ShResultDTO<>(400, "参数不合法");
         }
-        Map<String,Object> data =new HashMap<>();
-        data.put("chatHistories",chatHistoryDTOS);
-        return new ShResultDTO<>(200,"已返回该用户所有的历史记录及其内容",data,null);
+        List<ChatHistoryDTO> chatHistoryDTOS ;
+        if (isSystem == null || !isSystem) {
+            chatHistoryDTOS = chatHistoryService.selectAllchatHistoryMessageByUid(userId);
+        } else {
+            chatHistoryDTOS = chatHistoryService.selectAllsystemHistoryMessageByUid(userId);
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("chatHistories", chatHistoryDTOS);
+        return new ShResultDTO<>(200, "返回的是否是系统消息"+(isSystem!=null)+"，已返回对应的该用户的历史记录及其内容", data, null);
     }
 
     //用于通知某个用户 message需要携带消息内容、接收者的id
@@ -186,28 +193,28 @@ public class WebSocketController {
         Long recipientId = chatMessage.getRecipientId();
         //标识为系统通知
         chatMessage.setSystems(true);
-        messagingTemplate.convertAndSend("/uid/"+recipientId,chatMessage);
+        messagingTemplate.convertAndSend("/uid/" + recipientId, chatMessage);
     }
 
     //把某个消息记录的所有消息更新为已读
     @GetMapping("/shApi/updateChatHistoryRead")
     @ResponseBody
-    public ShResultDTO<String, Object> updateChatHistoryRead(String chatHistoryId){
-        chatMessageService.updateMessageReadByHistoryId(chatHistoryId,true);
-        return new ShResultDTO<>(200,"已更新");
+    public ShResultDTO<String, Object> updateChatHistoryRead(String chatHistoryId) {
+        chatMessageService.updateMessageReadByHistoryId(chatHistoryId, true);
+        return new ShResultDTO<>(200, "已更新");
     }
 
     //返回某个用户的未读消息数
     @GetMapping("/shApi/userUnReadMessagesCount")
     @ResponseBody
-    public ShResultDTO<String,Object> retUnReadMessagesCount(Long userId){
-        if (userId==null){
-            return new ShResultDTO<>(400,"参数不合法");
+    public ShResultDTO<String, Object> retUnReadMessagesCount(Long userId) {
+        if (userId == null) {
+            return new ShResultDTO<>(400, "参数不合法");
         }
         int unReadCount = chatHistoryService.selectUnReadMessagesCountByUid(userId);
-        Map<String,Object> data =new HashMap<>();
-        data.put("unReadCount",unReadCount);
-        return new ShResultDTO<>(200,"已经返回该用户的未读消息数",data,null);
+        Map<String, Object> data = new HashMap<>();
+        data.put("unReadCount", unReadCount);
+        return new ShResultDTO<>(200, "已经返回该用户的未读消息数", data, null);
     }
 }
 

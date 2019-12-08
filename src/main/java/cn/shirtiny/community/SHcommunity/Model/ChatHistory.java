@@ -31,4 +31,7 @@ public class ChatHistory {
     //频道
     @TableField(value = "channel")
     private String channel;
+    //系统标记 标识此消息记录为用户与系统的通信历史 默认false
+    @TableField(value = "system_sign",insertStrategy = FieldStrategy.DEFAULT)
+    private boolean systemSign;
 }

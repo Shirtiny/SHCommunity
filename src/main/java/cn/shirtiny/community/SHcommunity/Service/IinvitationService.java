@@ -31,5 +31,8 @@ public interface IinvitationService {
     //查询出版块列表的每一个最新创建的帖子（该帖应有最大的帖子id），包含创建者、标题等
     List<InvitationDTO> selectAllLatestDto(List<Long> sectionIds);
 
+    //根据帖子id查询出作者id
+    Long selectAuthorIdByInvitationId(Long invitationId);
+
 
 }

@@ -53,4 +53,8 @@ public interface InvitationMapper extends BaseMapper<Invitation> {
     @Select("select * from user u join invitation i on u.user_id = i.author_id " +
             "where i.gmt_modified = (select max(gmt_modified) from invitation where section_id = #{sectionId})")
     InvitationDTO selectOneLatestDto(@Param("sectionId") long sectionId);
+
+    //根据帖子id查询出作者id
+    @Select("SELECT author_id FROM `invitation` WHERE invitation_id=#{invitationId}")
+    Long selectAuthorIdById(@Param("invitationId") Long invitationId);
 }
