@@ -13,14 +13,15 @@
 
 <div id="vue_user_chat" th:fragment="user_chat" style="height: 630px;" class="img-rounded">
     <!-- 外层tab -->
-    <el-tabs class="img-rounded shELOutTab" tab-position="left" v-model="outTabsDefActive" type="border-card"
+    <el-tabs class="img-rounded shELOutTab" tab-position="left" @tab-click="outTabClick" v-model="outTabsDefActive"
+             type="border-card"
              style="height: 100%;padding: 10px 10px 10px 10px;">
         <el-tab-pane disabled>
             <span slot="label" style="font-style: italic;font-weight: 700;"><i
                         class="el-icon-s-promotion"></i>消息中心</span>
         </el-tab-pane>
         <el-tab-pane name="userMessage">
-            <span slot="label"><i class="el-icon-chat-dot-round"></i> 私信</span>
+            <span slot="label"><i class="el-icon-chat-dot-round"></i>查收私信</span>
             <!-- 标题 background-color: #e4ffff;-->
             <el-row class="shbox_shadow1"
                     style="margin-bottom: 20px;height: 40px;padding: 10px 0;background-color: #e4ffff;" type="flex"
@@ -47,6 +48,7 @@
                             <!--用户昵称-->
                             <span class="float_left"
                                   style="margin-left: 10px;">{{chatHistory.targetUser.nickName}}</span>
+                            <!--红点 -->
                             <div class="" :class="chatHistory.unReadCount > 0 ? 'shDot':'shDot-noColor' "></div>
                         </div>
                         <!-- 聊天面板-->
@@ -112,8 +114,53 @@
             </el-row>
 
         </el-tab-pane>
-        <el-tab-pane label="系统消息" name="sysMessage">
-            系统
+        <el-tab-pane name="sysMessage">
+            <div slot="label">
+                <!--红点 :class="chatHistory.unReadCount > 0 ? 'shDot':'shDot-noColor' "-->
+                <div class="shDot_out" v-if="systemHistory.unReadCount >0">
+                    <span style="color: white;font-size: 10px;position: absolute;top: -12px;left: 4px;">
+                        {{systemHistory.unReadCount}}
+                    </span>
+                </div>
+                <i class="el-icon-coffee-cup"></i><span>系统消息</span>
+            </div>
+            <!-- 标题 background-color: #e4ffff;-->
+            <el-row class="shbox_shadow1"
+                    style="margin-bottom: 20px;height: 40px;padding: 10px 0;background-color: #e4ffff;" type="flex"
+                    justify="space-around">
+                <div><span style="color: #666">通知</span></div>
+            </el-row>
+            <!--历史通知-->
+            <el-row class="shbox_shadow2 img-rounded shSystemHistoryBox">
+                <el-collapse v-model="activeCommentIds">
+                    <el-collapse-item v-for="comment in commentArr" :key="comment.commentId" :name="comment.commentId">
+                        <div slot="title" style="font-size: 14px;">
+                            <span style="margin-right: 8px;color: #222;font-weight: bold;">{{comment.reviewer.nickName}}</span>
+                            在&nbsp;<span style="color: #999;font-size: 13px;line-height: 22px;">2019年12月6日 21:13</span>&nbsp;回复了我，点击展开<i
+                                    class="el-icon-zoom-in"
+                                    style="margin-right: 8px;font-size: 18px;color: #fb7299"></i>
+                            或 <a target="_blank"
+                                 :href="'/shPub/invitationDetail/'+comment.targetId+'#'+comment.commentId">->前往该帖</a>
+                        </div>
+                        <div class="float_left"
+                             style="box-sizing: border-box;padding: 0 0 10px 0;min-height: 50px;overflow: hidden;">
+                            <a href="#" target="_blank" class="shAvatar avatar_image-sm float_left"
+                               :style="{'background-image' : 'url('+comment.reviewer.avatarImage +')'}">
+                            </a>
+                            <div style="color: #222;overflow: hidden;word-break: break-word;text-overflow:ellipsis;width:500px;margin: 0 20px;height: 75px;font-size: 14px;"
+                                 class="float_left">
+                                {{comment.commentContent.substring(0,101)}}<span
+                                        v-if="comment.commentContent.length>100">...</span>
+                            </div>
+                        </div>
+                        <div class="float_right" v-if="comment.citedComment!=null"
+                             style="font-size: 14px;color: #999;width:300px;box-sizing: border-box;padding: 0 0 10px 0;height: 75px;overflow: hidden;text-overflow: ellipsis;word-break: break-word;">
+                            {{comment.citedComment.commentContent.substring(0,101)}}<span
+                                    v-if="comment.citedComment.commentContent.length>100">...</span>
+                        </div>
+                    </el-collapse-item>
+                </el-collapse>
+            </el-row>
         </el-tab-pane>
     </el-tabs>
 
@@ -124,6 +171,12 @@
         data: {
             //外层激活的tab的name
             outTabsDefActive: 'userMessage',
+            //系统通知消息的记录
+            systemHistory: {},
+            //系统通知消息里的评论数组
+            commentArr: [],
+            //展开的手风琴
+            activeCommentIds: [],
             //激活的tab的name
             innerTabsDefActive: '',
             //内层tabs 历史消息数组chatHistories 每个tab的name是targetUser.userId
@@ -249,9 +302,9 @@
                     this.putNewMessage(chatMessage);
                     //查找消息对应的tab
                     let tab;
-                    for (let i=0;i<this.innerTabs.length;i++){
-                        if (this.innerTabs[i].chatHistoryId === chatMessage.chatHistoryId){
-                            tab=this.innerTabs[i];
+                    for (let i = 0; i < this.innerTabs.length; i++) {
+                        if (this.innerTabs[i].chatHistoryId === chatMessage.chatHistoryId) {
+                            tab = this.innerTabs[i];
                         }
                     }
                     //如果消息的收信人是本地用户 并且当前激活的tab是消息的所有者
@@ -334,7 +387,7 @@
                         //把新消息加入这个消息记录的消息列表里
                         this.innerTabs[i].chatMessages.push(chatMessage);
                         //标上红点
-                        this.changeDot(this.innerTabs[i],true,1);
+                        this.changeDot(this.innerTabs[i], true, 1);
                         break;
                     }
                 }
@@ -342,16 +395,16 @@
                 this.receiveNewMessage = this.receiveNewMessage + 1;
             },
             //改变红点显示 为接收到新消息的未读tab标上红点 第二个参数为增加多少未读数
-            changeDot(chatHistory,boolean,gap){
+            changeDot(chatHistory, boolean, gap) {
                 //boolean 为true时 显示红点 false则不显示
                 if (boolean) {
                     //如果不是当前激活的tab 改变对应消息记录的未读消息数 (>0标记上红点)
-                    if (chatHistory.targetUser.userId !== this.innerTabsDefActive){
+                    if (chatHistory.targetUser.userId !== this.innerTabsDefActive) {
                         chatHistory.unReadCount += gap;
                     }
-                }else if (!boolean) {
+                } else if (!boolean) {
                     //如果是当前激活的tab 改变对应消息记录的未读消息数 (=0取消红点标记)
-                    if (chatHistory.targetUser.userId === this.innerTabsDefActive){
+                    if (chatHistory.targetUser.userId === this.innerTabsDefActive) {
                         chatHistory.unReadCount = 0;
                     }
                 }
@@ -377,7 +430,7 @@
                         //把url里的新建立连接的用户加入到tabs
                         let uid = this.getUidFormUrl();
                         //防止自己与自己对话
-                        if (this.user.userId === uid){
+                        if (this.user.userId === uid) {
                             uid = null
                         }
                         console.log(uid);
@@ -451,7 +504,7 @@
                                     console.log(this.innerTabs[i].chatHistoryId, "更新为已读");
                                 });
                                 //取消红点显示
-                                this.changeDot(this.innerTabs[i],false);
+                                this.changeDot(this.innerTabs[i], false);
                             }
                         }
                     }
@@ -487,6 +540,36 @@
                     //开始移动
                     historyBox.scrollTop = historyBox.scrollTop + (scrollHeight - scrollTop - clientHeight);
                 }
+            },
+            //初始化系统通知的消息列表数据
+            getSystemHistory() {
+                axios.get('/shApi/allHistoryMessage?userId=' + this.user.userId + '&isSystem=true').then(res => {
+                    this.systemHistory = res.data.data.chatHistories[0];
+                    for (let message of this.systemHistory.chatMessages) {
+                        let comment = JSON.parse(message.chatMessageContent);
+                        //{"citedCommentId":826,"commentContent":"回复826","commentId":834,"createdTime":1575795846888,"reviewerId":1176036819306635266,"targetId":1176037389258023641}
+                        //{"commentContent":"回复帖子","commentId":835,"createdTime":1575810619516,"reviewerId":1176036819306635277,"targetId":1176037389258023640}
+                        axios.get('/shApi/retOneComment?commentId=' + comment.commentId).then(res => {
+                            let commentDTO = res.data.data.comment;
+                            this.activeCommentIds.push(commentDTO.commentId);
+                            this.commentArr.push(commentDTO);
+                        })
+                    }
+                    //最后把commentArr根据comment的创建时间排序
+                    // console.log("初始化系统通知的消息列表数据", JSON.stringify(this.commentArr));
+                })
+            },
+            //监控外部tab的点击事件
+            outTabClick(tab) {
+                //如果点击了系统通知
+                if (tab.name === "sysMessage") {
+                    //把本用户系统通知消息记录的未读消息更新为已读
+                    axios.get('/shApi/updateChatHistoryRead?chatHistoryId=' + this.systemHistory.chatHistoryId).then(res => {
+                        console.log(this.systemHistory.chatHistoryId, "系统通知更新为已读");
+                        //然后把本地js对应的未读消息变量改为0
+                        this.systemHistory.unReadCount = 0;
+                    });
+                }
             }
         },
         created() {
@@ -516,6 +599,8 @@
                     this.initializeInnerTabs();
                     //连接socket 订阅需要本地用户信息
                     this.connectSocket();
+                    //初始化系统通知的消息列表数据
+                    this.getSystemHistory();
                 }
             },
             recipientId: {
@@ -539,6 +624,20 @@
                     console.log("receiveNewMessage改变了", oldName, newName);
                 }
             },
+            commentArr: {
+                handler(newName, oldName){
+                    //排序 简单的冒泡法
+                    for (let n = 0; n + 1 < this.commentArr.length; n++) {
+                        for (let i = 0; i + 1 + n < this.commentArr.length; i++) {
+                            if (this.commentArr[i].createdTime < this.commentArr[i + 1].createdTime) {
+                                let temp = this.commentArr[i + 1];
+                                this.commentArr[i + 1] = this.commentArr[i];
+                                this.commentArr[i] = temp;
+                            }
+                        }
+                    }
+                }
+            }
         }
     });
 </script>
@@ -634,7 +733,7 @@
         right: 50px;
     }
 
-    .shDot{
+    .shDot {
         width: 6px;
         height: 6px;
         border-radius: 50%;
@@ -645,7 +744,7 @@
         left: 2px;
     }
 
-    .shDot-noColor{
+    .shDot-noColor {
         width: 6px;
         height: 6px;
         border-radius: 50%;
@@ -653,6 +752,29 @@
         position: absolute;
         top: 27px;
         left: 2px;
+    }
+
+    .shSystemHistoryBox {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        height: 520px;
+        padding: 0 20px;
+        margin: 5px 5px;
+    }
+
+    .el-collapse-item__header {
+        margin: 22px 0 0 0 !important;
+    }
+
+    .shDot_out {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: #fb7299 !important;
+        text-align: center;
+        position: absolute;
+        top: 12px;
+        left: 3px;
     }
 </style>
 </html>

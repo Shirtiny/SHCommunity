@@ -11,16 +11,14 @@ import cn.shirtiny.community.SHcommunity.Service.IchatHistoryService;
 import cn.shirtiny.community.SHcommunity.Service.IchatMessageService;
 import cn.shirtiny.community.SHcommunity.Service.IjwtService;
 import cn.shirtiny.community.SHcommunity.Service.ServiceImpl.InvitationService;
+import com.alibaba.fastjson.JSONObject;
 import com.baidu.fsg.uid.service.UidGenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class CommentController {
@@ -71,11 +69,8 @@ public class CommentController {
             chatHistoryService.addOneSystemChatHistory(recipientId);
             //消息id
             Long messageId = uidGenerateService.generateUid();
-            //消息内容
-            String messageContent = comment.getCommentContent();
-            if (messageContent.trim().length() > 30) {
-                messageContent = messageContent.substring(0, 31) + "...";
-            }
+            //消息内容 存取评论的json字符串
+            String messageContent = JSONObject.toJSONString(comment);
             //消息入库
             boolean isNotifySuccess = false;
             if (recipientId != null) {
@@ -88,6 +83,15 @@ public class CommentController {
         }
     }
 
+    //返回一个评论的关联内容
+    @GetMapping(value = "/shApi/retOneComment")
+    @ResponseBody
+    public ShResultDTO<String,Object> retOneComment(Long commentId){
+        CommentDTO commentDTO = commentService.selectCommentById(commentId);
+        Map<String,Object> data = new HashMap<>();
+        data.put("comment",commentDTO);
+        return new ShResultDTO<>(200, "返回评论的详细信息",data,null);
+    }
 
     //测试，返回0号帖子的评论
     @RequestMapping(value = "/test/c")
@@ -95,4 +99,6 @@ public class CommentController {
     public List<CommentDTO> testComments() {
         return commentService.findAllComment(0);
     }
+
+
 }

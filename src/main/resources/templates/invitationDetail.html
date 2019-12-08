@@ -111,8 +111,8 @@
                                     <span><span class="el-icon-guide"></span>{{index+1}}<sup
                                                 style="font-style: italic;">L</sup></span>
                                     <span style="color: #796161;padding: 25px;">{{toformatDate(comment.createdTime)}}</span>
-                                    <span class="el-icon-paperclip float_right">{{comment.commentId}}<sup
-                                                style="font-style: italic;">C</sup></span>
+                                    <a style="color: #333" :name="comment.commentId"><span class="el-icon-paperclip float_right">{{comment.commentId}}<sup
+                                                style="font-style: italic;">C</sup></span></a>
                                 </div>
                                 <div class="media-left ">
                                     <a :href="'/shPub/messageCenter?uid='+comment.reviewerId" target="_blank">
@@ -135,11 +135,11 @@
 
                             </div>
                             <!--右媒体 引用了其他评论-->
-                            <div :id="index" class="media invitationDetail_comment_right  img-rounded"
+                            <div :id="comment.commentId" class="media invitationDetail_comment_right  img-rounded"
                                  v-if="comment.citedComment!=null">
                                 <div class="text-right" style="padding: 5px 5px 5px 5px;">
-                                    <span class="el-icon-paperclip float_left">{{comment.commentId}}<sup
-                                                style="font-style: italic;">C</sup></span>
+                                    <a style="color: #333" :name="comment.commentId"><span class="el-icon-paperclip float_left">{{comment.commentId}}<sup
+                                                style="font-style: italic;">C</sup></span></a>
                                     Reply：
                                     <el-tooltip content="查看该评论" placement="top" effect="light">
 
@@ -403,6 +403,28 @@
                 } else {
                     this.drawer.commentContent = drawerCommentContent;
                 }
+                //dom更新后执行 跳转到指定锚点 从url中取锚点值
+                setTimeout(()=>{
+                    this.$nextTick(() => {
+                        let url = window.location.href;
+                        let array = url.match(`#([0-9]+)`);
+                        let id = array[1];
+                        let element = document.getElementById(id);
+                        element.scrollIntoView();
+                        let count = 0;
+                        let interval = setInterval(()=>{
+                            count +=1;
+                            element.style.border="solid #f8f0f1 2px";
+                            setTimeout(()=>{
+                                element.style.border=""
+                            },700);
+                            if (count===15){
+                                clearInterval(interval);
+                            }
+                        },1400);
+                    });
+                },1200)
+
             },
             created: function () {
                 //获取帖子id

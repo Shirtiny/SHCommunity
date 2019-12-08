@@ -32,4 +32,13 @@ public interface CommentMapper extends BaseMapper<Comment> {
     //通过commentId查找评论者id
     @Select("select reviewer_id from comment where comment_id=#{commentId}")
     Long selectReviewerIdByCid(@Param("commentId") long commentId);
+
+    //根据id查出一条评论关联的内容 评论者、被评论的评论内容
+    @Select("select * from comment where comment_id=#{commentId}")
+    @Results({
+            @Result(property = "reviewer",column ="reviewer_id",javaType = UserDTO.class,one = @One(select = "cn.shirtiny.community.SHcommunity.Mapper.UserMapper.selectDTOById")),
+            @Result(property = "reviewerId",column ="reviewer_id"),
+            @Result(property = "citedComment",column ="cited_comment_id",javaType = CommentDTO.class,one = @One(select = "cn.shirtiny.community.SHcommunity.Mapper.CommentMapper.selectOneByCitedCommentId")),
+    })
+    CommentDTO selectOneByCommentId(@Param("commentId") Long commentId);
 }

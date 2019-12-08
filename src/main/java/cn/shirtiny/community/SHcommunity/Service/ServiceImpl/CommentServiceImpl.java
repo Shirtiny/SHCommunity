@@ -71,4 +71,10 @@ public class CommentServiceImpl implements ICommentService {
     public Long selectReviewerIdByCommentId(long commentId) {
         return commentMapper.selectReviewerIdByCid(commentId);
     }
+
+    //通过id查出一条评论的关联内容
+    @Override
+    public CommentDTO selectCommentById(long commentId) {
+        return commentMapper.selectOneByCommentId(commentId);
+    }
 }

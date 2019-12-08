@@ -14,5 +14,7 @@ public interface ICommentService {
     //通过commentId查找评论者id
     Long selectReviewerIdByCommentId(long commentId);
 
+    //通过id查出一条评论的关联内容
+    CommentDTO selectCommentById(long commentId);
 
 }
