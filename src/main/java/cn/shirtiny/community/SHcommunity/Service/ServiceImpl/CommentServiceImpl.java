@@ -60,10 +60,15 @@ public class CommentServiceImpl implements ICommentService {
 
     }
 
+
     @Override
     public List<CommentDTO> findAllComment(long invitationId) {
         return commentMapper.selectAllByInvitatonId(invitationId);
     }
 
-
+    //通过commentId查找评论者id
+    @Override
+    public Long selectReviewerIdByCommentId(long commentId) {
+        return commentMapper.selectReviewerIdByCid(commentId);
+    }
 }

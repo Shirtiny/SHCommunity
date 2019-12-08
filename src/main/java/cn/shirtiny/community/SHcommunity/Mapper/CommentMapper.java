@@ -29,4 +29,7 @@ public interface CommentMapper extends BaseMapper<Comment> {
     })
     CommentDTO selectOneByCitedCommentId(@Param("citedCommentId") Long citedCommentId);
 
+    //通过commentId查找评论者id
+    @Select("select reviewer_id from comment where comment_id=#{commentId}")
+    Long selectReviewerIdByCid(@Param("commentId") long commentId);
 }

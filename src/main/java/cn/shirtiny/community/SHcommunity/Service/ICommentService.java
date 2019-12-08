@@ -11,4 +11,8 @@ public interface ICommentService {
 
     List<CommentDTO> findAllComment(long invitationId);
 
+    //通过commentId查找评论者id
+    Long selectReviewerIdByCommentId(long commentId);
+
+
 }

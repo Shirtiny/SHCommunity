@@ -48,11 +48,10 @@ public class CommentController {
         if (calims != null) {
             userMap = (LinkedHashMap) calims.get("user");
         }
-        Long userId = null;
         if (userMap != null) {
-            userId = (Long) userMap.get("userId");
+            Long userId = (Long) userMap.get("userId");
             comment.setReviewerId(userId);
-        }else {
+        } else {
             return new ShResultDTO<>(400, "发送失败，检查是否登录，评论不能为空或全是空格或字数超限");
         }
         comment.setCreatedTime(System.currentTimeMillis());
@@ -62,7 +61,8 @@ public class CommentController {
             //消息的收信人
             Long recipientId = null;
             if (comment.getCitedCommentId() != null) {
-                recipientId = comment.getCitedCommentId();
+                long commentId = comment.getCitedCommentId();
+                recipientId = commentService.selectReviewerIdByCommentId(commentId);
             } else {
                 Long invitationId = comment.getTargetId();
                 recipientId = invitationService.selectAuthorIdByInvitationId(invitationId);
@@ -74,10 +74,15 @@ public class CommentController {
             //消息内容
             String messageContent = comment.getCommentContent();
             if (messageContent.trim().length() > 30) {
-                messageContent = messageContent.substring(0, 31)+"...";
+                messageContent = messageContent.substring(0, 31) + "...";
             }
-            chatMessageService.addChatMessage(messageId, messageContent, userId, recipientId, true);
-            return new ShResultDTO<>(200, "评论成功");
+            //消息入库
+            boolean isNotifySuccess = false;
+            if (recipientId != null) {
+                //注意发信人id是0 看板娘
+                isNotifySuccess = chatMessageService.addChatMessage(messageId, messageContent, 0L, recipientId, true);
+            }
+            return new ShResultDTO<>(200, "评论成功，是否成功通知收信人：" + isNotifySuccess);
         } else {
             return new ShResultDTO<>(400, "发送失败，检查是否登录，评论不能为空或全是空格或字数超限");
         }
