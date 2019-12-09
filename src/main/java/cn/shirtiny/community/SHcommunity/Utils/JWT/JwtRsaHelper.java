@@ -54,6 +54,8 @@ public class JwtRsaHelper {
 
     //用户令牌
     public String createJwt(User user) {
+        //把用户敏感信息置空
+        user.setPassWord(null);
         Map<String, Object> claims = new HashMap<>();
         //这样user内的信息会作为一个map存入jwt，jwt解析取的时候，需要把user转为map
         claims.put("user",user);

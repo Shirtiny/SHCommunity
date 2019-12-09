@@ -10,6 +10,8 @@ public interface IloginService {
 
     String getRedirectFromCookie(HttpServletRequest request, HttpServletResponse response);
 
-    ShResultDTO<String,Object> userLoginByPWD(User user);
+    ShResultDTO<String,Object> userLoginByPWD(User user, HttpServletResponse response);
 
+    //将用户封装为jwt并设置cookie
+    String userLogin(User user,HttpServletResponse response);
 }

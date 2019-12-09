@@ -17,4 +17,6 @@ public interface IjwtService {
     Map<String,Object> parseJwt(String jwt);
     //把token字符串解析后返回一个userDto对象
     UserDTO parseJwtToUser(String jwt);
+    //将用户信息封装成jwt
+    String userToJwt(User user);
 }

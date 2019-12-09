@@ -85,7 +85,7 @@ public class ShFilter extends BasicHttpAuthenticationFilter {
         String shJwt = httpRequest.getHeader("Authorization");
         */
         //cookie中含有shJwt表示想尝试登录
-        String shJwt = cookieService.getCookieValueByName(httpRequest, "shJwt");
+        String shJwt = cookieService.getShJwtFromCookie(httpRequest.getCookies());
         return shJwt !=null && !"".equals(shJwt.trim());
     }
 

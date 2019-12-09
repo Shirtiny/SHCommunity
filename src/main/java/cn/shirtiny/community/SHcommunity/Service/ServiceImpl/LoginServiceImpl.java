@@ -3,6 +3,8 @@ package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
 import cn.shirtiny.community.SHcommunity.Exception.LoginFailedException;
 import cn.shirtiny.community.SHcommunity.Exception.UserInfoNotAllowException;
+import cn.shirtiny.community.SHcommunity.Service.IcookieService;
+import cn.shirtiny.community.SHcommunity.Service.IjwtService;
 import cn.shirtiny.community.SHcommunity.Utils.JWT.JwtRsaHelper;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IloginService;
@@ -11,6 +13,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
@@ -23,7 +26,11 @@ import java.util.Map;
 public class LoginServiceImpl implements IloginService {
 
     @Autowired
-    private JwtRsaHelper jwtRsaHelper;
+    private IjwtService jwtService;
+    @Autowired
+    private IcookieService cookieService;
+    @Value("${ShJwt_Cookie_maxAge}")
+    private Integer ShJwtCookieMaxAge;
 
     @Override
     public String getRedirectFromCookie(HttpServletRequest request, HttpServletResponse response) {
@@ -42,7 +49,7 @@ public class LoginServiceImpl implements IloginService {
 
     //通过用户密码登录
     @Override
-    public ShResultDTO<String, Object> userLoginByPWD(User user) {
+    public ShResultDTO<String, Object> userLoginByPWD(User user,HttpServletResponse response) {
         if (user==null || user.getUserName()==null || user.getUserName().trim().length()==0 || user.getPassWord()==null || user.getPassWord().trim().length()==0){
             throw  new UserInfoNotAllowException("待登录用户信息不正常");
         }
@@ -55,9 +62,9 @@ public class LoginServiceImpl implements IloginService {
             subject.login(token);
             //获得登录后的用户实体
             user = (User)subject.getPrincipal();
-            user.setPassWord(null);
-            //为用户颁发jwt
-            String jwt = jwtRsaHelper.createJwt(user);
+            //为用户颁发jwt 登录并设置cookie
+            String jwt = userLogin(user, response);
+            //把jwt封装 并返回
             Map<String,Object> data = new HashMap<>();
             data.put("jwt",jwt);
             return new ShResultDTO<>(200,"登录成功",data,null);
@@ -65,5 +72,13 @@ public class LoginServiceImpl implements IloginService {
             e.printStackTrace();
             throw new LoginFailedException("登录失败，用户名或密码不正确",e);
         }
+    }
+
+    //将用户封装为jwt并设置cookie 把jwt返回出来
+    @Override
+    public String userLogin(User user,HttpServletResponse response) {
+        String jwt = jwtService.userToJwt(user);
+        cookieService.addJwtCookie(response,jwt,ShJwtCookieMaxAge);
+        return jwt;
     }
 }

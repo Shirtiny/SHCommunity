@@ -9,6 +9,7 @@ import cn.shirtiny.community.SHcommunity.Service.IjwtService;
 import cn.shirtiny.community.SHcommunity.Service.IloginService;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,19 +31,16 @@ public class LoginController {
     private IjwtService jwtService;
     @Autowired
     private IcookieService cookieService;
+    @Value("${ShJwt_Cookie_name}")
+    private String shJwtCookieName;
 
 
     //用户账号密码登录
     @PostMapping("/shApi/login")
     @ResponseBody
     public ShResultDTO<String, Object> userLogin(@RequestBody User user, HttpServletResponse response) {
-        ShResultDTO<String, Object> parseResult = loginService.userLoginByPWD(user);
-        Map data = parseResult.getData();
-        if (data != null) {
-            String jwt = (String) data.get("jwt");
-            cookieService.addOneCookie(response, "shJwt", jwt, "/", -1, true);
-        }
-        return parseResult;
+
+        return loginService.userLoginByPWD(user,response);
     }
 
     //用户注册
@@ -67,7 +65,7 @@ public class LoginController {
     //注销 删除jwt maxAge=0表示删除
     @GetMapping("/logout")
     public String logout(HttpServletResponse response) {
-        cookieService.addOneCookie(response, "shJwt", "", "/", 0, true);
+        cookieService.deleteShJwtFromCookie(response);
         return "redirect:/";
     }
 
@@ -75,7 +73,7 @@ public class LoginController {
     @GetMapping("/shApi/logout")
     @ResponseBody
     public ShResultDTO logoutByApi(HttpServletResponse response) {
-        cookieService.addOneCookie(response, "shJwt", "", "/", 0, true);
+        cookieService.deleteShJwtFromCookie(response);
         return new ShResultDTO(200, "用户注销");
     }
 
@@ -120,7 +118,8 @@ public class LoginController {
     //解析cookie中的jwt，返回用户信息
     @GetMapping("/shApi/getLoginedUserByCookie")
     @ResponseBody
-    public ShResultDTO<String, Object> backLoginedUserInfoByCookie(@CookieValue("shJwt") String jwt) {
+    public ShResultDTO<String, Object> backLoginedUserInfoByCookie(HttpServletRequest request) {
+        String jwt = cookieService.getShJwtFromCookie(request.getCookies());
         UserDTO userDTO = jwtService.parseJwtToUser(jwt);
         Map<String, Object> data = new HashMap<>();
         if (userDTO != null) {

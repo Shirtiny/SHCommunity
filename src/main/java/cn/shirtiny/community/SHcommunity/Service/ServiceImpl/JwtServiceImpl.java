@@ -40,7 +40,7 @@ public class JwtServiceImpl implements IjwtService {
         if (request == null) {
             return null;
         } else {
-            String shJwt = cookieService.getCookieValueByName(request, "shJwt");
+            String shJwt = cookieService.getShJwtFromCookie(request.getCookies());
             return parseJwt(shJwt);
         }
     }
@@ -73,5 +73,11 @@ public class JwtServiceImpl implements IjwtService {
             user = JSONObject.parseObject(JSONObject.toJSONString(userMap), UserDTO.class);
         }
         return user;
+    }
+
+    //将用户信息封装成jwt
+    @Override
+    public String userToJwt(User user) {
+        return jwtRsaHelper.createJwt(user);
     }
 }

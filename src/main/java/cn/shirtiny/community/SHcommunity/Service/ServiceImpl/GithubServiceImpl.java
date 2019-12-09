@@ -81,6 +81,7 @@ public class GithubServiceImpl implements IGithubService {
         user.setEmail(githubUser.getEmail());
         user.setGithubId(githubUser.getId());
         user.setAvatarImage(githubUser.getAvatar_url());
+        user.setDescription(githubUser.getBio());
         //获取当前系统的毫秒数
         user.setGmtCreate(System.currentTimeMillis());
         user.setGmtModified(user.getGmtCreate());

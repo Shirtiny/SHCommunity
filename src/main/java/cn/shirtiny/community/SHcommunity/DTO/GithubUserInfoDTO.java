@@ -13,5 +13,6 @@ public class GithubUserInfoDTO {
     private String name;//姓名
     private String email;//邮箱
     private String location;//位置
+    private String bio;//自我介绍
 
 }
