@@ -15,9 +15,8 @@
                             max-height="500"
                             id="messageTable"
                     >
-                        <!--暂时只支持游客-->
                         <el-table-column
-                                label="消息记录 "
+                                label="消息记录 (近期30条)"
                                 min-width="280"
                                 show-overflow-tooltip>
 
@@ -31,7 +30,8 @@
 
                                 <el-row id="message_content">
                                     <el-col :span="4">
-                                        <el-avatar icon="el-icon-user-solid"></el-avatar>
+                                        <el-avatar v-if="scope.row.sender!=null" :src="scope.row.sender.avatarImage"></el-avatar>
+                                        <el-avatar v-else-if="scope.row.sender==null" icon="el-icon-user-solid"></el-avatar>
                                     </el-col>
 
                                     <el-col :span="20">
@@ -73,9 +73,9 @@
             </el-row>
         </el-tab-pane>
 
-        <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
-        <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
-        <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+        <el-tab-pane label="社区规范" name="second">社区规范</el-tab-pane>
+        <el-tab-pane label="用户反馈" name="third">联系我</el-tab-pane>
+        <el-tab-pane label="更多..." name="fourth">更多功能开发中...</el-tab-pane>
     </el-tabs>
 </div>
 <style>
@@ -90,7 +90,7 @@
         el: "#vue_el_tab",
         data() {
             return {
-                activeName: 'second',
+                activeName: 'first',
                 //聊天室正在输入的消息
                 unsendChatMessage: '',
                 //聊天室历史消息
@@ -103,6 +103,8 @@
                 cellHeight: 94,
                 //标识是否让滚动条 自动跟进新消息
                 letScollAtFoot: true,
+                //标识socket是否连接
+                isConnected:false
             };
         },
         computed: {
@@ -116,10 +118,6 @@
             clickTab(tab, event) {
                 console.log("点击tab");
                 console.log(tab.index);
-                if (tab.index == 0) {
-                    //订阅聊天室
-                    this.subscribeChatRoom();
-                }
             },
             //加载聊天室历史数据
             loadChatHistoryDta() {
@@ -139,11 +137,13 @@
                     // console.log("频道: /room/chat，响应数据为：");
                     // console.log(retData);
                     //存储订阅频道发过来的数据
-                    let res = JSON.parse(retData.body);
-                    //更新历史消息
-                    this.historyMessages = res.data.historyMessages;
-                    console.log("你订阅的频道更新啦！！！！！~");
-                }, {id: 'client1'});
+                    let chatMessage = JSON.parse(retData.body);
+                    //把消息发送时间补上
+                    chatMessage.gmtCreated = new Date().getTime();
+                    //加入历史消息数组
+                    this.historyMessages.push(chatMessage);
+                    console.log("你订阅的频道更新啦！！！！！~", chatMessage);
+                }, {id: this.touristID});
                 console.log("订阅频道，接收到的对象：");
                 console.log(this.chatSubscribe);
 
@@ -178,8 +178,12 @@
             //发送消息
             sendMessage: function () {
                 //在已订阅时，才发送和清空输入框
-                if (this.chatSubscribe != null) {
-                    stompClient.send("/app/sendToRoom", {}, JSON.stringify({
+                if (this.chatSubscribe != null && this.unsendChatMessage.trim().length !== 0) {
+                    stompClient.send("/app/sendToRoom", {
+                        'Authorization': 'shJWt',
+                        'channel': '/room/chat',
+                        'touristId': this.touristID
+                    }, JSON.stringify({
                         chatMessageContent: this.unsendChatMessage,
                         senderId: Number(this.touristID)
                     }));
@@ -189,19 +193,29 @@
             },
             //连接socket
             connect: function () {
+                //获取游客id
+                this.getTouristID();
                 //建立socket连接
                 let socket = new SockJS('/websocket');
                 stompClient = Stomp.over(socket);
                 //连接socket 自定义header Authorization
-                stompClient.connect({'Authorization': 'shJWt'}, function (frame) {
+                stompClient.connect({
+                    'Authorization': 'shJWt',
+                    'channel': '/room/chat',
+                    'touristId': this.touristID,
+                }, function (frame) {
                     console.log("连接socket: /websocket");
                     console.log(frame);
+                    vue_el_tab.isConnected = true
+                },(err) => {
+                    console.log("socket连接失败",err);
+                    vue_el_tab.isConnected = false;
                 });
             },
             //断开socket连接
             disconnect: function () {
                 console.log(this.isConnected);
-                if (stompClient !== null && this.isConnected === true) {
+                if (stompClient !== null && vue_el_tab.isConnected === true) {
                     stompClient.disconnect(() => {
                         console.log("断开socket连接");
                     });
@@ -213,11 +227,10 @@
             },
             //随机生成一个游客id，从后台获取数据
             getTouristID() {
-                axios.get('/shApi/newChatRoomSenderId').then(res => {
-                    console.log("获取游客id");
-                    console.log(res);
-                    this.touristID = res.data.data.touristID;
-                })
+                let timestamp = new Date().getTime();
+                let random = Math.floor(Math.random() * 10) + Math.floor(Math.random() * 100) + Math.floor(Math.random() * 1000);
+                this.touristID = timestamp + '' + random;
+                console.log('游客id', this.touristID);
             },
             //日期格式化
             fomateDate: function (dateStr) {
@@ -225,7 +238,7 @@
                 date = new Date(date).toLocaleString();
                 return date.split(" ")[1];
             },
-            //判断滚动条是否在底部
+            //判断滚动条是否在底部 没用到
             scrollAtFoot: function () {
                 let elTable = $(`#messageTable .el-table__body-wrapper`)[0];
                 let clientHeight = elTable.clientHeight;
@@ -247,14 +260,27 @@
         created: function () {
             //连接socket
             this.connect();
-            //获取游客id
-            this.getTouristID()
         },
-        updated: function () {
-            //如果订阅了频道，并且打开了滚动条跟进
-            if (this.chatSubscribe != null && this.letScollAtFoot === true) {
-                // 把滚条移动到最底部
-                this.moveScroll();
+        watch: {
+            isConnected: {
+                handler(newName, oldName) {
+                   if (newName){
+                       //订阅聊天室
+                       this.subscribeChatRoom();
+                   }
+                }
+            },
+            historyMessages:{
+                handler(newName, oldName) {
+                    this.$nextTick(() => {
+                        //如果订阅了频道，并且打开了滚动条跟进
+                        if (this.chatSubscribe != null && this.letScollAtFoot === true) {
+                            // 把滚条移动到最底部
+                            this.moveScroll();
+                        }
+                    });
+
+                }
             }
         }
     })

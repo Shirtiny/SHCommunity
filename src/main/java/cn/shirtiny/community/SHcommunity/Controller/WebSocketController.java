@@ -3,32 +3,22 @@ package cn.shirtiny.community.SHcommunity.Controller;
 import cn.shirtiny.community.SHcommunity.DTO.ChatHistoryDTO;
 import cn.shirtiny.community.SHcommunity.DTO.ChatMessageDTO;
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
-import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Model.ChatHistory;
 import cn.shirtiny.community.SHcommunity.Model.ChatMessage;
-import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IchatHistoryService;
 import cn.shirtiny.community.SHcommunity.Service.IchatMessageService;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
 import cn.shirtiny.community.SHcommunity.Utils.Encryption.ShaEncryptor;
-import com.alibaba.fastjson.JSONObject;
 import com.baidu.fsg.uid.service.UidGenerateService;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.socket.WebSocketSession;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,28 +45,19 @@ public class WebSocketController {
     @MessageMapping("/sendToRoom")
     //发送到 /room/chat 频道
     @SendTo("/room/chat")
-    public ShResultDTO<String, Object> retString(@RequestBody ChatMessageDTO message) {
+    public ChatMessage retString(Message message) {
         //聊天室记录的固定id
         String historyId = "0";
-
-        //从session获取用户信息
-        UserDTO user = null;
-//        user =(UserDTO)request.getSession().getAttribute("user");
+        //接收发送来的消息 然后转为消息对象
+        ChatMessage chatMessage = chatMessageService.parseMessageToChatMessage(message,"0");
         //发送者id
-        Long senderId = null;
-        if (user != null) {
-            senderId = user.getUserId();
-        } else {
-            //为空则获取游客id，由前端手动调用后端接口，生成游客id
-            senderId = message.getSenderId();
+        Long senderId = chatMessage.getSenderId();
+        if (senderId != null) {
+            //将消息存入数据库
+            chatMessageService.addChatMessageByChatHistoryId("0",chatMessage);
         }
-        //接收者id
-        //无
-        //将消息存入数据库
-        chatMessageService.addChatMessage(null, message.getChatMessageContent(), senderId, null);
-
         //从数据库中查询此聊天室的消息，广播给该频道
-        return tolistChatRoomMessages();
+        return chatMessage;
     }
 
     //创建聊天室的聊天记录表
@@ -93,12 +74,12 @@ public class WebSocketController {
         return flag ? new ShResultDTO<>(200, "聊天室创建成功") : new ShResultDTO<>(501, "聊天室创建失败，该聊天室已存在");
     }
 
-    //查询聊天室的聊天记录
+    //查询聊天室的聊天记录 返回倒数20个
     @GetMapping(value = "/shApi/listChatRoomMessages")
     @ResponseBody
     public ShResultDTO<String, Object> tolistChatRoomMessages() {
 
-        List<ChatMessageDTO> chatMessageDTOs = chatMessageService.selectMessagesByHistoryId("0");
+        List<ChatMessageDTO> chatMessageDTOs = chatMessageService.selectMessagesByHistoryId("0",20);
         Map<String, Object> map = new HashMap<>();
         map.put("historyMessages", chatMessageDTOs);
 
@@ -115,12 +96,11 @@ public class WebSocketController {
         return new ShResultDTO<>(200, "聊天室记录已清空");
     }
 
-    //生成一个聊天室游客id
+    //生成一个聊天室游客id 已不用 由js生成
     @GetMapping(value = "/shApi/newChatRoomSenderId")
     @ResponseBody
     public ShResultDTO<String, Object> toNewChatRoomTouristId(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
-
         Random random = new Random();
         int touristIDNumber = random.nextInt(999);
         //转成字符串，加上时间戳

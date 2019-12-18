@@ -21,14 +21,14 @@
                 <span class="icon-bar"></span>
             </button>
             <!--            左上角logo首页-->
-            <a class="navbar-brand" href="/">SH</a>
+            <a class="navbar-brand" href="/" title="首页">SH</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <!--        左下拉框-->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li><a href="https://shirtiny.cn">站长的博客</a></li>
+                <li><a href="https://shirtiny.cn" title="将离开社区">站长的博客</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">社区 <span class="caret"></span></a>
@@ -56,16 +56,16 @@
                     </el-input>
                 </div>
             </form>
-            <!--            右下拉框-->
+            <!--  右下拉框-->
             <ul class="nav navbar-nav navbar-right ">
-                <!--                if判断 标签内有效-->
-                <li><a href="/login" v-if="user==null">登录</a></li>
-                <!--                用户头像-->
+                <!-- if判断 标签内有效-->
+                <li><a href="/login" v-if="user==null" title="登录，以使用更多社区功能">登录</a></li>
+                <!-- 用户头像-->
                 <li v-if="user!=null"><a class="navbar-brand" href="#">
                         <img alt="avatar" class="nav_avatar img-thumbnail img-circle"
                              :src="user.avatarImage">
                     </a></li>
-                <!--                消息-->
+                <!-- 消息-->
                 <li v-if="user!=null">
                     <a href="/shPub/messageCenter">
                         <abbr title="您收到的消息">

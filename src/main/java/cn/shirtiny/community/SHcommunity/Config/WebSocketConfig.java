@@ -1,31 +1,22 @@
 package cn.shirtiny.community.SHcommunity.Config;
 
 import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
-import cn.shirtiny.community.SHcommunity.Exception.NoLoginException;
-import cn.shirtiny.community.SHcommunity.Model.ChatMessage;
 import cn.shirtiny.community.SHcommunity.Service.IchatMessageService;
 import cn.shirtiny.community.SHcommunity.Service.IcookieService;
 import cn.shirtiny.community.SHcommunity.Service.IjwtService;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.config.annotation.*;
 import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
-import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import javax.servlet.http.Cookie;
-import java.security.Principal;
 import java.util.Map;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,12 +81,21 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         chatMessageService.updateMessageRead(chatMessageId, true);
                     }
                 }
-                //检查客户端传来的ack，根据ack来改变数据库中的已读标识
-                //当用户上线时，把对应的消息发给用户，同样携带系统标记，传来ack则修改对应信息
-                if (user == null) {
-                    //不是有效的用户登录，就关闭session
-                    System.out.println("用户无效 ，关闭session");
-                    session.close();
+                //连接帧
+                boolean isCONNECT = payload.startsWith("CONNECT");
+                if (user == null && isCONNECT) {
+                    //检查自定head头，查看是否是聊天频道
+                    boolean matchChatRoomChannel = payload.matches("[\\s\\S]+\nchannel:/room/chat\n[\\s\\S]+");
+                    //查看是否含有游客id
+                    boolean matchTouristId = payload.matches("[\\s\\S]+\ntouristId:\\d+\n[\\s\\S]+");
+                    System.out.println("是否是聊天室频道："+matchChatRoomChannel+"；是否含有游客id："+matchTouristId);
+                    if (matchChatRoomChannel && matchTouristId){
+                        super.handleMessage(session, message);
+                    }else {
+                        //不是有效的用户登录，要使用的频道不是聊天室，也没有游客id，就关闭session
+                        System.out.println("用户无效 ，关闭session");
+                        session.close();
+                    }
                 } else {
 //                    session.sendMessage(new TextMessage("用户有效"));
                     super.handleMessage(session, message);

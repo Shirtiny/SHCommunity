@@ -2,7 +2,9 @@ package cn.shirtiny.community.SHcommunity.Service.ServiceImpl;
 
 import cn.shirtiny.community.SHcommunity.DTO.ChatMessageDTO;
 import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
+import cn.shirtiny.community.SHcommunity.Mapper.ChatHistoryMapper;
 import cn.shirtiny.community.SHcommunity.Mapper.ChatMessageMapper;
+import cn.shirtiny.community.SHcommunity.Mapper.UserMapper;
 import cn.shirtiny.community.SHcommunity.Model.ChatHistory;
 import cn.shirtiny.community.SHcommunity.Model.ChatMessage;
 import cn.shirtiny.community.SHcommunity.Service.IchatHistoryService;
@@ -16,9 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sun.nio.cs.ext.MacArabic;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional
@@ -28,9 +28,20 @@ public class ChatMessageServiceImpl implements IchatMessageService {
     private ChatMessageMapper chatMessageMapper;
     @Autowired
     private IchatHistoryService chatHistoryService;
+    @Autowired
+    private ChatHistoryMapper chatHistoryMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     @Value("${CHATMESSAGE_MAX_LENGTH}")
     private Integer CHATMESSAGE_MAX_LENGTH;
+
+    //指定消息记录 添加一条消息
+    @Override
+    public boolean addChatMessageByChatHistoryId(String chatHistoryId, ChatMessage chatMessage) {
+        chatMessage.setChatHistoryId(chatHistoryId);
+        return insertChatMessage(chatMessage);
+    }
 
     //增加一条消息
     @Override
@@ -44,17 +55,29 @@ public class ChatMessageServiceImpl implements IchatMessageService {
     //增加一条消息
     @Override
     public boolean addChatMessage(Long chatMessageId, String messageContent, Long senderId, Long recipientId) {
-        return insertChatMessage(chatMessageId,messageContent,senderId,recipientId,false);
+        return insertChatMessage(chatMessageId, messageContent, senderId, recipientId, null, false);
     }
 
     @Override
     public boolean addChatMessage(Long chatMessageId, String messageContent, Long senderId, Long recipientId, boolean systems) {
-        return insertChatMessage(chatMessageId,messageContent,senderId,recipientId,systems);
+        return insertChatMessage(chatMessageId, messageContent, senderId, recipientId, null, systems);
     }
 
     //消息入库
     @Override
-    public boolean insertChatMessage(Long chatMessageId, String messageContent, Long senderId, Long recipientId, boolean systems) {
+    public boolean insertChatMessage(ChatMessage chatMessage) {
+        Long chatMessageId = chatMessage.getChatMessageId();
+        String chatMessageContent = chatMessage.getChatMessageContent();
+        Long senderId = chatMessage.getSenderId();
+        Long recipientId = chatMessage.getRecipientId();
+        String chatHistoryId = chatMessage.getChatHistoryId();
+        boolean systems = chatMessage.isSystems();
+        return insertChatMessage(chatMessageId, chatMessageContent, senderId, recipientId, chatHistoryId, systems);
+    }
+
+    //消息入库
+    @Override
+    public boolean insertChatMessage(Long chatMessageId, String messageContent, Long senderId, Long recipientId, String chatHistoryId, boolean systems) {
         //检查消息内容是否为空
         if (messageContent == null || messageContent.trim().isEmpty()) {
             System.out.println("消息为空");
@@ -73,8 +96,12 @@ public class ChatMessageServiceImpl implements IchatMessageService {
                 chatMessage.setChatMessageId(chatMessageId);
             }
             //保存此消息的记录id
-            String historyId = chatHistoryService.createHistoryId(senderId, recipientId);
-            chatMessage.setChatHistoryId(historyId);
+            if (chatHistoryId == null || chatHistoryId.trim().length() == 0) {
+                String historyId = chatHistoryService.createHistoryId(senderId, recipientId);
+                chatMessage.setChatHistoryId(historyId);
+            } else {
+                chatMessage.setChatHistoryId(chatHistoryId);
+            }
             //创建时间
             chatMessage.setGmtCreated(System.currentTimeMillis());
             //消息内容
@@ -94,10 +121,45 @@ public class ChatMessageServiceImpl implements IchatMessageService {
         }
     }
 
-    //查询某个聊天记录的消息 ,比如查询聊天室的消息（chatHistoryId为0的消息）
+    //查询某个聊天记录的消息及其全部内容，显示倒数size条 ,比如查询聊天室的消息（chatHistoryId为0的消息）
     @Override
-    public List<ChatMessageDTO> selectMessagesByHistoryId(String historyId) {
-        return chatMessageMapper.selectAllDTOByhistoryId(historyId);
+    public List<ChatMessageDTO> selectMessagesByHistoryId(String historyId, int size) {
+        assert size > 0;
+        int totalCount = chatHistoryMapper.selectMessageCountById(historyId);
+        int offset = 0;
+        if (totalCount > size) {
+            offset = totalCount - size;
+        }
+        List<ChatMessageDTO> chatMessageDTOS = chatMessageMapper.selectAllDTOByhistoryId(historyId, offset, size);
+
+        return supplementMessageSender(chatMessageDTOS);
+    }
+
+    //重载 第curPage页的消息及其全部内容
+    @Override
+    public List<ChatMessageDTO> selectMessagesByHistoryId(String historyId, int curPage, int size) {
+        assert size > 0;
+        int offset = 0;
+        int totalCount = chatHistoryMapper.selectMessageCountById(historyId);
+        int totalPageNum = (totalCount + size - 1) / size;
+        if (curPage > 0) {
+            offset = (curPage - 1) * size;
+        } else if (curPage > totalPageNum && totalCount > size) {
+            offset = totalCount - size;
+        }
+        List<ChatMessageDTO> chatMessageDTOS = chatMessageMapper.selectAllDTOByhistoryId(historyId, offset, size);
+        return supplementMessageSender(chatMessageDTOS);
+    }
+
+    //给定一个消息列表，返回带有sender的消息列表
+    private List<ChatMessageDTO> supplementMessageSender(List<ChatMessageDTO> chatMessageDTOS) {
+        List<ChatMessageDTO> tempList = new LinkedList<>();
+        for (ChatMessageDTO chatMessage : chatMessageDTOS) {
+            UserDTO sender = userMapper.selectUserDtoByid(chatMessage.getSenderId());
+            chatMessage.setSender(sender);
+            tempList.add(chatMessage);
+        }
+        return tempList;
     }
 
     @Override
@@ -105,10 +167,15 @@ public class ChatMessageServiceImpl implements IchatMessageService {
         chatMessageMapper.deleteMessagesByhistoryId(chatHistoryId);
     }
 
+    //将Message对象转为ChatMessage，自动生成chatHistoryId，当然Message的载荷要为ChatMessage chatMessage只含有sender，没有recipient
+    @Override
+    public ChatMessage parseMessageToChatMessage(Message message) {
+        return parseMessageToChatMessage(message,null);
+    }
 
     //将Message对象转为ChatMessage，当然Message的载荷要为ChatMessage chatMessage只含有sender，没有recipient
     @Override
-    public ChatMessage parseMessageToChatMessage(Message message) {
+    public ChatMessage parseMessageToChatMessage(Message message, String chatHistoryId) {
         String payload = new String((byte[]) message.getPayload());
         ChatMessage chatMessage = JSONObject.parseObject(payload, ChatMessage.class);
         //取出消息头中session里的当前用户
@@ -118,11 +185,18 @@ public class ChatMessageServiceImpl implements IchatMessageService {
         assert sessionAttributes != null;
         //从websocketSession取出发送者
         UserDTO sender = (UserDTO) sessionAttributes.get("user");
-        chatMessage.setSender(sender);
-        chatMessage.setSenderId(sender.getUserId());
-        //根据双方id得出历史记录id
-        String historyId = chatHistoryService.createHistoryId(sender.getUserId(), chatMessage.getRecipientId());
-        chatMessage.setChatHistoryId(historyId);
+        if (sender != null) {
+            chatMessage.setSender(sender);
+            chatMessage.setSenderId(sender.getUserId());
+            if (chatHistoryId == null){
+                //根据双方id得出历史记录id
+                String historyId = chatHistoryService.createHistoryId(sender.getUserId(), chatMessage.getRecipientId());
+                chatMessage.setChatHistoryId(historyId);
+            }else {
+                chatMessage.setChatHistoryId(chatHistoryId);
+            }
+        }
+        //若sender == null 表示无发送者，则为游客 客户端将游客id作为senderId传输
         return chatMessage;
     }
 
