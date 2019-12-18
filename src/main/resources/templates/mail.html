@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>只有body有效</title>
+</head>
+<body>
+<div style="font-size: 17px">
+    <img src="https://file.moetu.org/images/2019/09/23/49fa536255fd49b50a3978d1620a50dd00139ced90265d42628488939e82dfc3.png"
+         style="margin: 0 10px;width: 80px"><span>：请确认您的邮箱(∩_∩)</span>
+    <br>
+    <br>
+    这里是【<a th:href="@{http://{domain}(domain=${domain})}">SH社区</a>】<span
+            style="font-size: 20px;font-weight: bold">官方看板娘</span>，
+    <br>
+    <br>
+    您刚刚注册了社区，请点击下方连接，以绑定您的邮箱。
+    <br>
+    <br>
+    <div style="width:500px;">
+        <div style="float: left;width: 300px">
+            <div style="text-align: center;margin: 0 auto;padding-top:60px;height: 150px;width: 300px">
+                <a th:href="@{http://baidu.com?jwt={jwt}(jwt=${jwt})}" title="为您的社区账号绑定邮箱"
+                    style="font-size: 30px;color: #2CE6E6;text-decoration-color: lavender;">SH社区邮箱确认</a>
+            </div>
+            <div style="margin-top: -35px;height: 50px">请认准官方邮箱域名：<a href="#">@shirtiny.cn</a></div>
+        </div>
+        <div style="float: right;width: 200px;">
+            <img src="https://file.moetu.org/images/2019/12/18/DsBVzifUwAAv9-633ec063afa66ab48.jpg"
+                 style="margin: 0 10px;width: 260px;height: 240px">
+        </div>
+    </div>
+</div>
+</body>
+</html>

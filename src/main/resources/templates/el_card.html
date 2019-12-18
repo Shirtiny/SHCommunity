@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<div id="vue_el_card" th:fragment="el_card">
-    <el-card class="box-card" shadow="hover">
+<div id="vue_el_card" th:fragment="el_card" >
+    <el-card class="box-card" shadow="hover" >
         <div slot="header" class="clearfix">
-            <span>排行榜</span>
-            <el-button style="float: right; padding: 3px 0" type="text">功能按钮</el-button>
+            <span style="font-size: large">公告</span>
+            <!--<el-button style="float: right; padding: 3px 0" type="text">待定按钮</el-button> -->
+            <!--<a href="mailto:shirtiny@gmail.com" style="float: right; padding: 3px 0" title="联系邮箱">shirtiny@gmail.com</a>-->
+            <span style="float: right; padding: 3px 0"><a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=w7Crg7CrqrG3qq267aCt"  title="点击,可使用qq邮箱发送邮件"><i class="el-icon-message" style="font-size: 17px;margin: 0 5px"></i></a>sh@shirtiny.cn</span>
         </div>
-        <div v-for="o in 4" :key="o" class="text item">
-            {{'开发中 ' + o }}
+        <div  class="text item" style="line-height: 36px;">
+            本站仍在测试与完善中，<br>
+            站内绝大部分字幕、用户信息、图片资源都爬取自：<a href="http://bbs.vcb-s.com/">Vcb字幕论坛</a><br>
+            对爬取频率采取了限制措施，未对该站造成额外困扰，<br>
+            只爬取少量数据，仅用于学习交流。
+            所写爬虫已在Github开源，<a href="https://github.com/Shirtiny/shCrawler">点此查看</a>。
         </div>
     </el-card>
 </div>
 <style>
+    .el-card__body{
+        height: 188px;
+    }
     .text {
         font-size: 14px;
     }
