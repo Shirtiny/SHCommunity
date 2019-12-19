@@ -11,7 +11,7 @@
 <script src="/js/myJs/element.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<div th:fragment="signUpForm" id="vue_signUpForm">
+<div th:fragment="signUpForm" id="vue_signUpForm" element-loading-text="努力交互中" v-loading="dLoading" element-loading-background="rgba(255, 255, 255, 0.7)">
     <el-card class="box-card">
         <div slot="header" class="clearfix">
             <span class="el-icon-coffee-cup"></span>
@@ -24,7 +24,7 @@
                 <el-form-item prop="userName">
                     <span slot="label"><span class="el-icon-user"></span> Name</span>
                     <el-input type="text" v-model="ruleForm.userName" autocomplete="off" minlength="2" maxlength="10"
-                              show-word-limit placeholder="用于登录的账号名..."></el-input>
+                              show-word-limit placeholder="用于登录的账户名..."></el-input>
                 </el-form-item>
                 <el-form-item prop="nickName">
                     <span slot="label"><span class="el-icon-edit"></span> Nickname</span>
@@ -76,7 +76,10 @@
                         this.$refs.ruleForm.validateField('checkPass');
                     }
                     //调用用户信息校验接口 校验密码 校验类型代码为2
-                    axios.get("/shApi/checkUserInfo?passWord=" + this.ruleForm.passWord + "&typeCode=2").then(res => {
+                    let params = new URLSearchParams();
+                    params.append('passWord', this.ruleForm.passWord);
+                    params.append('typeCode', '2');
+                    axios.post("/shApi/checkUserInfo", params).then(res => {
                         if (Number(res.data.code) !== 200) {
                             callback(new Error(res.data.message));
                         } else {
@@ -102,7 +105,10 @@
                 //调用用户信息校验接口 校验用户名 校验代码为1
                 //设置延时，用来展示loading的效果 是不是有种仪式感
                 setTimeout(() => {
-                    axios.get("/shApi/checkUserInfo?userName=" + this.ruleForm.userName + "&typeCode=1").then(res => {
+                    let params = new URLSearchParams();
+                    params.append('userName', this.ruleForm.userName);
+                    params.append('typeCode', '1');
+                    axios.post("/shApi/checkUserInfo",params).then(res => {
                         if (Number(res.data.code) !== 200) {
                             callback(new Error(res.data.message));
                         } else {
@@ -116,7 +122,16 @@
                     callback(new Error('请输入昵称'));
                     return;
                 } else {
-                    callback();
+                    let params = new URLSearchParams();
+                    params.append('nickName', this.ruleForm.nickName);
+                    params.append('typeCode', '4');
+                    axios.post("/shApi/checkUserInfo",params).then(res => {
+                        if (Number(res.data.code) !== 200) {
+                            callback(new Error(res.data.message))
+                        } else {
+                            callback()
+                        }
+                    });
                 }
             };
             var checkEmail = (rule, value, callback) => {
@@ -124,22 +139,28 @@
                     callback(new Error('请输入邮箱'));
                     return;
                 }
-                //调用用户信息校验接口 校验邮箱 校验代码为3
                 console.log("当前的邮箱值", this.ruleForm.email);
                 //在失去焦点时会触发校验，但是，用户在鼠标点击输入建议时，就会失去焦点
                 // ，鼠标松开时 this.ruleForm.email的值才会被输入建议覆盖，所以此时发送的email是未赋值的email
                 //所以我设置了延时，来确保email的值被覆盖后才校验
+                //调用用户信息校验接口 校验邮箱 校验代码为3
                 setTimeout(() => {
-                    axios.get("/shApi/checkUserInfo?email=" + this.ruleForm.email + "&typeCode=3").then(res => {
+                    let params = new URLSearchParams();
+                    params.append('email', this.ruleForm.email);
+                    params.append('typeCode', '3');
+                    axios.post("/shApi/checkUserInfo",params).then(res => {
                         if (Number(res.data.code) !== 200) {
                             callback(new Error(res.data.message))
                         } else {
                             callback()
                         }
                     });
-                }, 300);
+                }, 500);
             };
             return {
+                //控制页面的loading效果的值，与v-loading.fullscreen.lock="fullscreenLoading"配合
+                dLoading: false,
+                //表单对象
                 ruleForm: {
                     passWord: '',
                     checkPass: '',
@@ -171,6 +192,7 @@
                     {"value": "@outlook.com"},
                     {"value": "@yahoo.com"},
                     {"value": "@gmail.com"},
+                    {"value": "@shirtiny.cn"},
                 ],
             };
         },
@@ -178,19 +200,30 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        //转圈圈
+                        this.dLoading = true;
                         axios.post('/shApi/signUp', this.ruleForm).then(res => {
                             if (Number(res.data.code) === 200) {
                                 //清空表单数据
                                 this.resetForm("ruleForm");
                                 this.$notify({
-                                    title: '成功',
-                                    message: res.data.message + "，一切已就绪，即将跳转...",
-                                    type: 'success'
+                                    title: '提示',
+                                    message:  "请确认您的邮件，24h内有效。不过目前邮箱并不影响使用。",
+                                    type: 'info'
                                 });
                                 setTimeout(() => {
+                                    this.$notify({
+                                        title: '成功',
+                                        message: res.data.message + "，一切已就绪，即将跳转...",
+                                        type: 'success'
+                                    });
+                                },1000);
+                                setTimeout(() => {
                                     window.location.href = "/login"
-                                }, 800)
+                                }, 2000)
                             } else {
+                                //取消转圈圈
+                                this.dLoading = false;
                                 this.$notify({
                                     title: '提示',
                                     message: res.data.message,

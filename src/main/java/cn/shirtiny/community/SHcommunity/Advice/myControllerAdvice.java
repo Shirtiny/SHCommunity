@@ -111,6 +111,15 @@ public class myControllerAdvice {
         return new ShResultDTO(ShErrorCode.Create_User_Failed_Error.getCode(), e.getMessage());
     }
 
+    @ExceptionHandler(MailSendFailedException.class)
+    @ResponseBody
+    public ShResultDTO mailSendFailedErr(@NotNull MailSendFailedException e) {
+        e.printStackTrace();
+        //邮件发送失败
+        log.error(ShErrorCode.Mail_Send_Failed_Error.getMessage(), e);
+        return new ShResultDTO(ShErrorCode.Mail_Send_Failed_Error.getCode(), e.getMessage());
+    }
+
 //    @ExceptionHandler(Exception.class)//捕获所有异常
 //    @ResponseStatus
 //    public String handler(Model model, Throwable e){

@@ -4,6 +4,7 @@ public enum  ShUserInfoCheckType {
     UserName(1),
     PassWord(2),
     Email(3),
+    NickName(4),
     UserName_OR_Email(13),
     ;
     private final int code;

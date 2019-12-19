@@ -121,6 +121,8 @@ public class userServiceImpl implements IuserService {
         checkUserPWD(user.getPassWord());
         //校验邮箱
         checkUserEmail(user.getEmail());
+        //校验昵称
+        checkUserNickName(user.getNickName());
     }
 
 
@@ -142,6 +144,10 @@ public class userServiceImpl implements IuserService {
             checkUserEmail(user.getEmail());
             return;
         }
+        if (type == ShUserInfoCheckType.NickName.getCode()) {
+            checkUserNickName(user.getNickName());
+            return;
+        }
         throw new UserInfoNotAllowException("传入的校验类型代码不合法");
     }
 
@@ -152,7 +158,7 @@ public class userServiceImpl implements IuserService {
     public void checkUserName(String userName) {
         //校验用户名
         if (userName == null || "".equals(userName.trim()) || userName.length() < 2 || userName.length() > 10) {
-            throw new UserInfoNotAllowException("用户名为空或长度不符合规范");
+            throw new UserInfoNotAllowException("用户名不能为空，支持2-10个字符");
         }
         boolean isExsit = userNameIsExsit(userName);
         if (isExsit) {
@@ -182,7 +188,7 @@ public class userServiceImpl implements IuserService {
     }
 
     //邮箱格式的正则表达式
-    private Pattern emailReg = Pattern.compile("^[\\da-zA-Z]+[\\w.\\-]+@[a-zA-Z0-9]+\\.[a-z]+$");
+    private Pattern emailReg = Pattern.compile("^[\\da-zA-Z]+[\\w.\\-]+@[a-zA-Z0-9\\-]{1,26}\\.[a-z]+$");
 
     @Override
     public void checkUserEmail(String email) {
@@ -200,7 +206,14 @@ public class userServiceImpl implements IuserService {
         if (emailName.length() < 3 || emailName.length() > 18) {
             throw new UserInfoNotAllowException("邮箱用户名最小3个字符，最大18个字符");
         }
-        //给邮箱发邮件 或实际的去验证邮箱是否真实
+        //给邮箱发邮件 或实际的去验证邮箱是否真实 待解决
+    }
+
+    //校验用户昵称 主要是长度
+    public void checkUserNickName(String nickName){
+        if (nickName == null || nickName.trim().length()<2 || nickName.trim().length()>10){
+            throw new UserInfoNotAllowException("昵称字符长度限制2-10个字符，不能全为空格");
+        }
     }
 
 }

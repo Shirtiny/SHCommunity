@@ -3,11 +3,9 @@ package cn.shirtiny.community.SHcommunity.Controller;
 import cn.shirtiny.community.SHcommunity.DTO.ShResultDTO;
 import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Exception.JwtInvalidException;
+import cn.shirtiny.community.SHcommunity.Exception.MailSendFailedException;
 import cn.shirtiny.community.SHcommunity.Model.User;
-import cn.shirtiny.community.SHcommunity.Service.IcookieService;
-import cn.shirtiny.community.SHcommunity.Service.IjwtService;
-import cn.shirtiny.community.SHcommunity.Service.IloginService;
-import cn.shirtiny.community.SHcommunity.Service.IuserService;
+import cn.shirtiny.community.SHcommunity.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -31,6 +29,9 @@ public class LoginController {
     private IjwtService jwtService;
     @Autowired
     private IcookieService cookieService;
+    @Autowired
+    private ImailService mailService;
+
     @Value("${ShJwt_Cookie_name}")
     private String shJwtCookieName;
 
@@ -40,7 +41,7 @@ public class LoginController {
     @ResponseBody
     public ShResultDTO<String, Object> userLogin(@RequestBody User user, HttpServletResponse response) {
 
-        return loginService.userLoginByPWD(user,response);
+        return loginService.userLoginByPWD(user, response);
     }
 
     //用户注册
@@ -48,11 +49,28 @@ public class LoginController {
     @ResponseBody
     public ShResultDTO<String, Object> userSignUp(@RequestBody User user) {
         userService.addUser(user);
+        //发送邮箱确认邮件
+        String jwtBase64Url = jwtService.userSignMailToJwtBase64Url(user.getUserName(), user.getEmail());
+        sendMail(user.getUserName(), user.getEmail(), jwtBase64Url, 0);
         return new ShResultDTO<>(200, "注册完成");
     }
 
+    public void sendMail(String userName, String mailBox, String jwtBase64Url, int count) {
+        try {
+            mailService.sendMailConfirm(userName, mailBox, jwtBase64Url);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("当前第" + count + "次重试");
+            if (count < 3) {
+                sendMail(userName, mailBox, jwtBase64Url, count + 1);
+            } else {
+                throw new MailSendFailedException("邮件多次重试后发送失败");
+            }
+        }
+    }
+
     //检查用户信息是否已存在、是否符合规范 userName 1,passWord 2,email 3
-    @GetMapping("/shApi/checkUserInfo")
+    @PostMapping("/shApi/checkUserInfo")
     @ResponseBody
     public ShResultDTO<String, Object> checkUserInfo(User user, Integer typeCode) {
         if (user == null || typeCode == null) {

@@ -41,4 +41,7 @@ public interface IuserService {
 
     //校验用户邮箱
     void checkUserEmail(String email);
+
+    //校验用户昵称
+    void checkUserNickName(String nickName);
 }

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.CookieValue;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -79,5 +81,16 @@ public class JwtServiceImpl implements IjwtService {
     @Override
     public String userToJwt(User user) {
         return jwtRsaHelper.createJwt(user);
+    }
+
+    //将用户名、所填邮箱 封装为jwt 返回base64URL编码的字符串
+    @Override
+    public String userSignMailToJwtBase64Url(String userName, String mailBox) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userName",userName);
+        claims.put("subject","主题：绑定邮箱");
+        claims.put("mailBox",mailBox);
+        String jwt = jwtRsaHelper.createHsJwt(claims);
+        return Base64.getUrlEncoder().encodeToString(jwt.getBytes());
     }
 }

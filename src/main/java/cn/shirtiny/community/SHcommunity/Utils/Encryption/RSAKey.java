@@ -12,7 +12,7 @@ public class RSAKey {
     private PrivateKey privateKey;
     private PublicKey publicKey;
 
-    //生成密钥
+    //生成新的密钥对
     public RSAKey() throws GeneralSecurityException {
         //密钥对生成器 生成rsa密钥对生成器
         KeyPairGenerator rsaGenerator = KeyPairGenerator.getInstance("RSA");
@@ -93,7 +93,7 @@ public class RSAKey {
         return rsaCipher.doFinal(str);
     }
 
-    //示例方法
+    //示例方法 以后可以从这个方法获取新的密钥字符串
     public void rsaKeyTest() throws GeneralSecurityException {
         RSAKey rsaKey = new RSAKey();
         String message = "公钥加密的消息";
