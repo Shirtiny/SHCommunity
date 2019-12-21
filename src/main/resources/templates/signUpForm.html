@@ -145,10 +145,10 @@
                 //所以我设置了延时，来确保email的值被覆盖后才校验
                 //调用用户信息校验接口 校验邮箱 校验代码为3
                 setTimeout(() => {
-                    let params = new URLSearchParams();
-                    params.append('email', this.ruleForm.email);
-                    params.append('typeCode', '3');
-                    axios.post("/shApi/checkUserInfo",params).then(res => {
+                    let param = new URLSearchParams();
+                    param.append('email', this.ruleForm.email);
+                    param.append('typeCode', '3');
+                    axios.post("/shApi/checkUserInfo",param).then(res => {
                         if (Number(res.data.code) !== 200) {
                             callback(new Error(res.data.message))
                         } else {

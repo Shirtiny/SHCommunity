@@ -184,4 +184,10 @@ public class pageController {
         return "webSocket";
     }
 
+    //错误测试
+    @GetMapping(value = "/shPub/errorPage")
+    public String toTestErrPage(){
+        return "notExistPage";
+    }
+
 }

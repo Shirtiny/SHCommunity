@@ -65,6 +65,9 @@ public class CookieServiceImpl implements IcookieService {
     //指定cookieName 返回cookies数组中的对应值
     @Override
     public String getCookieValueByName(Cookie[] cookies, String cookieName) {
+        if(cookies == null){
+            return null;
+        }
         for (Cookie cookie : cookies) {
             if (Objects.equals(cookieName, cookie.getName())) {
                 return cookie.getValue();

@@ -27,10 +27,10 @@ public class errorController implements ErrorController {
 
         model.addAttribute("code",status.value());
         if (status.is4xxClientError()) {
-            model.addAttribute("message", "请求出错");
+            model.addAttribute("message", "请求有错哦");
         }
         if (status.is5xxServerError()) {
-            model.addAttribute("message", "服务异常");
+            model.addAttribute("message", "服务开小差喽");
         }
         return "myError";
     }

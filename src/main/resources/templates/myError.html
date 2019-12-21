@@ -3,34 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-<!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+    <link rel="stylesheet" href="/css/myCss.css">
     <script src="/js/myJs/vue.js"></script>
 </head>
 <body class="shbody">
-<h2>我的错误页面</h2>
 
 <div id="app">
-    {{code}}：<span th:text="${code}"></span> <br>
-    {{message}}：<span th:text="${message}"></span>
+
+    <!-- 404 -->
+    <div th:if="${code == 404}">
+        <script type="text/plain" src="http://www.qq.com/404/search_children.js"
+                charset="utf-8" homePageUrl="/"
+                homePageName="⤾返回SH社区">
+        </script>
+        <script src="https://qzone.qq.com/gy/404/data.js" charset="utf-8"></script>
+        <script src="https://qzone.qq.com/gy/404/page.js" charset="utf-8"></script>
+    </div>
+    <br>
+    <!-- 其他错误 -->
+    <div class="errInfoBox" th:if="${code != 404}">
+        <div class="shbox_shadow1 errInfo">
+            错误代码：<span style="font-style: italic;" th:text="${code}"></span><br>
+            信息：<span th:text="${message}"></span>
+        </div>
+    </div>
 </div>
-
-<script type="text/plain" src="http://www.qq.com/404/search_children.js"
-        charset="utf-8" homePageUrl="/"
-        homePageName="⤾SH社区">
-</script>
-<script src="https://qzone.qq.com/gy/404/data.js" charset="utf-8"></script>
-<script src="https://qzone.qq.com/gy/404/page.js" charset="utf-8"></script>
-
-
-
-<script>
-    const app=new Vue({
-        el:"#app",
-        data:{
-            code:'code',
-            message:'message'
-        }
-    })
-</script>
+<style>
+    .errInfoBox {
+        height: 500px;
+        width: 600px;
+        margin: auto;
+        padding: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: rgba(255, 252, 251, 0.82);
+    }
+    .errInfo {
+        height: 400px;
+        width: 500px;
+        margin: auto;
+        padding: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: rgba(255, 252, 251, 1);
+        background-image: url("/image/err.png");
+    }
+</style>
 </body>
 </html>
