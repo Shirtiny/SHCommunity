@@ -13,7 +13,6 @@ import cn.shirtiny.community.SHcommunity.Service.ServiceImpl.InvitationService;
 import cn.shirtiny.community.SHcommunity.Utils.ShArrayQueue;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.jmx.remote.internal.ArrayQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -5,7 +5,6 @@ import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Mapper.ChatHistoryMapper;
 import cn.shirtiny.community.SHcommunity.Mapper.ChatMessageMapper;
 import cn.shirtiny.community.SHcommunity.Mapper.UserMapper;
-import cn.shirtiny.community.SHcommunity.Model.ChatHistory;
 import cn.shirtiny.community.SHcommunity.Model.ChatMessage;
 import cn.shirtiny.community.SHcommunity.Service.IchatHistoryService;
 import cn.shirtiny.community.SHcommunity.Service.IchatMessageService;
@@ -16,7 +15,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.nio.cs.ext.MacArabic;
 
 import java.util.*;
 

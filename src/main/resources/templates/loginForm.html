@@ -87,7 +87,10 @@
                     //调用用户信息校验接口 校验用户名 校验代码为1
                     //设置延时，用来展示loading的效果 是不是有种仪式感
                     setTimeout(() => {
-                        axios.get("/shApi/checkUserInfo?userName=" + this.loginForm.userName + "&typeCode=1").then(res => {
+                        let params = new URLSearchParams();
+                        params.append('userName',this.loginForm.userName);
+                        params.append('typeCode','1');
+                        axios.post("/shApi/checkUserInfo",params).then(res => {
                             if (Number(res.data.code) === 200) {
                                 callback(new Error("该用户不存在"));
                             } else {
@@ -101,14 +104,7 @@
                 if (value === '') {
                     callback(new Error('请输入密码'));
                 } else {
-                    //调用用户信息校验接口 校验密码 校验类型代码为2
-                    axios.get("/shApi/checkUserInfo?passWord=" + this.loginForm.passWord + "&typeCode=2").then(res => {
-                        if (Number(res.data.code) !== 200) {
-                            callback(new Error(res.data.message));
-                        } else {
-                            callback();
-                        }
-                    });
+                    callback();
                 }
             };
 
@@ -173,7 +169,7 @@
                                     window.location.href = shRedirectCookie;
                                 }, 600)
                             } else {
-                                this.$message(res.data.message + "，请检查用户名密码");
+                                this.$message(res.data.message + "，请检查用户名或密码");
                                 //清空密码
                                 this.loginForm.passWord = "";
                                 //取消loading
