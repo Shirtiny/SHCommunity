@@ -7,8 +7,8 @@
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="/js/myJs/vue.js"></script>
 <script src="/js/myJs/element.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
+<!--<script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+<script  src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
 <nav class="navbar" id="vue_Nav" th:fragment="nav">
     <div class="container-fluid ">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -45,10 +45,10 @@
             </ul>
             <!-- 文件上传-->
 
-            <!--el搜索框                    -->
-            <form class="navbar-form navbar-right  margin_around_5px" role="search">
+            <!--el搜索框   onsubmit="return false;" 防止表单提交，提交会自动刷新页面的-->
+            <form onsubmit="return false;" class="navbar-form navbar-right  margin_around_5px" role="search">
                 <div class="form-group ">
-                    <el-input class="nav_el_search "
+                    <el-input class="nav_el_search " @keyup.enter.native="search()"
                               placeholder="搜索..."
                               v-model="inputSearchContent">
                         <el-link @click="search" slot="suffix" class="el-input__icon Nav_Search_input_icon"
@@ -104,7 +104,13 @@
         },
         methods: {
             search: function () {
-                console.log("执行搜索")
+                console.log("执行搜索");
+                this.$notify({
+                    title: '抱歉',
+                    message:  "搜索用的Es服务尚在建设中...",
+                    type: 'info',
+                    offset: 100
+                });
             },
             //注销 删除jwt 现在把jwt标为httpOnly了，js不能访问 由后端覆盖cookie，设置maxAge为0
             logOut() {

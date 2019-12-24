@@ -3,6 +3,7 @@ package cn.shirtiny.community.community;
 import cn.shirtiny.community.SHcommunity.Mapper.Pre_UserMapper;
 import cn.shirtiny.community.SHcommunity.Mapper.UserMapper;
 import cn.shirtiny.community.SHcommunity.Model.User;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Ignore
 public class CommunityApplicationTests {
 
     @Autowired
