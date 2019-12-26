@@ -497,16 +497,17 @@
             },
             //更新对应tab的消息记录的消息为已读状态
             updateHistoryRead() {
+                console.log("1.准备更新为已读");
                 if (this.innerTabs.length !== 0 && this.recipientId != null && Number(this.recipientId) !== 0 && this.user != null && this.isConnected) {
                     for (let i = 0; i < this.innerTabs.length; i++) {
                         if (this.innerTabs[i].targetUser.userId === this.recipientId) {
                             //如果消息记录的最后一条消息的收信人是本地用户 更新该消息记录的已读状态
                             let lastIndex = this.innerTabs[i].chatMessages.length - 1;
-                            console.log(lastIndex,this.user.userId,this.innerTabs[i].chatMessages[lastIndex].recipientId,this.innerTabs[i].chatHistoryId, "准备更新为已读");
+                            console.log(lastIndex,this.user.userId,this.innerTabs[i].chatMessages[lastIndex].recipientId,this.innerTabs[i].chatHistoryId, "2.准备更新为已读");
                             if (lastIndex >= 0 && this.user.userId === this.innerTabs[i].chatMessages[lastIndex].recipientId) {
                                 //更新数据库
                                 axios.get('/shApi/updateChatHistoryRead?chatHistoryId=' + this.innerTabs[i].chatHistoryId).then(res => {
-                                    console.log(this.innerTabs[i].chatHistoryId, "更新为已读");
+                                    console.log(this.innerTabs[i].chatHistoryId, "3.已经更新为已读");
                                 });
                                 //取消红点显示
                                 this.changeDot(this.innerTabs[i], false);
@@ -617,7 +618,7 @@
                     //更新对应消息历史记录的消息为已读状态 延迟一会儿，socket连接比较慢
                     setTimeout(()=>{
                         this.updateHistoryRead();
-                    },2000);
+                    },4000);
                 }
             },
             receiveNewMessage: {
