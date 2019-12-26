@@ -614,9 +614,10 @@
                     if (this.recipientId != null && this.user != null && this.isConnected) {
                         this.subscribe();
                     }
-                    //更新对应消息历史记录的消息为已读状态
-                    this.updateHistoryRead();
-                    console.log('tab初始化完成啦 看看要不要更新对应的tab消息已读状态');
+                    //更新对应消息历史记录的消息为已读状态 延迟一会儿，socket连接比较慢
+                    setTimeout(()=>{
+                        this.updateHistoryRead();
+                    },2000);
                 }
             },
             receiveNewMessage: {
