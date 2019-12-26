@@ -158,7 +158,7 @@ public class userServiceImpl implements IuserService {
     public void checkUserName(String userName) {
         //校验用户名
         if (userName == null || "".equals(userName.trim()) || userName.length() < 2 || userName.length() > 10) {
-            throw new UserInfoNotAllowException("用户名不能为空，支持2-10个字符");
+            throw new UserInfoNotAllowException("用户名不能为空并且不支持中文和特殊字符，限定2-10个字母或数字，");
         }
         boolean isExsit = userNameIsExsit(userName);
         if (isExsit) {

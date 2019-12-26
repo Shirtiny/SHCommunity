@@ -64,6 +64,7 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
     }
 
 
+    //注意这样配置会有问题，应该配置跨域过滤器 看 https://www.codercto.com/a/55519.html 我没试过 先这样吧
     //跨域处理 全局设置，这样就不用在每个Controller上加 @CrossOrigin(origins = "http://localhost:3000")了
     @Override
     public void addCorsMappings(CorsRegistry registry) {
