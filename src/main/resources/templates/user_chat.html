@@ -502,6 +502,7 @@
                         if (this.innerTabs[i].targetUser.userId === this.recipientId) {
                             //如果消息记录的最后一条消息的收信人是本地用户 更新该消息记录的已读状态
                             let lastIndex = this.innerTabs[i].chatMessages.length - 1;
+                            console.log(lastIndex,this.user.userId,this.innerTabs[i].chatMessages[lastIndex].recipientId,this.innerTabs[i].chatHistoryId, "准备更新为已读");
                             if (lastIndex >= 0 && this.user.userId === this.innerTabs[i].chatMessages[lastIndex].recipientId) {
                                 //更新数据库
                                 axios.get('/shApi/updateChatHistoryRead?chatHistoryId=' + this.innerTabs[i].chatHistoryId).then(res => {
@@ -615,7 +616,7 @@
                     }
                     //更新对应消息历史记录的消息为已读状态
                     this.updateHistoryRead();
-                    console.log('tab初始化完成啦 更新对应的tab消息已读状态');
+                    console.log('tab初始化完成啦 看看要不要更新对应的tab消息已读状态');
                 }
             },
             receiveNewMessage: {
