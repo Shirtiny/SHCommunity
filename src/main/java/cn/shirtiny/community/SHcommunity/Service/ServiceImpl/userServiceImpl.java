@@ -178,7 +178,7 @@ public class userServiceImpl implements IuserService {
     public void checkUserPWD(String passWord) {
         //校验用户密码
         if (passWord == null || "".equals(passWord.trim()) || passWord.length() < 6 || passWord.length() > 20) {
-            throw new UserInfoNotAllowException("密码不能为空或长度不能超过6-20");
+            throw new UserInfoNotAllowException("密码不能为空，长度限定6-20字符，特殊字符限定.!#%^_-");
         }
 
         boolean isMatche = passWordReg.matcher(passWord).matches();
