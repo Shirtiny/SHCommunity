@@ -29,7 +29,6 @@
             //获取当前页信息，并保存
             this.curPage.title=document.title;
             this.curPage.path=window.location.pathname;
-
             //读取数组
             let breadcrumb= JSON.parse(sessionStorage.getItem("breadcrumb"));
             //新建一个过渡数组
@@ -63,9 +62,6 @@
             sessionStorage.setItem("breadcrumb",JSON.stringify(breadcrumb));
             //存入vue data 以遍历
             this.breadcrumb=breadcrumb;
-
-
-
         }
 
     })
