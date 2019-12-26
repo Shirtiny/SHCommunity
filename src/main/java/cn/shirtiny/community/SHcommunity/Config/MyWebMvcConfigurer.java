@@ -67,9 +67,10 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
     //跨域处理 全局设置，这样就不用在每个Controller上加 @CrossOrigin(origins = "http://localhost:3000")了
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("https://*.shirtiny.cn")
+        registry.addMapping("/**").allowedOrigins("*")
                 .allowedHeaders("*")
                 .allowedMethods("*")
+                .allowCredentials(true)
                 .maxAge(30_000);
 
     }
