@@ -81,7 +81,7 @@ public class LoginWithGithubController {
         }
         //用户名适配 临时处理
         if (user.getUserName().length() > 10) {
-            user.setUserName(user.getUserName().substring(0, 10));
+            user.setUserName(user.getUserName().substring(0, 11));
         } else if (user.getUserName().length() < 2) {
             user.setUserName(user.getUserName() + "0");
         }
@@ -89,6 +89,12 @@ public class LoginWithGithubController {
         if (user.getPassWord() == null) {
             long uid = uidGenerateService.generateUid();
             user.setPassWord(uid+"");
+        }
+        //昵称适配 临时处理
+        if(user.getNickName().trim().length()<2){
+            user.setNickName(user.getNickName().trim()+"0");
+        }else if (user.getNickName().trim().length()>10){
+            user.setNickName(user.getNickName().trim().substring(0,11));
         }
         userService.addUser(user);
         System.out.println("github上获得的用户信息：" + userInfo);
