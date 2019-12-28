@@ -21,4 +21,5 @@ docker stop shcommunity
 docker rm shcommunity
 #运行镜像
 docker run -d --restart=always --name shcommunity -p 8888:8888 registry.cn-hongkong.aliyuncs.com/shirtinycn/shcommunity:$1
-
+#展示当前运行的容器
+docker ps
