@@ -157,8 +157,8 @@ public class userServiceImpl implements IuserService {
     @Override
     public void checkUserName(String userName) {
         //校验用户名
-        if (userName == null || "".equals(userName.trim()) || userName.length() < 2 || userName.length() > 10) {
-            throw new UserInfoNotAllowException("用户名不能为空并且不支持中文和特殊字符，限定2-10个字母或数字，");
+        if (userName == null || "".equals(userName.trim()) || userName.length() < 2 || userName.length() > 8) {
+            throw new UserInfoNotAllowException("用户名不能为空并且不支持中文和特殊字符，限定2-8个字母或数字，");
         }
         boolean isExsit = userNameIsExsit(userName);
         if (isExsit) {
@@ -211,8 +211,8 @@ public class userServiceImpl implements IuserService {
 
     //校验用户昵称 主要是长度
     public void checkUserNickName(String nickName){
-        if (nickName == null || nickName.trim().length()<2 || nickName.trim().length()>10){
-            throw new UserInfoNotAllowException("昵称字符长度限制2-10个字符，不能全为空格");
+        if (nickName == null || nickName.trim().length()<2 || nickName.trim().length()>8){
+            throw new UserInfoNotAllowException("昵称字符长度限制2-8个字符，不能全为空格");
         }
     }
 

@@ -62,7 +62,7 @@
                                     :href="'/shPub/invitationDetail/'+section.latestInvitation.invitationId">【{{section.latestInvitation.title}}】</a>
                             </p>
                             <p class="font_invitation_authorP"><span
-                                    class="label label-info font_invitation_author">Author</span>：<a href="#">{{section.latestInvitation.nickName}}</a>
+                                    class="label label-info font_invitation_author">Author</span>：<a :href="'/shPub/messageCenter?uid=' + section.latestInvitation.authorId">{{section.latestInvitation.nickName}}</a>
                             </p>
                             <p>
                                 <span class="label label-default font_invitation_createdTime">{{formatDate(section.latestInvitation.gmtCreated)}}</span>
