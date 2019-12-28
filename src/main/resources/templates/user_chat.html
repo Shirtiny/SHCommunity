@@ -11,7 +11,7 @@
 <script src="/js/myJs/vue.js"></script>
 <script src="/js/myJs/element.js"></script>
 <!--<script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
-<script  src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
 <!--<script src="/webjars/sockjs-client/sockjs.min.js"></script> 手动版本改为1.0.0-->
 <script src="/js/myJs/sockjs.min.js"></script>
 <script src="/webjars/stomp-websocket/stomp.min.js"></script>
@@ -22,7 +22,7 @@
              style="height: 100%;padding: 10px 10px 10px 10px;">
         <el-tab-pane disabled>
             <span slot="label" style="font-style: italic;font-weight: 700;"><i
-                        class="el-icon-s-promotion"></i>消息中心</span>
+                    class="el-icon-s-promotion"></i>消息中心</span>
         </el-tab-pane>
         <el-tab-pane name="userMessage">
             <span slot="label"><i class="el-icon-chat-dot-round"></i>查收私信</span>
@@ -141,8 +141,8 @@
                         <div slot="title" style="font-size: 14px;">
                             <span style="margin-right: 8px;color: #222;font-weight: bold;">{{comment.reviewer.nickName}}</span>
                             在&nbsp;<span style="color: #999;font-size: 13px;line-height: 22px;">2019年12月6日 21:13</span>&nbsp;回复了我，点击展开<i
-                                    class="el-icon-zoom-in"
-                                    style="margin-right: 8px;font-size: 18px;color: #fb7299"></i>
+                                class="el-icon-zoom-in"
+                                style="margin-right: 8px;font-size: 18px;color: #fb7299"></i>
                             或 <a target="_blank"
                                  :href="'/shPub/invitationDetail/'+comment.targetId+'#'+comment.commentId">->前往该帖</a>
                         </div>
@@ -154,13 +154,13 @@
                             <div style="color: #222;overflow: hidden;word-break: break-word;text-overflow:ellipsis;width:500px;margin: 0 20px;height: 75px;font-size: 14px;"
                                  class="float_left">
                                 {{comment.commentContent.substring(0,101)}}<span
-                                        v-if="comment.commentContent.length>100">...</span>
+                                    v-if="comment.commentContent.length>100">...</span>
                             </div>
                         </div>
                         <div class="float_right" v-if="comment.citedComment!=null"
                              style="font-size: 14px;color: #999;width:300px;box-sizing: border-box;padding: 0 0 10px 0;height: 75px;overflow: hidden;text-overflow: ellipsis;word-break: break-word;">
                             {{comment.citedComment.commentContent.substring(0,101)}}<span
-                                    v-if="comment.citedComment.commentContent.length>100">...</span>
+                                v-if="comment.citedComment.commentContent.length>100">...</span>
                         </div>
                     </el-collapse-item>
                 </el-collapse>
@@ -503,7 +503,7 @@
                         if (this.innerTabs[i].targetUser.userId === this.recipientId) {
                             //如果消息记录的最后一条消息的收信人是本地用户 更新该消息记录的已读状态
                             let lastIndex = this.innerTabs[i].chatMessages.length - 1;
-                            console.log(lastIndex,this.user.userId,this.innerTabs[i].chatMessages[lastIndex].recipientId,this.innerTabs[i].chatHistoryId, "2.准备更新为已读");
+                            console.log(lastIndex, this.user.userId, this.innerTabs[i].chatMessages[lastIndex].recipientId, this.innerTabs[i].chatHistoryId, "2.准备更新为已读");
                             if (lastIndex >= 0 && this.user.userId === this.innerTabs[i].chatMessages[lastIndex].recipientId) {
                                 //更新数据库
                                 axios.get('/shApi/updateChatHistoryRead?chatHistoryId=' + this.innerTabs[i].chatHistoryId).then(res => {
@@ -550,7 +550,9 @@
             //初始化系统通知的消息列表数据
             getSystemHistory() {
                 axios.get('/shApi/allHistoryMessage?userId=' + this.user.userId + '&isSystem=true').then(res => {
-                    this.systemHistory = res.data.data.chatHistories[0];
+                    if (res.data.data.chatHistories[0] != null) {
+                        this.systemHistory = res.data.data.chatHistories[0];
+                    }
                     for (let message of this.systemHistory.chatMessages) {
                         let comment = JSON.parse(message.chatMessageContent);
                         //{"citedCommentId":826,"commentContent":"回复826","commentId":834,"createdTime":1575795846888,"reviewerId":1176036819306635266,"targetId":1176037389258023641}
@@ -616,9 +618,9 @@
                         this.subscribe();
                     }
                     //更新对应消息历史记录的消息为已读状态 延迟一会儿，socket连接比较慢
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         this.updateHistoryRead();
-                    },4000);
+                    }, 4000);
                 }
             },
             receiveNewMessage: {
@@ -633,7 +635,7 @@
                 }
             },
             commentArr: {
-                handler(newName, oldName){
+                handler(newName, oldName) {
                     //排序 简单的冒泡法
                     for (let n = 0; n + 1 < this.commentArr.length; n++) {
                         for (let i = 0; i + 1 + n < this.commentArr.length; i++) {
