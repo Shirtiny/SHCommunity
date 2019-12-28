@@ -3,6 +3,7 @@ package cn.shirtiny.community.SHcommunity.Controller;
 import cn.shirtiny.community.SHcommunity.DTO.GithubUserInfoDTO;
 import cn.shirtiny.community.SHcommunity.DTO.UserDTO;
 import cn.shirtiny.community.SHcommunity.Exception.GithubConnectedTimeOutException;
+import cn.shirtiny.community.SHcommunity.Exception.UserInfoNotAllowException;
 import cn.shirtiny.community.SHcommunity.Mapper.Pre_UserMapper;
 import cn.shirtiny.community.SHcommunity.Model.User;
 import cn.shirtiny.community.SHcommunity.Service.IGithubService;
@@ -10,6 +11,7 @@ import cn.shirtiny.community.SHcommunity.Service.IjwtService;
 import cn.shirtiny.community.SHcommunity.Service.IloginService;
 import cn.shirtiny.community.SHcommunity.Service.IuserService;
 import com.alibaba.fastjson.JSON;
+import com.baidu.fsg.uid.service.UidGenerateService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +38,8 @@ public class LoginWithGithubController {
     private IuserService userService;
     @Autowired
     private IloginService loginService;
+    @Autowired
+    private UidGenerateService uidGenerateService;
 
 
     //请求Github登录授权
@@ -64,18 +68,33 @@ public class LoginWithGithubController {
             //把对应的用户查出来
             User user = userService.selectOneUserByGitId(userInfo.getId());
             //为用户颁发jwt 设置到cookie中
-            loginService.userLogin(user,response);
+            loginService.userLogin(user, response);
             //转到从cookie中找到的回调地址（没找到的话会返回"/ "）
             return "redirect:" + loginService.getRedirectFromCookie(httpServletRequest, response);
         }
         //若不存在，使用github的用户信息新建一个本地用户
         User user = githubService.localisationGithubUser(userInfo);
         //添加进数据库
+        //邮箱适配 若无邮箱的临时处理
+        if (user.getEmail() == null) {
+            user.setEmail("null@shirtinynull.cn");
+        }
+        //用户名适配 临时处理
+        if (user.getUserName().length() > 10) {
+            user.setUserName(user.getUserName().substring(0, 10));
+        } else if (user.getUserName().length() < 2) {
+            user.setUserName(user.getUserName() + "0");
+        }
+        //密码适配 临时处理
+        if (user.getPassWord() == null) {
+            long uid = uidGenerateService.generateUid();
+            user.setPassWord(uid+"");
+        }
         userService.addUser(user);
         System.out.println("github上获得的用户信息：" + userInfo);
         System.out.println("存储的用户信息：" + user);
         //设置jwt
-        loginService.userLogin(user,response);
+        loginService.userLogin(user, response);
         //转到从cookie中找到的回调地址（没找到的话会返回"/ "）
         return "redirect:" + loginService.getRedirectFromCookie(httpServletRequest, response);
     }
