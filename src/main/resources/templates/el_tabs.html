@@ -4,7 +4,7 @@
 <script src="/js/myJs/sockjs.min.js"></script>
 <script  src="/webjars/stomp-websocket/stomp.min.js"></script>
 
-<div id="vue_el_tab" th:fragment="el_tab" class="img-rounded">
+<div id="vue_el_tab" th:fragment="el_tab" class="img-rounded" v-cloak>
     <el-tabs v-model="activeName" @tab-click="clickTab" type="border-card">
 
         <el-tab-pane label="聊天室" name="first">

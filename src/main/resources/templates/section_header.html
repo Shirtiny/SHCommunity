@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <!--首页头-->
-<div class="page-header" th:fragment="section_header" id="vue_section_header">
+<div class="page-header" v-cloak th:fragment="section_header" id="vue_section_header">
     <h1><span class="glyphicon glyphicon-home"></span>&nbsp;{{section.sectionTitle}}
         <small class="font_color_aliceBlue">{{section.sectionDescription}}</small>
     </h1>

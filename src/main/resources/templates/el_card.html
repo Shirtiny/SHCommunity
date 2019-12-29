@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<div id="vue_el_card" th:fragment="el_card" >
+<div id="vue_el_card" th:fragment="el_card" v-cloak>
     <el-card class="box-card" shadow="hover" >
         <div slot="header" class="clearfix">
             <span style="font-size: large">公告</span>
@@ -10,9 +10,9 @@
         </div>
         <div  class="text item" style="line-height: 36px;">
             本站仍在测试与完善中，<br>
+            未对移动端设备做更多的布局适配。<br>
             站内绝大部分字幕、用户信息、图片资源都爬取自：<a href="http://bbs.vcb-s.com/">Vcb字幕论坛</a><br>
-            对爬取频率采取了限制措施，未对该站造成额外困扰，<br>
-            只爬取少量数据，仅用于学习交流。
+            仅用于学习交流<br>
             所写爬虫已在Github开源，<a href="https://github.com/Shirtiny/shCrawler">点此查看</a>。
         </div>
     </el-card>

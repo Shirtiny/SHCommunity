@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <!--走马灯广告中型-->
-<div id="vue_banner_md" th:fragment="banner_md">
+<div id="vue_banner_md" th:fragment="banner_md" v-cloak>
     <el-carousel height="252px" direction="vertical" indicator-position="" :autoplay="true" :interval=interval>
         <el-carousel-item v-for="(banner,index) in banners" :key="index">
             <el-image

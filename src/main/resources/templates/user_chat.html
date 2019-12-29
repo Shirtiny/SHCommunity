@@ -15,7 +15,7 @@
 <!--<script src="/webjars/sockjs-client/sockjs.min.js"></script> 手动版本改为1.0.0-->
 <script src="/js/myJs/sockjs.min.js"></script>
 <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-<div id="vue_user_chat" th:fragment="user_chat" style="height: 630px;" class="img-rounded">
+<div id="vue_user_chat" v-cloak th:fragment="user_chat" style="height: 630px;" class="img-rounded">
     <!-- 外层tab -->
     <el-tabs class="img-rounded shELOutTab" tab-position="left" @tab-click="outTabClick" v-model="outTabsDefActive"
              type="border-card"
